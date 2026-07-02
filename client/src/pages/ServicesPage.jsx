@@ -319,7 +319,7 @@ export default function ServicesPage() {
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
               Free Consultation Available
             </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4 leading-tight" style={{ color: '#ffffff' }}>
               Not Sure Which Service to Choose?
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red to-orange-400">
