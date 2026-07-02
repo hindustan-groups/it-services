@@ -10,6 +10,7 @@ import {
 import { Container, Button } from '@/components/ui'
 import Skeleton from '@/components/ui/Skeleton'
 import { useService, useServices } from '@/hooks/useServices'
+import { getServiceIcon } from '@/utils/serviceIcons'
 
 /* ── Service config (icons, colors, process, features) ─────────── */
 const SERVICE_CONFIG = {
@@ -241,11 +242,19 @@ export default function ServiceDetailPage() {
 
   const service = data?.data || PLACEHOLDER_SERVICE_DETAILS[slug]
   const allServices = allData?.data?.length ? allData.data : PLACEHOLDER_SERVICES
+
+  // Use DB fields if available, fall back to SERVICE_CONFIG for icon/color only
   const config = SERVICE_CONFIG[slug] || SERVICE_CONFIG['web-development']
-  const ServiceIcon = config.icon
+  const ServiceIcon = getServiceIcon(service?.icon || 'Globe')
+
+  // Rich detail — prefer DB, fallback to SERVICE_CONFIG
+  const keyFeatures = service?.keyFeatures?.length ? service.keyFeatures : config.keyFeatures
+  const techStack   = service?.techStack?.length   ? service.techStack   : config.techStack
+  const process     = service?.process?.length     ? service.process     : config.process
+  const tag         = service?.tag         || config.tag
+  const deliveryTime= service?.deliveryTime|| config.deliveryTime
 
   const related = allServices.filter((s) => s.slug !== slug).slice(0, 3)
-  const relatedConfigs = related.map((s) => SERVICE_CONFIG[s.slug] || SERVICE_CONFIG['web-development'])
 
   if (isLoading && !service) return <DetailSkeleton />
 
@@ -264,7 +273,6 @@ export default function ServiceDetailPage() {
       <section className="relative pt-32 pb-20 overflow-hidden bg-[#050e20]">
         {/* Grid pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
-        {/* Gradient glow */}
         <div className={`absolute top-0 left-0 w-full h-full bg-gradient-to-br ${config.bgGlow} opacity-60 pointer-events-none`} />
         <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-brand-red/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -284,7 +292,7 @@ export default function ServiceDetailPage() {
               {/* Tag badge */}
               <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-white/60 text-xs font-semibold uppercase tracking-widest mb-5`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                {config.tag}
+                {tag}
               </span>
 
               {/* Icon + title row */}
@@ -305,7 +313,7 @@ export default function ServiceDetailPage() {
               <div className="flex flex-wrap gap-4">
                 <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10">
                   <Clock className="w-4 h-4 text-green-400" />
-                  <span className="text-sm text-white/70">Delivery: <strong className="text-white">{config.deliveryTime}</strong></span>
+                  <span className="text-sm text-white/70">Delivery: <strong className="text-white">{deliveryTime}</strong></span>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10">
                   <Shield className="w-4 h-4 text-blue-400" />
@@ -372,7 +380,7 @@ export default function ServiceDetailPage() {
                   What You Get
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {config.keyFeatures.map((feature, i) => (
+                  {keyFeatures.map((feature, i) => (
                     <div
                       key={i}
                       className="flex items-start gap-3 p-4 rounded-xl border border-gray-100 bg-white
@@ -392,14 +400,13 @@ export default function ServiceDetailPage() {
                   How We Deliver It
                 </h2>
                 <div className="space-y-4">
-                  {config.process.map((step, i) => (
+                  {process.map((step, i) => (
                     <div key={i} className="flex gap-5 group">
-                      {/* Step number + connector */}
                       <div className="flex flex-col items-center">
                         <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${config.color} flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-md`}>
                           {step.step}
                         </div>
-                        {i < config.process.length - 1 && (
+                        {i < process.length - 1 && (
                           <div className="w-0.5 flex-1 bg-gradient-to-b from-gray-200 to-transparent mt-2" />
                         )}
                       </div>
@@ -420,7 +427,7 @@ export default function ServiceDetailPage() {
                   Tools & Technologies
                 </h2>
                 <div className="flex flex-wrap gap-2.5">
-                  {config.techStack.map((tech) => (
+                  {techStack.map((tech) => (
                     <span
                       key={tech}
                       className="px-4 py-2 rounded-full border border-gray-200 bg-white text-sm font-medium
@@ -547,9 +554,9 @@ export default function ServiceDetailPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {related.map((s, i) => {
-                const rc = relatedConfigs[i]
-                const RelIcon = rc.icon
+              {related.map((s) => {
+                const RelIcon = getServiceIcon(s.icon)
+                const rc = SERVICE_CONFIG[s.slug] || SERVICE_CONFIG['web-development']
                 return (
                   <Link
                     key={s.id}
@@ -559,11 +566,11 @@ export default function ServiceDetailPage() {
                       hover:-translate-y-1 transition-all duration-300"
                   >
                     <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${rc.color} flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300`}>
-                      <RelIcon className="w-5.5 h-5.5 text-white" strokeWidth={1.7} />
+                      <RelIcon className="w-5 h-5 text-white" strokeWidth={1.7} />
                     </div>
                     <h3 className="font-heading text-base font-bold text-brand-blue mb-2">{s.title}</h3>
                     <p className="text-xs text-text-muted leading-relaxed flex-1 mb-4 line-clamp-2">
-                      {PLACEHOLDER_SERVICE_DETAILS[s.slug]?.shortDescription || ''}
+                      {s.shortDescription || ''}
                     </p>
                     <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-red group-hover:gap-2.5 transition-all duration-200">
                       Learn More <ArrowRight className="w-3.5 h-3.5" />

@@ -19,9 +19,17 @@ model Service {
   slug             String   @unique
   shortDescription String
   fullDescription  String
-  icon             String   // Lucide icon name or SVG string
+  icon             String
   order            Int      @default(0)
   isActive         Boolean  @default(true)
+  // Rich detail fields for ServiceDetailPage
+  tag              String?              // e.g. "Most Popular"
+  deliveryTime     String?              // e.g. "2–4 Weeks"
+  techStack        String[]             // e.g. ["React", "Node.js"]
+  keyFeatures      String[]             // bullet points
+  process          Json?                // [{step, title, desc}]
+  colorFrom        String?              // Tailwind gradient from color
+  colorTo          String?              // Tailwind gradient to color
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -72,7 +80,84 @@ model TeamMember {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// ContactLead — Form submissions from the contact page
+// Testimonial — Client reviews
+// ─────────────────────────────────────────────────────────────────
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  company   String
+  text      String
+  rating    Int      @default(5)
+  avatarUrl String?
+  isActive  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, order])
+  @@map("testimonials")
+}
+
+// ─────────────────────────────────────────────────────────────────
+// FAQ — Frequently asked questions
+// ─────────────────────────────────────────────────────────────────
+model Faq {
+  id       String  @id @default(cuid())
+  question String
+  answer   String
+  order    Int     @default(0)
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, order])
+  @@map("faqs")
+}
+
+// ─────────────────────────────────────────────────────────────────
+// SiteSetting — Key-value store for contact info, social links etc
+// ─────────────────────────────────────────────────────────────────
+model SiteSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Milestone — Company timeline on About page
+// ─────────────────────────────────────────────────────────────────
+model Milestone {
+  id        String   @id @default(cuid())
+  year      String
+  title     String
+  desc      String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+  @@map("milestones")
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Partner — Client logo banner
+// ─────────────────────────────────────────────────────────────────
+model Partner {
+  id       String  @id @default(cuid())
+  name     String
+  logoUrl  String?
+  order    Int     @default(0)
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, order])
+  @@map("partners")
+}
+
 // ─────────────────────────────────────────────────────────────────
 enum LeadStatus {
   NEW

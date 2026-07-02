@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/utils/api'
 
-export function useTeam() {
+export function useTestimonials() {
   return useQuery({
-    queryKey: ['team'],
-    queryFn: () => api.get('/team'),
+    queryKey: ['testimonials'],
+    queryFn: () => api.get('/testimonials'),
     staleTime: 10 * 60 * 1000,
   })
 }

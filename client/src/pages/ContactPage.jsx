@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { MapPin, Phone, Mail, MessageCircle, Send, CheckCircle, AlertCircle, ChevronDown } from 'lucide-react'
 import { Container, Button } from '@/components/ui'
 import { useServices } from '@/hooks/useServices'
+import { useFaqs } from '@/hooks/useContent'
 import { api } from '@/utils/api'
 import { fadeUp, staggerContainer } from '@/utils/motion'
 import contactHeroPerson from '@/assets/contact_hero_person.png'
@@ -107,38 +108,26 @@ function ContactInfoCard({ icon: Icon, label, value, href, borderColor }) {
   )
 }
 
-// ── FAQ Constants ──────────────────────────────────────────────
-const FAQ_DATA = [
-  {
-    q: "What services does Hindustan Projects offer?",
-    a: "We provide comprehensive custom Web Development, Mobile App Development (iOS & Android), Multi-channel Digital Marketing (SEO, PPC, Social Media), Brand Identity Design, and custom ERP/Software Solutions built to solve operational bottlenecks."
-  },
-  {
-    q: "Where is your office located? Can we meet in person?",
-    a: "Our office is located in Bhilwara, Rajasthan, India (311001). We welcome local clients to visit us for face-to-face consultations, and we also work seamlessly with clients across India via video calls and digital collaboration tools."
-  },
-  {
-    q: "How long does it take to start a new project?",
-    a: "Once we conduct our initial requirement discovery and agree on the project proposal/timeline, we typically onboard and kick off new web, app, or software projects within 3 to 5 business days."
-  },
-  {
-    q: "Do you offer post-launch support and maintenance?",
-    a: "Yes! Every project we deliver comes with a standard support window to resolve any initial launch issues. We also offer dedicated monthly support and maintenance contracts to handle feature updates, security patches, backups, and page performance optimizations."
-  },
-  {
-    q: "How do you calculate pricing for custom projects?",
-    a: "Pricing is calculated based on project scope, features, complexity, and resource hours. We offer clear, itemized quotes with no hidden fees, providing cost-effective solutions tailored to your business goals. Contact us for a free estimate!"
-  }
+// ── FAQ Fallback (when DB empty) ───────────────────────────────
+const FAQ_FALLBACK = [
+  { id: '1', question: "What services does Hindustan Projects offer?", answer: "We provide custom Web Development, Mobile App Development, Digital Marketing, Brand Identity Design, and custom ERP/Software Solutions." },
+  { id: '2', question: "Where is your office?", answer: "Our office is in Bhilwara, Rajasthan, India (311001). We also work remotely with clients across India." },
+  { id: '3', question: "How long to start a new project?", answer: "We typically onboard and kick off new projects within 3–5 business days after requirement discovery." },
+  { id: '4', question: "Do you offer post-launch support?", answer: "Yes! Every project includes a standard support window. We also offer monthly maintenance contracts." },
+  { id: '5', question: "How is pricing calculated?", answer: "Pricing is based on project scope, features, and complexity. We provide clear itemized quotes with no hidden fees." },
 ]
 
 // ── Main Page Component ────────────────────────────────────────
 export default function ContactPage() {
-  const [submitState, setSubmitState] = useState('idle') // 'idle' | 'loading' | 'success' | 'error'
+  const [submitState, setSubmitState] = useState('idle')
   const [apiError, setApiError] = useState('')
   const [activeFaq, setActiveFaq] = useState(null)
 
   const { data: servicesData } = useServices()
   const services = servicesData?.data ?? []
+
+  const { data: faqsData } = useFaqs()
+  const faqs = faqsData?.data?.length ? faqsData.data : FAQ_FALLBACK
 
   const {
     register,
@@ -569,11 +558,13 @@ export default function ContactPage() {
             </div>
 
             <div className="space-y-4">
-              {FAQ_DATA.map((faq, idx) => {
+              {faqs.map((faq, idx) => {
                 const isOpen = activeFaq === idx
+                const question = faq.question ?? faq.q
+                const answer = faq.answer ?? faq.a
                 return (
                   <div
-                    key={idx}
+                    key={faq.id ?? idx}
                     className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden transition-all duration-300"
                   >
                     <button
@@ -581,7 +572,7 @@ export default function ContactPage() {
                       className="w-full flex items-center justify-between p-5 text-left font-heading font-bold text-brand-blue hover:text-brand-red transition-colors duration-200 cursor-pointer group"
                       aria-expanded={isOpen}
                     >
-                      <span className="text-sm sm:text-base leading-snug">{faq.q}</span>
+                      <span className="text-sm sm:text-base leading-snug">{question}</span>
                       <span className={`p-1 rounded-full bg-slate-50 text-slate-400 group-hover:bg-brand-blue/5 transition-transform duration-350 ${isOpen ? 'rotate-180 text-brand-blue' : ''}`}>
                         <ChevronDown className="w-4 h-4" />
                       </span>
@@ -593,7 +584,7 @@ export default function ContactPage() {
                       }`}
                     >
                       <div className="p-5 text-sm text-text-muted leading-relaxed">
-                        {faq.a}
+                        {answer}
                       </div>
                     </div>
                   </div>

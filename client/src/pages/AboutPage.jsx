@@ -8,8 +8,10 @@ import {
   TrendingUp, Shield, Clock, Star
 } from 'lucide-react'
 import { Container, Button } from '@/components/ui'
+import { useTeam } from '@/hooks/useTeam'
+import { useMilestones } from '@/hooks/useContent'
 
-/* ── Data ──────────────────────────────────────────────────────── */
+/* ── Static data (company values, stats — not CMS managed) ─────── */
 const STATS = [
   { value: '50+', label: 'Projects Delivered', icon: Rocket },
   { value: '40+', label: 'Happy Clients', icon: Heart },
@@ -24,22 +26,28 @@ const VALUES = [
   { icon: Handshake, title: 'Long-Term Partners', desc: 'We build lasting partnerships, not one-off transactions. We grow together.' },
 ]
 
-const TEAM = [
-  { name: 'Rahul Sharma', role: 'Founder & CEO', emoji: '👨‍💼', desc: 'Visionary leader with 8+ years in web tech and digital strategy.' },
-  { name: 'Priya Singh', role: 'Lead Developer', emoji: '👩‍💻', desc: 'Full-stack expert specialising in React, Node.js, and cloud architecture.' },
-  { name: 'Amit Verma', role: 'Digital Marketing Head', emoji: '📈', desc: 'Growth hacker behind our clients\' SEO and paid campaign results.' },
-  { name: 'Sneha Joshi', role: 'UI/UX Designer', emoji: '🎨', desc: 'Crafts beautiful, intuitive interfaces that users love to interact with.' },
+// Fallbacks (shown if DB empty)
+const FALLBACK_MILESTONES = [
+  { id: '1', year: '2019', title: 'Founded', desc: 'Hindustan Projects was born in Bhilwara with a mission to bring world-class IT to local businesses.' },
+  { id: '2', year: '2020', title: 'First 10 Clients', desc: 'Delivered web development and digital marketing for 10 businesses across Rajasthan.' },
+  { id: '3', year: '2022', title: 'Expanded Services', desc: 'Launched cloud, DevOps, and mobile app development verticals.' },
+  { id: '4', year: '2024', title: '40+ Happy Clients', desc: 'Crossed 40 happy clients mark, serving businesses pan-India.' },
+  { id: '5', year: '2025', title: 'Growing Strong', desc: 'Expanding our team and services to cover enterprise-level digital transformation.' },
 ]
 
-const MILESTONES = [
-  { year: '2019', title: 'Founded', desc: 'Hindustan Projects was born in Bhilwara with a mission to bring world-class IT to local businesses.' },
-  { year: '2020', title: 'First 10 Clients', desc: 'Delivered web development and digital marketing for 10 businesses across Rajasthan.' },
-  { year: '2022', title: 'Expanded Services', desc: 'Launched cloud, DevOps, and mobile app development verticals.' },
-  { year: '2024', title: '40+ Happy Clients', desc: 'Crossed 40 happy client mark, serving businesses pan-India.' },
-  { year: '2025', title: 'Growing Strong', desc: 'Expanding our team and services to cover enterprise-level digital transformation.' },
+const FALLBACK_TEAM = [
+  { id: '1', name: 'Rahul Sharma', role: 'Founder & CEO', bio: 'Visionary leader with 8+ years in web tech and digital strategy.' },
+  { id: '2', name: 'Priya Singh', role: 'Lead Developer', bio: 'Full-stack expert specialising in React, Node.js, and cloud architecture.' },
+  { id: '3', name: 'Amit Verma', role: 'Digital Marketing Head', bio: "Growth hacker behind our clients' SEO and paid campaign results." },
+  { id: '4', name: 'Sneha Joshi', role: 'UI/UX Designer', bio: 'Crafts beautiful, intuitive interfaces that users love to interact with.' },
 ]
 
 export default function AboutPage() {
+  const { data: teamData, isLoading: teamLoading } = useTeam()
+  const { data: milestonesData, isLoading: milestonesLoading } = useMilestones()
+
+  const team = teamData?.data?.length ? teamData.data : (teamLoading ? [] : FALLBACK_TEAM)
+  const milestones = milestonesData?.data?.length ? milestonesData.data : (milestonesLoading ? [] : FALLBACK_MILESTONES)
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────────────── */}
@@ -260,15 +268,19 @@ export default function AboutPage() {
             {/* Vertical line */}
             <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-brand-blue via-brand-red to-transparent hidden sm:block" />
             <div className="space-y-8">
-              {MILESTONES.map((m, i) => (
-                <div key={m.year} className="flex gap-6 group">
-                  {/* Year circle */}
+              {(milestonesLoading ? Array.from({length: 4}) : milestones).map((m, i) => (
+                milestonesLoading ? (
+                  <div key={i} className="flex gap-6">
+                    <div className="hidden sm:block w-16 h-16 rounded-full bg-gray-100 animate-pulse shrink-0" />
+                    <div className="flex-1 h-20 bg-gray-100 rounded-2xl animate-pulse" />
+                  </div>
+                ) : (
+                <div key={m.id} className="flex gap-6 group">
                   <div className="hidden sm:flex flex-col items-center shrink-0">
                     <div className="w-16 h-16 rounded-full border-2 border-brand-blue bg-white flex flex-col items-center justify-center shadow-md group-hover:bg-brand-blue transition-colors duration-300">
                       <span className="text-xs font-bold text-brand-blue group-hover:text-white transition-colors leading-none">{m.year}</span>
                     </div>
                   </div>
-                  {/* Content */}
                   <div className="flex-1 bg-white rounded-2xl border border-gray-100 p-5 group-hover:border-brand-blue/20 group-hover:shadow-md transition-all duration-300">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="sm:hidden text-xs font-bold text-brand-red">{m.year} —</span>
@@ -277,6 +289,7 @@ export default function AboutPage() {
                     <p className="text-sm text-text-muted leading-relaxed">{m.desc}</p>
                   </div>
                 </div>
+                )
               ))}
             </div>
           </div>
@@ -294,22 +307,41 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {TEAM.map((member) => (
-              <div
-                key={member.name}
-                className="group bg-white rounded-2xl border border-gray-100 p-6 text-center
-                  hover:border-transparent hover:shadow-[0_12px_40px_rgba(26,62,140,0.10)]
-                  hover:-translate-y-1.5 transition-all duration-300"
-              >
-                {/* Avatar */}
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-blue to-blue-400 flex items-center justify-center mx-auto mb-4 text-3xl shadow-md group-hover:scale-105 transition-transform duration-300">
-                  {member.emoji}
-                </div>
-                <h3 className="font-heading text-base font-bold text-brand-blue mb-0.5">{member.name}</h3>
-                <p className="text-xs font-semibold text-brand-red mb-3">{member.role}</p>
-                <p className="text-xs text-text-muted leading-relaxed">{member.desc}</p>
-              </div>
-            ))}
+            {teamLoading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="h-52 bg-gray-100 rounded-2xl animate-pulse" />
+                ))
+              : team.map((member) => {
+                  const initials = member.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
+                  return (
+                    <div key={member.id}
+                      className="group bg-white rounded-2xl border border-gray-100 p-6 text-center
+                        hover:border-transparent hover:shadow-[0_12px_40px_rgba(26,62,140,0.10)]
+                        hover:-translate-y-1.5 transition-all duration-300"
+                    >
+                      {member.photoUrl ? (
+                        <img src={member.photoUrl} alt={member.name}
+                          className="w-20 h-20 rounded-full object-cover mx-auto mb-4 ring-2 ring-brand-blue/10"
+                          loading="lazy" />
+                      ) : (
+                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-blue to-blue-400 flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-white shadow-md group-hover:scale-105 transition-transform duration-300">
+                          {initials}
+                        </div>
+                      )}
+                      <h3 className="font-heading text-base font-bold text-brand-blue mb-0.5">{member.name}</h3>
+                      <p className="text-xs font-semibold text-brand-red mb-3">{member.role}</p>
+                      {member.bio && <p className="text-xs text-text-muted leading-relaxed">{member.bio}</p>}
+                      {member.linkedinUrl && (
+                        <a href={member.linkedinUrl} target="_blank" rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs text-brand-blue/60
+                            hover:text-brand-blue mt-3 transition-colors">
+                          LinkedIn →
+                        </a>
+                      )}
+                    </div>
+                  )
+                })
+            }
           </div>
         </Container>
       </section>

@@ -11,7 +11,16 @@ import FeaturedProjects from '@/components/sections/FeaturedProjects'
 import TestimonialsSection from '@/components/sections/TestimonialsSection'
 import TeamSection from '@/components/sections/TeamSection'
 import FaqSection from '@/components/sections/FaqSection'
-import { Container, Button } from '@/components/ui'
+import { Container, Button, SEO } from '@/components/ui'
+import { usePartners } from '@/hooks/useContent'
+
+const FALLBACK_PARTNERS = [
+  { id: '1', name: 'Bhilwara Textiles' },
+  { id: '2', name: 'Jaipur Crafts' },
+  { id: '3', name: 'Singhal Marbles' },
+  { id: '4', name: 'Rajasthan Polytech' },
+  { id: '5', name: 'RetailHub' },
+]
 
 /**
  * HomePage — assembles all homepage sections.
@@ -21,15 +30,17 @@ export default function HomePage() {
   const [email, setEmail] = useState('')
   const [service, setService] = useState('Web Development')
   const [submitted, setSubmitted] = useState(false)
+  const { data: partnersData } = usePartners()
+  const partners = partnersData?.data?.length ? partnersData.data : FALLBACK_PARTNERS
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Local mock submission
     setSubmitted(true)
   }
 
   return (
     <>
+      <SEO path="/" />
       <HeroSection />
 
       {/* ── Partner Logos Banner ── */}
@@ -39,11 +50,11 @@ export default function HomePage() {
             Trusted By Forward-Thinking Brands & Businesses
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 md:gap-x-16 opacity-30 hover:opacity-50 transition-opacity duration-300 pointer-events-none select-none">
-            <span className="font-heading text-sm md:text-base font-black tracking-wider text-brand-blue uppercase">Bhilwara Textiles</span>
-            <span className="font-heading text-sm md:text-base font-black tracking-wider text-brand-blue uppercase">Jaipur Crafts</span>
-            <span className="font-heading text-sm md:text-base font-black tracking-wider text-brand-blue uppercase">Singhal Marbles</span>
-            <span className="font-heading text-sm md:text-base font-black tracking-wider text-brand-blue uppercase">Rajasthan Polytech</span>
-            <span className="font-heading text-sm md:text-base font-black tracking-wider text-brand-blue uppercase">RetailHub</span>
+            {partners.map(p => (
+              <span key={p.id} className="font-heading text-sm md:text-base font-black tracking-wider text-brand-blue uppercase">
+                {p.name}
+              </span>
+            ))}
           </div>
         </Container>
       </section>

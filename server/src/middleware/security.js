@@ -105,7 +105,7 @@ export const contactLimiter = rateLimit({
 // ── 5. Strict limiter for admin auth routes ───────────────────
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10, // 10 login attempts per 15 min per IP
+  max: process.env.NODE_ENV === 'development' ? 100 : 10, // relaxed in dev
   standardHeaders: true,
   legacyHeaders: false,
   message: { status: 'error', message: 'Too many login attempts. Please try again later.' },
