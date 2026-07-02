@@ -26,6 +26,73 @@ const WHY_STATS = [
   { icon: Users,  label: 'Happy Clients',    value: '50+ Businesses' },
 ]
 
+/* ── Local Fallback Services data (when DB is not connected) ── */
+const SERVICES = [
+  {
+    id: '1',
+    title: 'Web Development',
+    slug: 'web-development',
+    icon: 'Code2',
+    tag: 'Most Popular',
+    features: ['React & Next.js', 'SEO Optimised', 'Mobile Responsive'],
+    shortDescription: 'Custom, responsive websites built with modern technologies like React, Node.js, and WordPress — optimised for speed, SEO, and conversions.',
+  },
+  {
+    id: '2',
+    title: 'Digital Marketing & SEO',
+    slug: 'digital-marketing-seo',
+    icon: 'Megaphone',
+    tag: 'High ROI',
+    features: ['Google & Meta Ads', 'SEO & Content', 'Analytics Reports'],
+    shortDescription: 'Result-driven digital marketing campaigns spanning SEO, Google Ads, Meta Ads, and content marketing to drive high-intent leads.',
+  },
+  {
+    id: '3',
+    title: 'IT Consulting & Strategy',
+    slug: 'it-consulting-strategy',
+    icon: 'Lightbulb',
+    tag: 'Expert Advice',
+    features: ['Tech Roadmap', 'System Architecture', 'Growth Planning'],
+    shortDescription: 'Strategic IT advisory to align your technology roadmap with business growth. We help you choose the right systems and architecture.',
+  },
+  {
+    id: '4',
+    title: 'E-Commerce Solutions',
+    slug: 'ecommerce-solutions',
+    icon: 'Monitor',
+    tag: 'Sell More',
+    features: ['Secure Payments', 'Inventory Mgmt', 'Checkout Optimized'],
+    shortDescription: 'End-to-end e-commerce store setup, checkout optimisation, inventory management systems, and secure payment gateway integrations.',
+  },
+  {
+    id: '5',
+    title: 'Cloud Solutions & DevOps',
+    slug: 'cloud-solutions-devops',
+    icon: 'Settings',
+    tag: 'Scale Fast',
+    features: ['AWS & Google Cloud', 'CI/CD Pipelines', 'Zero Downtime'],
+    shortDescription: 'Secure cloud hosting setup, AWS/Google Cloud management, server scaling, and continuous deployment workflows for zero downtime.',
+  },
+  {
+    id: '6',
+    title: 'Branding & UI/UX Design',
+    slug: 'branding-ui-ux-design',
+    icon: 'Layers',
+    tag: 'Premium Look',
+    features: ['Logo & Guidelines', 'Modern UI/UX', 'Prototypes'],
+    shortDescription: 'Premium user interface and user experience designs coupled with complete corporate brand identity systems, logos, and guidelines.',
+  },
+  {
+    id: '7',
+    title: 'Mobile App Development',
+    slug: 'mobile-app-development',
+    icon: 'Smartphone',
+    tag: 'Custom Apps',
+    features: ['React Native & Flutter', 'iOS & Android', 'Store Publishing'],
+    shortDescription: 'Native and cross-platform mobile apps for iOS and Android built with React Native and Flutter. Secure, high-performing, and published on App Stores.',
+  }
+]
+
 /* ── Skeleton card ────────────────────────────────────────────── */
 function ServiceSkeleton() {
   return (
@@ -47,7 +114,7 @@ function ServiceSkeleton() {
 
 export default function ServicesPage() {
   const { data, isLoading, isError, refetch } = useServices()
-  const services = data?.data ?? []
+  const services = data?.data?.length ? data.data : (isLoading ? [] : SERVICES)
 
   return (
     <>
