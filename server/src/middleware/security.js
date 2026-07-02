@@ -104,10 +104,11 @@ export const contactLimiter = rateLimit({
 
 // ── 5. Strict limiter for admin auth routes ───────────────────
 export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === 'development' ? 100 : 10, // relaxed in dev
+  windowMs: 30 * 60 * 1000, // 30 minutes window
+  max: process.env.NODE_ENV === 'development' ? 500 : 50, // much more relaxed
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => process.env.NODE_ENV === 'development', // skip entirely in dev
   message: { status: 'error', message: 'Too many login attempts. Please try again later.' },
 })
 
