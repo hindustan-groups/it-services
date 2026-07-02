@@ -84,9 +84,10 @@ export const corsOptions = cors({
 // ── 3. General API rate limiter ────────────────────────────────
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
+  max: process.env.NODE_ENV === 'development' ? 2000 : 500, // Relaxed limits
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => process.env.NODE_ENV === 'development', // Skip entirely in dev
   message: { status: 'error', message: 'Too many requests, please try again later.' },
 })
 
