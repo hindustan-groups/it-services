@@ -57,9 +57,7 @@ export default function AdminLoginPage() {
 
           {/* Logo */}
           <div className="relative flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
-              <span className="text-brand-red font-heading font-black text-lg leading-none">Hi</span>
-            </div>
+            <img src="/apple-touch-icon.png" alt="Logo" className="w-10 h-10 rounded-xl object-contain bg-white/10 p-1 border border-white/20" />
             <div>
               <p className="font-heading font-bold text-white text-base">Hindustan Projects</p>
               <p className="text-white/40 text-xs">Admin Panel</p>
@@ -109,11 +107,9 @@ export default function AdminLoginPage() {
 
             {/* Mobile logo */}
             <div className="lg:hidden text-center mb-8">
-              <div className="inline-flex items-center gap-2 mb-2">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                  style={{ background: 'linear-gradient(135deg, #1A3E8C, #0f2660)' }}>
-                  <span className="text-brand-red font-heading font-black text-sm">Hi</span>
-                </div>
+              <div className="inline-flex items-center gap-2.5 mb-2">
+                <img src="/apple-touch-icon.png" alt="Logo" className="w-9 h-9 rounded-xl object-contain bg-white/10 p-0.5 border border-white/20"
+                  style={{ background: 'linear-gradient(135deg, #1A3E8C, #0f2660)' }} />
                 <span className="font-heading font-bold text-xl text-brand-blue">Hindustan Projects</span>
               </div>
             </div>

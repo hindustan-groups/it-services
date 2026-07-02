@@ -87,11 +87,11 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="h-screen flex bg-gray-50 overflow-hidden">
 
       {/* ── Sidebar ── */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 flex flex-col
+        className={`fixed inset-y-0 left-0 z-40 w-64 flex flex-col h-full
           transition-transform duration-300 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0 lg:static lg:flex`}
@@ -100,9 +100,7 @@ export default function AdminLayout() {
         {/* ── Logo ── */}
         <div className="flex items-center justify-between px-5 h-16 border-b border-white/10 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center">
-              <span className="text-brand-red font-heading font-black text-sm leading-none">Hi</span>
-            </div>
+            <img src="/apple-touch-icon.png" alt="Logo" className="w-8 h-8 rounded-lg object-contain bg-white/10 p-0.5 border border-white/20" />
             <div>
               <p className="font-heading font-bold text-white text-sm leading-none">Hindustan</p>
               <p className="text-white/40 text-[10px] font-medium tracking-wider uppercase">Projects Admin</p>
@@ -190,7 +188,7 @@ export default function AdminLayout() {
       )}
 
       {/* ── Main ── */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         {/* Topbar */}
         <header className="h-16 bg-white border-b border-gray-200 flex items-center
           justify-between px-4 lg:px-6 shrink-0 sticky top-0 z-20 shadow-sm">
