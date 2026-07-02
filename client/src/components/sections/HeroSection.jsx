@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, ChevronDown, CheckCircle2 } from 'lucide-react'
 import { Button, Container } from '@/components/ui'
+import { useSiteSettings } from '@/hooks/useContent'
 import professionalHero from '@/assets/professional_hero.png'
 
 // ── Animation variants ─────────────────────────────────────────
@@ -30,13 +31,6 @@ const wordVariants = {
 const HEADLINE_LINE1 = ['Building', 'Digital', 'Solutions']
 const HEADLINE_LINE2 = ['That', 'Drive', 'Business', 'Growth']
 
-const STATS = [
-  { value: '50+', label: 'Projects Delivered' },
-  { value: '40+', label: 'Happy Clients' },
-  { value: '5+',  label: 'Years Experience' },
-  { value: '3+',  label: 'Cities Served' },
-]
-
 const TRUST_POINTS = [
   'Custom websites tailored to your business',
   'Result-driven digital marketing campaigns',
@@ -44,6 +38,16 @@ const TRUST_POINTS = [
 ]
 
 export default function HeroSection() {
+  const { data: settingsData } = useSiteSettings()
+  const cfg = settingsData?.data || {}
+
+  const stats = [
+    { value: `${cfg.stat_projects || '50'}+`, label: 'Projects Delivered' },
+    { value: `${cfg.stat_clients || '40'}+`, label: 'Happy Clients' },
+    { value: `${cfg.stat_experience || '5'}+`, label: 'Years Experience' },
+    { value: `${cfg.stat_cities || '3'}+`, label: 'Cities Served' },
+  ]
+
   return (
     <section
       id="home"
@@ -258,11 +262,11 @@ export default function HeroSection() {
       >
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4">
-            {STATS.map((s, i) => (
+            {stats.map((s, i) => (
               <div
                 key={s.label}
                 className={`py-3.5 px-6 text-center ${
-                  i < STATS.length - 1 ? 'border-r border-white/10' : ''
+                  i < stats.length - 1 ? 'border-r border-white/10' : ''
                 }`}
               >
                 <p className="font-heading text-2xl font-bold text-white">{s.value}</p>

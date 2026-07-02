@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { label: 'Services', href: '/services' },
   { label: 'About', href: '/about' },
   { label: 'Portfolio', href: '/portfolio' },
+  { label: 'Careers', href: '/careers' },
   { label: 'Contact', href: '/contact' },
 ]
 
@@ -111,7 +112,7 @@ export default function Navbar() {
               <li key={link.href}>
                 <Link
                   to={link.href}
-                  className={`relative px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 group/navlink
+                  className={`relative px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 group/navlink inline-block
                     ${isTransparent
                       ? isActive(link.href)
                         ? 'text-white bg-white/15'

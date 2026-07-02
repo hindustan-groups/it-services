@@ -52,6 +52,7 @@ model Project {
   technologies String[] // e.g. ["React", "Node.js", "PostgreSQL"]
   category     String   // e.g. "Web", "Marketing", "Branding"
   isFeatured   Boolean  @default(false)
+  liveUrl      String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -199,4 +200,79 @@ model Admin {
 
   @@index([email])
   @@map("admins")
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Careers — Job Postings & Applications
+// ─────────────────────────────────────────────────────────────────
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  INTERNSHIP
+  CONTRACT
+}
+
+enum ApplicationStatus {
+  NEW
+  SHORTLISTED
+  REJECTED
+  HIRED
+}
+
+model JobPosting {
+  id                 String           @id @default(cuid())
+  title              String
+  slug               String           @unique
+  department         String
+  location           String
+  jobType            JobType          @default(FULL_TIME)
+  experienceRequired String
+  description        String
+  responsibilities   String[]
+  requirements       String[]
+  isActive           Boolean          @default(true)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  applications       JobApplication[]
+
+  @@index([slug])
+  @@index([isActive])
+  @@map("job_postings")
+}
+
+model JobApplication {
+  id           String            @id @default(cuid())
+  jobPostingId String
+  jobPosting   JobPosting        @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+  fullName     String
+  email        String
+  phone        String
+  resumeUrl    String
+  coverLetter  String?
+  status       ApplicationStatus @default(NEW)
+  createdAt    DateTime          @default(now())
+
+  @@index([jobPostingId])
+  @@map("job_applications")
+}
+
+// ─────────────────────────────────────────────────────────────────
+// LegalPage — Dynamic terms and policy pages
+// ─────────────────────────────────────────────────────────────────
+enum LegalPageType {
+  PRIVACY_POLICY
+  TERMS_OF_SERVICE
+  REFUND_POLICY
+}
+
+model LegalPage {
+  id          String        @id @default(cuid())
+  pageType    LegalPageType @unique
+  title       String
+  content     String        // Stored as long HTML/Markdown text
+  lastUpdated DateTime      @default(now()) @updatedAt
+  updatedBy   String?       // admin id reference
+
+  @@index([pageType])
+  @@map("legal_pages")
 }

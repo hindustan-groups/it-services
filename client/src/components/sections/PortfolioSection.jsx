@@ -205,6 +205,19 @@ export function ProjectModal({ project, onClose }) {
                       </div>
                     </div>
                   )}
+                  {project.liveUrl && (
+                    <div className="pt-2">
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-1.5 w-full bg-brand-blue hover:bg-[#0f2660] text-white text-[11px] font-bold py-2 px-3 rounded-xl shadow-sm hover:shadow transition-all"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Visit Live Site
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -283,9 +296,23 @@ function ProjectCard({ project, onOpen }) {
             </div>
           )}
 
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-brand-red group-hover:gap-3 transition-all duration-200">
-            <ExternalLink className="w-3.5 h-3.5" />
-            View Details
+          <div className="flex items-center justify-between border-t border-slate-100/60 pt-3 mt-1.5">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-brand-red group-hover:gap-2.5 transition-all duration-200 font-heading">
+              <ArrowRight className="w-3.5 h-3.5" />
+              View Case Study
+            </div>
+            {project.liveUrl && (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1.5 text-[10px] font-bold text-white bg-brand-blue/90 hover:bg-brand-blue px-2.5 py-1.5 rounded-xl shadow-sm hover:shadow transition-all"
+              >
+                <ExternalLink className="w-3 h-3" />
+                Live Demo
+              </a>
+            )}
           </div>
         </div>
       </article>
@@ -328,13 +355,20 @@ export default function PortfolioSection() {
               role="tab"
               aria-selected={activeCategory === cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer border ${
+              className={`relative px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer border overflow-hidden active:scale-95 ${
                 activeCategory === cat
-                  ? 'bg-brand-blue text-white border-brand-blue shadow-lg shadow-brand-blue/25 scale-105'
+                  ? 'text-white border-brand-blue shadow-lg shadow-brand-blue/20'
                   : 'bg-white text-text-muted border-gray-200 hover:border-brand-blue/30 hover:text-brand-blue'
               }`}
             >
-              {cat}
+              {activeCategory === cat && (
+                <motion.span
+                  layoutId="activeCategoryTab"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  className="absolute inset-0 bg-brand-blue -z-10"
+                />
+              )}
+              <span className="relative z-10">{cat}</span>
             </button>
           ))}
         </div>

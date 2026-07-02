@@ -86,6 +86,9 @@ export default function Button({
     const x = e.clientX - rect.left - size / 2
     const y = e.clientY - rect.top - size / 2
 
+    const isLightRipple = variant === 'primary' || variant === 'secondary'
+    const rippleColor = isLightRipple ? 'rgba(255,255,255,0.32)' : 'rgba(26, 62, 140, 0.16)'
+
     const ripple = document.createElement('span')
     ripple.className = 'btn-ripple'
     Object.assign(ripple.style, {
@@ -95,7 +98,7 @@ export default function Button({
       left: `${x}px`,
       top: `${y}px`,
       borderRadius: '50%',
-      background: 'rgba(255,255,255,0.30)',
+      background: rippleColor,
       transform: 'scale(0)',
       animation: 'ripple-expand 0.55s ease-out forwards',
       pointerEvents: 'none',
@@ -134,7 +137,7 @@ export default function Button({
       `}</style>
 
       <Tag
-        ref={Tag === 'button' ? btnRef : undefined}
+        ref={btnRef}
         type={Tag === 'button' ? type : undefined}
         disabled={Tag === 'button' ? (disabled || loading) : undefined}
         className={`${base} ${variants[variant] ?? variants.primary} ${sizes[size]} ${className}`}

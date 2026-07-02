@@ -119,49 +119,49 @@ async function main() {
       clientName: 'Retail Client, Bhilwara', category: 'Web', isFeatured: true,
       technologies: ['React', 'Node.js', 'PostgreSQL', 'Razorpay', 'Tailwind CSS'],
       description: 'A full-stack e-commerce platform with inventory management, payment integration, and admin dashboard. Increased online sales by 3x within 60 days.',
-      thumbnailUrl: '', images: [],
+      thumbnailUrl: '', images: [], liveUrl: 'https://demo.hindustanprojects.com/ecommerce',
     },
     {
       id: 'proj-2', title: 'Digital Marketing Campaign', slug: 'digital-marketing-campaign',
       clientName: 'Fashion Brand, Jaipur', category: 'Marketing', isFeatured: true,
       technologies: ['Google Ads', 'Meta Ads', 'SEO', 'Google Analytics'],
       description: 'Multi-channel digital marketing campaign achieving 3x ROI within 3 months. Conversion rates improved by 42% through targeted campaigns.',
-      thumbnailUrl: '', images: [],
+      thumbnailUrl: '', images: [], liveUrl: 'https://demo.hindustanprojects.com/campaign',
     },
     {
       id: 'proj-3', title: 'Corporate Brand Identity', slug: 'corporate-brand-identity',
       clientName: 'Manufacturing Co., Bhilwara', category: 'Branding', isFeatured: true,
       technologies: ['Figma', 'Adobe Illustrator', 'Brand Guidelines'],
       description: 'Complete brand identity redesign including logo, brand guidelines, and marketing collateral. Established premium positioning in the B2B market.',
-      thumbnailUrl: '', images: [],
+      thumbnailUrl: '', images: [], liveUrl: null,
     },
     {
       id: 'proj-4', title: 'Textile ERP System', slug: 'textile-erp-system',
       clientName: 'Textile Company, Bhilwara', category: 'Software', isFeatured: false,
       technologies: ['Node.js', 'React', 'MySQL', 'Docker'],
       description: 'Custom ERP solution for textile manufacturing with production tracking, inventory management, and billing. Reduced operational overhead by 40%.',
-      thumbnailUrl: '', images: [],
+      thumbnailUrl: '', images: [], liveUrl: null,
     },
     {
       id: 'proj-5', title: 'Restaurant Website & SEO', slug: 'restaurant-website-seo',
       clientName: 'Local Restaurant, Bhilwara', category: 'Web', isFeatured: false,
       technologies: ['React', 'Tailwind CSS', 'SEO', 'Google My Business'],
       description: 'Responsive website with online menu, table booking, and local SEO. Restaurant now ranks #1 on Google for restaurant in Bhilwara.',
-      thumbnailUrl: '', images: [],
+      thumbnailUrl: '', images: [], liveUrl: 'https://demo.hindustanprojects.com/restaurant',
     },
     {
       id: 'proj-6', title: 'Real Estate Social Media Growth', slug: 'real-estate-social-media',
       clientName: 'Real Estate Agency', category: 'Marketing', isFeatured: false,
       technologies: ['Instagram', 'Facebook', 'Canva', 'Meta Business Suite'],
       description: 'Organic social media strategy growing followers from 500 to 12,000+ in 6 months with consistent inbound leads.',
-      thumbnailUrl: '', images: [],
+      thumbnailUrl: '', images: [], liveUrl: null,
     },
     {
       id: 'proj-7', title: 'Logistics Mobile App', slug: 'logistics-mobile-app',
       clientName: 'Transport Agency, Bhilwara', category: 'App', isFeatured: true,
       technologies: ['React Native', 'Firebase', 'Google Maps API', 'Node.js'],
       description: 'Real-time GPS tracking and booking mobile app for a regional logistics provider. Available on iOS & Android with push notifications and driver management.',
-      thumbnailUrl: '', images: [],
+      thumbnailUrl: '', images: [], liveUrl: 'https://demo.hindustanprojects.com/logistics',
     },
   ]
   for (const p of projects) {
@@ -279,16 +279,101 @@ async function main() {
   }
   console.log('Seeded ' + partners.length + ' partners')
 
+  // Careers
+  const jobs = [
+    {
+      id: 'jp-1',
+      title: 'Full Stack Developer',
+      slug: 'full-stack-developer',
+      department: 'Engineering',
+      location: 'Bhilwara (On-site)',
+      jobType: 'FULL_TIME',
+      experienceRequired: '2-4 years',
+      description: 'We are looking for a skilled Full Stack Developer to join our team in Bhilwara. You will be responsible for building responsive client interfaces and robust backend services.',
+      responsibilities: [
+        'Build reusable components and front-end libraries for future use',
+        'Optimize applications for maximum speed and scalability',
+        'Collaborate with backend developers and web designers to improve usability'
+      ],
+      requirements: [
+        'Proven work experience as a Full Stack Developer or similar role',
+        'Hands-on experience with React, Node.js, Express, and PostgreSQL',
+        'Familiarity with modern CSS frameworks (TailwindCSS) and version control tools (Git)'
+      ],
+      isActive: true
+    },
+    {
+      id: 'jp-2',
+      title: 'Social Media Associate',
+      slug: 'social-media-associate',
+      department: 'Marketing',
+      location: 'Remote',
+      jobType: 'INTERNSHIP',
+      experienceRequired: 'Freshers welcome',
+      description: 'We are hiring a creative Social Media Associate intern to design engaging campaigns and manage our clients social media presence.',
+      responsibilities: [
+        'Create graphic and video content for social channels using Canva/Figma',
+        'Draft copy and schedule posts across Facebook, Instagram, and LinkedIn',
+        'Monitor brand engagement and compile monthly analytics reports'
+      ],
+      requirements: [
+        'Strong visual storytelling skills and design aesthetic',
+        'Basic understanding of SEO and social media algorithms',
+        'Excellent verbal and written communication skills in Hindi & English'
+      ],
+      isActive: true
+    }
+  ]
+
+  for (const j of jobs) {
+    await prisma.jobPosting.upsert({
+      where: { slug: j.slug },
+      update: j,
+      create: j
+    })
+  }
+  console.log('Seeded ' + jobs.length + ' job postings')
+
   // Admin
   const adminEmail    = process.env.SEED_ADMIN_EMAIL    || 'admin@hindustanprojects.com'
   const adminPassword = process.env.SEED_ADMIN_PASSWORD || 'ChangeMe@123'
   const passwordHash  = await bcrypt.hash(adminPassword, 12)
-  await prisma.admin.upsert({
+  const adminRecord = await prisma.admin.upsert({
     where: { email: adminEmail },
     update: {},
     create: { email: adminEmail, passwordHash, role: 'SUPER_ADMIN' },
   })
   console.log('Seeded admin: ' + adminEmail)
+
+  // Legal Pages
+  const legalPages = [
+    {
+      pageType: 'PRIVACY_POLICY',
+      title: 'Privacy Policy',
+      content: `<h2>1. Information We Collect</h2><p>We collect information you provide directly to us, such as when you submit a contact form, request a quote, or apply for a job. This includes your name, email, phone number, and any other details you share.</p><h2>2. How We Use Your Information</h2><p>We use your information to respond to inquiries, deliver our IT services, send updates, and improve website performance.</p><h2>3. Data Protection</h2><p>We implement secure industry-standard measures to protect your personal data from unauthorized access or disclosure.</p>`,
+      updatedBy: adminRecord.id
+    },
+    {
+      pageType: 'TERMS_OF_SERVICE',
+      title: 'Terms of Service',
+      content: `<h2>1. Services Rendered</h2><p>Hindustan Projects provides custom software, web development, digital marketing, and IT consulting services. All projects are subject to agreed milestones and deliverables.</p><h2>2. Payments & Fees</h2><p>Invoices are generated based on the project scope and payment schedule. Payments must be made within the specified timeframes to avoid service suspension.</p><h2>3. Intellectual Property</h2><p>Upon final payment, the ownership of the custom code and deliverables is transferred to the client, while we retain rights to reusable modules.</p>`,
+      updatedBy: adminRecord.id
+    },
+    {
+      pageType: 'REFUND_POLICY',
+      title: 'Refund Policy',
+      content: `<h2>1. Service-Based Projects</h2><p>As our projects involve custom design and engineering resources, payments made for milestone deliverables are generally non-refundable once work has commenced.</p><h2>2. Cancellation Policy</h2><p>Clients may cancel a project at any stage. Any work completed up to the date of cancellation will be invoiced and is payable by the client.</p><h2>3. Issues and Support</h2><p>If you encounter any bugs or quality issues, we provide a 30-day post-launch support period to resolve them free of charge.</p>`,
+      updatedBy: adminRecord.id
+    }
+  ]
+  for (const lp of legalPages) {
+    await prisma.legalPage.upsert({
+      where: { pageType: lp.pageType },
+      update: { title: lp.title, content: lp.content, updatedBy: lp.updatedBy },
+      create: lp
+    })
+  }
+  console.log('Seeded ' + legalPages.length + ' legal pages')
 
   console.log('Seeding complete.')
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -123,6 +123,7 @@ export default function ContactPage() {
   const [submitState, setSubmitState] = useState('idle')
   const [apiError, setApiError] = useState('')
   const [activeFaq, setActiveFaq] = useState(null)
+  const [localLockout, setLocalLockout] = useState(false)
 
   const { data: servicesData } = useServices()
   const services = servicesData?.data ?? []
@@ -154,7 +155,26 @@ export default function ContactPage() {
     },
   })
 
+  useEffect(() => {
+    const lastSubmit = localStorage.getItem('last_submit_lead')
+    if (lastSubmit) {
+      const timeDiff = Date.now() - parseInt(lastSubmit, 10)
+      const oneDay = 24 * 60 * 60 * 1000
+      if (timeDiff < oneDay) {
+        setLocalLockout(true)
+      }
+    }
+  }, [])
+
   const onSubmit = async (data) => {
+    // Check local lockout before calling API
+    const lastSubmit = localStorage.getItem('last_submit_lead')
+    if (lastSubmit && (Date.now() - parseInt(lastSubmit, 10)) < 24 * 60 * 60 * 1000) {
+      setSubmitState('error')
+      setApiError('You have already submitted an inquiry recently. Please wait 24 hours.')
+      return
+    }
+
     setSubmitState('loading')
     setApiError('')
 
@@ -178,6 +198,8 @@ export default function ContactPage() {
         _hp: '', // honeypot
       })
 
+      localStorage.setItem('last_submit_lead', Date.now().toString())
+      setLocalLockout(true)
       setSubmitState('success')
       reset()
     } catch (err) {
@@ -203,14 +225,13 @@ export default function ContactPage() {
         ]}
       />
       {/* ── Page Hero Header ── */}
-      <section className="pt-36 pb-24 bg-gradient-to-b from-brand-blue via-slate-900 to-brand-blue border-b border-white/5 relative overflow-hidden">
+      <section className="pt-24 sm:pt-32 lg:pt-36 pb-14 sm:pb-20 lg:pb-24 bg-[#050e20] border-b border-white/5 relative overflow-hidden">
         {/* Mesh Background grid */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:30px_30px] pointer-events-none" />
         
-        {/* Glow Spheres */}
-        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-blue-600/10 blur-[150px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-emerald-500/10 blur-[150px] pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-purple-500/5 blur-[180px] pointer-events-none" />
+        {/* Subtle Brand Red Glow to replace heavy blur blobs */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-brand-red/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-10 w-80 h-80 bg-brand-blue/10 rounded-full blur-3xl pointer-events-none" />
         
         <Container className="relative">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
@@ -221,7 +242,7 @@ export default function ContactPage() {
                 GET IN TOUCH
               </span>
               <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
-                Let&apos;s Build Something <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400">Extraordinary</span>
+                Let&apos;s Build Something <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red to-orange-400">Extraordinary</span>
               </h1>
               <p className="text-white/70 text-base sm:text-lg max-w-2xl leading-relaxed">
                 Have a project in mind, need a consultation, or just want to say hello? Fill out the form, WhatsApp us, or visit our office. We respond within 24 hours.
@@ -241,7 +262,7 @@ export default function ContactPage() {
             </div>
 
             {/* Right graphic/portrait column (Advanced 2026 Style) */}
-            <div className="lg:col-span-5 flex justify-center lg:justify-end relative h-[440px]">
+            <div className="hidden lg:flex lg:col-span-5 justify-center lg:justify-end relative h-[440px]">
               
               {/* Main Futuristic Glass Panel */}
               <div className="absolute bottom-4 left-4 right-4 lg:left-12 lg:right-0 top-12 rounded-3xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-lg shadow-[0_30px_100px_rgba(0,0,0,0.5)] overflow-hidden">
@@ -291,7 +312,7 @@ export default function ContactPage() {
       </section>
 
       {/* ── Main Content Grid ── */}
-      <section className="py-20 bg-slate-50/30">
+      <section className="py-12 sm:py-16 lg:py-20 bg-slate-50/30">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
 
@@ -362,7 +383,7 @@ export default function ContactPage() {
                 <div className="rounded-xl overflow-hidden h-56 relative group">
                   <iframe
                     title="Hindustan Projects Office Location — Bhilwara, Rajasthan"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57692.35!2d74.6!3d25.35!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3968a5!2sBhilwara%2C+Rajasthan!5e0!3m2!1sen!2sin!4v1"
+                    src={cfg.googleMapUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57692.35!2d74.6!3d25.35!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3968a5!2sBhilwara%2C+Rajasthan!5e0!3m2!1sen!2sin!4v1"}
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
@@ -408,6 +429,20 @@ export default function ContactPage() {
                     >
                       Send Another Message
                     </Button>
+                  </div>
+                ) : localLockout ? (
+                  <div className="flex flex-col items-center justify-center py-10 text-center gap-5">
+                    <span className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center shadow-inner">
+                      <AlertCircle className="w-8 h-8 text-amber-500 animate-pulse" />
+                    </span>
+                    <div>
+                      <h3 className="font-heading text-2xl font-bold text-brand-blue mb-2">
+                        Submission Locked
+                      </h3>
+                      <p className="text-text-muted text-sm max-w-sm leading-relaxed">
+                        You have already submitted an inquiry in the last 24 hours. To prevent spam and duplicate records, please wait before sending another message.
+                      </p>
+                    </div>
                   </div>
                 ) : (
                   <>
@@ -473,7 +508,7 @@ export default function ContactPage() {
 
                         {/* Phone */}
                         <Field
-                          label="Phone Number"
+                          label="Phone / WhatsApp Number"
                           error={errors.phone?.message}
                           htmlFor="phone"
                         >

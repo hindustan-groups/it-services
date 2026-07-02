@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import RootLayout from '@/layouts/RootLayout'
 import AdminLayout from '@/layouts/AdminLayout'
+import GlobalClickRipple from '@/components/ui/GlobalClickRipple'
 
 // Public pages
 import HomePage from '@/pages/HomePage'
@@ -11,6 +12,11 @@ import AboutPage from '@/pages/AboutPage'
 import PortfolioPage from '@/pages/PortfolioPage'
 import ContactPage from '@/pages/ContactPage'
 import NotFoundPage from '@/pages/NotFoundPage'
+import CareersPage from '@/pages/CareersPage'
+import JobDetailPage from '@/pages/JobDetailPage'
+import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage'
+import TermsOfServicePage from '@/pages/TermsOfServicePage'
+import RefundPolicyPage from '@/pages/RefundPolicyPage'
 
 // Admin pages — lazy loaded
 const AdminLoginPage    = lazy(() => import('@/pages/admin/AdminLoginPage'))
@@ -25,6 +31,9 @@ const AdminFaqPage          = lazy(() => import('@/pages/admin/AdminFaqPage'))
 const AdminSiteSettingsPage = lazy(() => import('@/pages/admin/AdminSiteSettingsPage'))
 const AdminMilestonesPage   = lazy(() => import('@/pages/admin/AdminMilestonesPage'))
 const AdminPartnersPage     = lazy(() => import('@/pages/admin/AdminPartnersPage'))
+const AdminHelpPage         = lazy(() => import('@/pages/admin/AdminHelpPage'))
+const AdminCareersPage      = lazy(() => import('@/pages/admin/AdminCareersPage'))
+const AdminLegalPage        = lazy(() => import('@/pages/admin/AdminLegalPage'))
 
 function AdminFallback() {
   return (
@@ -36,7 +45,9 @@ function AdminFallback() {
 
 export default function App() {
   return (
-    <Routes>
+    <>
+      <GlobalClickRipple />
+      <Routes>
       {/* ── Public site ── */}
       <Route element={<RootLayout />}>
         <Route path="/" element={<HomePage />} />
@@ -44,7 +55,12 @@ export default function App() {
         <Route path="/services/:slug" element={<ServiceDetailPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
+        <Route path="/careers" element={<CareersPage />} />
+        <Route path="/careers/:slug" element={<JobDetailPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+        <Route path="/refund-policy" element={<RefundPolicyPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
 
@@ -70,8 +86,13 @@ export default function App() {
         <Route path="site-settings" element={<AdminSiteSettingsPage />} />
         <Route path="milestones"    element={<AdminMilestonesPage />} />
         <Route path="partners"      element={<AdminPartnersPage />} />
+        <Route path="careers"       element={<AdminCareersPage />} />
+        <Route path="legal"         element={<AdminLegalPage />} />
+        <Route path="help"          element={<AdminHelpPage />} />
         <Route index element={<AdminDashboardPage />} />
       </Route>
     </Routes>
-  )
+  </>
+)
 }
+

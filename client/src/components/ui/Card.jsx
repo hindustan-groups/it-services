@@ -16,14 +16,18 @@ export default function Card({
   as: Tag = 'div',
   ...props
 }) {
-  const base = 'bg-white rounded-lg border border-gray-100'
+  const isClickable = hoverable || props.onClick || props.to || props.href
+  const base = 'bg-white rounded-lg border border-gray-100 block'
   const shadow = 'shadow-[0_2px_8px_0_rgba(26,62,140,0.08)]'
   const hover = hoverable
-    ? 'transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-[0_8px_24px_0_rgba(26,62,140,0.14)] cursor-pointer'
+    ? 'hover:-translate-y-1 hover:shadow-[0_8px_24px_0_rgba(26,62,140,0.14)]'
     : ''
+  const interactive = isClickable
+    ? 'cursor-pointer active:scale-[0.982] active:translate-y-[1.5px] transition-all duration-150'
+    : 'transition-all duration-300'
 
   return (
-    <Tag className={`${base} ${shadow} ${hover} ${className}`} {...props}>
+    <Tag className={`${base} ${shadow} ${hover} ${interactive} ${className}`} {...props}>
       {children}
     </Tag>
   )

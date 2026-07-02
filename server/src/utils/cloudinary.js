@@ -40,4 +40,40 @@ export const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB max
 })
 
+// Resume upload storage configuration (allowing PDF and Word docs)
+const resumeStorage = new CloudinaryStorage({
+  cloudinary,
+  params: async (_req, file) => {
+    const ext = file.originalname.split('.').pop().toLowerCase()
+    const cleanName = file.originalname
+      .replace(/\.[^/.]+$/, "") // strip extension
+      .replace(/[^a-zA-Z0-9]/g, "-") // sanitize
+    return {
+      folder: 'hindustan-projects-resumes',
+      resource_type: 'raw',
+      public_id: `${Date.now()}-${cleanName}.${ext}`,
+    }
+  },
+})
+
+const resumeFileFilter = (_req, file, cb) => {
+  const allowedTypes = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ]
+  const ext = file.originalname.split('.').pop().toLowerCase()
+  if (allowedTypes.includes(file.mimetype) || ['pdf', 'doc', 'docx'].includes(ext)) {
+    cb(null, true)
+  } else {
+    cb(new Error('Only PDF and Word documents (.doc, .docx) are allowed.'), false)
+  }
+}
+
+export const uploadResume = multer({
+  storage: resumeStorage,
+  fileFilter: resumeFileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5 MB max
+})
+
 export { cloudinary }

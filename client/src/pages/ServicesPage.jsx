@@ -8,6 +8,7 @@ import { serviceSchema, breadcrumbSchema } from '@/components/ui/SEO'
 import { SITE } from '@/components/ui/SEO'
 import { useServices } from '@/hooks/useServices'
 import { getServiceIcon } from '@/utils/serviceIcons'
+import { useSiteSettings } from '@/hooks/useContent'
 
 /* ── Colour palette — cycles through services ─────────────────── */
 const COLORS = [
@@ -18,14 +19,6 @@ const COLORS = [
   { gradient: 'from-sky-500 to-indigo-400',    glow: 'bg-sky-500/10' },
   { gradient: 'from-pink-500 to-rose-400',     glow: 'bg-pink-500/10' },
   { gradient: 'from-amber-500 to-yellow-400',  glow: 'bg-amber-500/10' },
-]
-
-/* ── Why Us stats strip ───────────────────────────────────────── */
-const WHY_STATS = [
-  { icon: Zap,    label: 'Fast Delivery',    value: '2–4 Weeks' },
-  { icon: Shield, label: 'Trusted & Secure', value: '100% Safe' },
-  { icon: Clock,  label: 'Support',          value: '24/7 Available' },
-  { icon: Users,  label: 'Happy Clients',    value: '50+ Businesses' },
 ]
 
 /* ── Local Fallback Services data (when DB is not connected) ── */
@@ -116,7 +109,17 @@ function ServiceSkeleton() {
 
 export default function ServicesPage() {
   const { data, isLoading, isError, refetch } = useServices()
+  const { data: settingsData } = useSiteSettings()
+  
   const services = data?.data?.length ? data.data : (isLoading ? [] : SERVICES)
+  const cfg = settingsData?.data || {}
+
+  const whyStats = [
+    { icon: Zap,    label: 'Fast Delivery',    value: '2–4 Weeks' },
+    { icon: Shield, label: 'Trusted & Secure', value: '100% Safe' },
+    { icon: Clock,  label: 'Support',          value: '24/7 Available' },
+    { icon: Users,  label: 'Happy Clients',    value: `${cfg.stat_clients || '50'}+ Businesses` },
+  ]
 
   return (
     <>
@@ -137,7 +140,7 @@ export default function ServicesPage() {
       />
 
       {/* ── Hero ─────────────────────────────────────────────────── */}
-      <section className="relative pt-36 pb-24 overflow-hidden bg-[#050e20]">
+      <section className="relative pt-24 sm:pt-32 lg:pt-36 pb-12 sm:pb-20 lg:pb-24 overflow-hidden bg-[#050e20]">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-blue/20 rounded-full blur-3xl -translate-y-1/2 pointer-events-none" />
         <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-brand-red/15 rounded-full blur-3xl translate-y-1/2 pointer-events-none" />
@@ -199,9 +202,9 @@ export default function ServicesPage() {
       {/* ── Why Us Stats Strip ── */}
       <section className="bg-white border-b border-gray-100">
         <Container>
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-gray-100">
-            {WHY_STATS.map((stat) => (
-              <div key={stat.label} className="flex items-center gap-3 px-6 py-5 group hover:bg-brand-blue/3 transition-colors duration-200">
+          <div className="grid grid-cols-2 lg:grid-cols-4">
+            {whyStats.map((stat) => (
+              <div key={stat.label} className="flex items-center gap-3 px-4 sm:px-6 py-4 sm:py-5 group hover:bg-brand-blue/3 transition-colors duration-200 border-b border-r border-gray-100 [&:nth-child(2)]:border-r-0 lg:[&:nth-child(2)]:border-r lg:[&:nth-child(4)]:border-r-0">
                 <div className="w-10 h-10 rounded-xl bg-brand-blue/8 flex items-center justify-center shrink-0 group-hover:bg-brand-blue/14 transition-colors">
                   <stat.icon className="w-5 h-5 text-brand-blue" strokeWidth={1.8} />
                 </div>
@@ -216,7 +219,7 @@ export default function ServicesPage() {
       </section>
 
       {/* ── Services Grid ── */}
-      <section className="py-20 bg-gradient-to-b from-gray-50/60 to-white">
+      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-gray-50/60 to-white">
         <Container>
           <div className="text-center mb-14">
             <span className="text-xs font-semibold tracking-widest uppercase text-brand-red">All Services</span>
@@ -291,7 +294,7 @@ export default function ServicesPage() {
       </section>
 
       {/* ── Process teaser ── */}
-      <section className="py-16 bg-white border-t border-gray-100">
+      <section className="py-10 sm:py-12 lg:py-16 bg-white border-t border-gray-100">
         <Container>
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="max-w-lg">
@@ -320,7 +323,7 @@ export default function ServicesPage() {
       </section>
 
       {/* ── Bottom CTA ── */}
-      <section className="relative py-20 overflow-hidden">
+      <section className="relative py-14 sm:py-16 lg:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-blue via-[#1e3a7a] to-[#0a1f5c]" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:30px_30px]" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-red/15 rounded-full blur-3xl" />

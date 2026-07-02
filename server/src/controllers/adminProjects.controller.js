@@ -12,9 +12,9 @@ export const listProjects = async (_req, res, next) => {
 
 export const createProject = async (req, res, next) => {
   try {
-    const { title, slug, clientName, description, thumbnailUrl, images, technologies, category, isFeatured } = req.body
+    const { title, slug, clientName, description, thumbnailUrl, images, technologies, category, isFeatured, liveUrl } = req.body
     const project = await prisma.project.create({
-      data: { title, slug, clientName, description, thumbnailUrl, images: images ?? [], technologies: technologies ?? [], category, isFeatured: isFeatured ?? false },
+      data: { title, slug, clientName, description, thumbnailUrl, images: images ?? [], technologies: technologies ?? [], category, isFeatured: isFeatured ?? false, liveUrl },
     })
     res.status(201).json({ status: 'ok', data: project })
   } catch (err) { next(err) }

@@ -9,7 +9,7 @@ import {
   LayoutDashboard, MessageSquare, Briefcase, FolderKanban,
   Users, LogOut, Menu, X, Settings, Star,
   HelpCircle, Flag, Handshake, SlidersHorizontal, Bell,
-  ChevronRight,
+  ChevronRight, BookOpen, UserCheck, FileText,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 
@@ -27,10 +27,12 @@ const NAV_GROUPS = [
       { to: '/admin/services',      icon: Briefcase,          label: 'Services' },
       { to: '/admin/projects',      icon: FolderKanban,       label: 'Projects' },
       { to: '/admin/team',          icon: Users,              label: 'Team' },
+      { to: '/admin/careers',       icon: UserCheck,          label: 'Careers' },
       { to: '/admin/testimonials',  icon: Star,               label: 'Testimonials' },
       { to: '/admin/faqs',          icon: HelpCircle,         label: 'FAQs' },
       { to: '/admin/milestones',    icon: Flag,               label: 'Milestones' },
       { to: '/admin/partners',      icon: Handshake,          label: 'Partners' },
+      { to: '/admin/legal',         icon: FileText,           label: 'Legal Pages' },
     ]
   },
   {
@@ -38,6 +40,12 @@ const NAV_GROUPS = [
     items: [
       { to: '/admin/site-settings', icon: SlidersHorizontal,  label: 'Site Settings' },
       { to: '/admin/settings',      icon: Settings,           label: 'Account' },
+    ]
+  },
+  {
+    label: 'Support',
+    items: [
+      { to: '/admin/help',          icon: BookOpen,           label: 'Help / Guide' },
     ]
   }
 ]
@@ -48,12 +56,15 @@ const PAGE_TITLES = {
   '/admin/services':     'Services',
   '/admin/projects':     'Projects',
   '/admin/team':         'Team',
+  '/admin/careers':      'Careers',
   '/admin/testimonials': 'Testimonials',
   '/admin/faqs':         'FAQs',
   '/admin/milestones':   'Milestones',
   '/admin/partners':     'Partners',
+  '/admin/legal':        'Legal Pages',
   '/admin/site-settings':'Site Settings',
   '/admin/settings':     'Account',
+  '/admin/help':         'Help / Guide',
 }
 
 export default function AdminLayout() {
@@ -236,7 +247,7 @@ export default function AdminLayout() {
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-          <Outlet />
+          <Outlet context={{ admin, setAdmin }} />
         </main>
       </div>
     </div>

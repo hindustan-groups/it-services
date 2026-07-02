@@ -2,6 +2,7 @@
  * Admin Leads — Table with status filter + update (premium polish)
  */
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { AlertCircle, Trash2, ChevronDown, MessageSquare, Mail, Phone, Filter, Inbox, Eye, X, Calendar, Download } from 'lucide-react'
 import { api } from '@/utils/api'
@@ -98,6 +99,22 @@ export default function AdminLeadsPage() {
       <SEO title="Leads" noIndex />
       <div className="space-y-5">
         <PageHeader count={isLoading ? null : leads.length} onExport={leads.length ? handleExport : null} />
+
+        {/* Info Banner for Careers */}
+        <div className="bg-[#f0f4ff] border border-blue-100 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-start gap-2.5 text-slate-600 leading-normal">
+            <AlertCircle className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold text-slate-800">Looking for Job Applications?</span> Careers, open postings, and candidate resumes are managed separately.
+            </div>
+          </div>
+          <Link 
+            to="/admin/careers" 
+            className="text-brand-blue font-bold hover:underline shrink-0 flex items-center gap-1.5"
+          >
+            Go to Careers Panel <ChevronDown className="w-3.5 h-3.5 -rotate-90 text-brand-blue" />
+          </Link>
+        </div>
 
         {/* Filter bar */}
         <div className="flex items-center gap-3">

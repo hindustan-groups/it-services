@@ -3,7 +3,7 @@
  */
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Pencil, Trash2, X, Check, Star, FolderOpen, ImageIcon, Search, Filter } from 'lucide-react'
+import { Plus, Pencil, Trash2, X, Check, Star, FolderOpen, ImageIcon, Search, Filter, ExternalLink } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { api } from '@/utils/api'
 import { SEO, ImageUploader } from '@/components/ui'
@@ -25,6 +25,7 @@ function ProjectForm({ initial, onSave, onCancel, loading }) {
     defaultValues: initial ?? {
       title: '', slug: '', clientName: '', description: '',
       thumbnailUrl: '', technologies: '', category: 'Web', isFeatured: false,
+      liveUrl: '',
     },
   })
 
@@ -65,6 +66,10 @@ function ProjectForm({ initial, onSave, onCancel, loading }) {
           <div className="sm:col-span-2">
             <label className="text-xs font-semibold text-gray-600 block mb-1.5">Technologies <span className="text-gray-400 font-normal">(comma separated)</span></label>
             <input {...register('technologies')} placeholder="React, Node.js, PostgreSQL" className={inputCls} />
+          </div>
+          <div className="sm:col-span-2">
+            <label className="text-xs font-semibold text-gray-600 block mb-1.5">Live Project URL <span className="text-gray-400 font-normal">(optional)</span></label>
+            <input {...register('liveUrl')} placeholder="https://myproject.com" className={inputCls} />
           </div>
         </div>
       </div>
@@ -274,6 +279,12 @@ export default function AdminProjectsPage() {
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${CATEGORY_COLORS[p.category] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
                       {p.category}
                     </span>
+                    {p.liveUrl && (
+                      <a href={p.liveUrl} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-medium hover:bg-blue-100 transition-colors">
+                        <ExternalLink className="w-2.5 h-2.5" /> Live Link
+                      </a>
+                    )}
                   </div>
                   <p className="text-xs text-gray-400 mt-1">{p.clientName}</p>
                   {p.technologies?.length > 0 && (

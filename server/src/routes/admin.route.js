@@ -6,7 +6,7 @@ import { Router } from 'express'
 import { body } from 'express-validator'
 import { verifyToken, requireRole } from '../middleware/auth.js'
 import { authLimiter, validateRequest } from '../middleware/security.js'
-import { adminLogin, adminLogout, getMe, getDashboardStats, changePassword } from '../controllers/admin.controller.js'
+import { adminLogin, adminLogout, getMe, getDashboardStats, changePassword, changeEmail } from '../controllers/admin.controller.js'
 import { getLeads, updateLeadStatus, deleteLead } from '../controllers/leads.controller.js'
 import { listServices, createService, updateService, deleteService } from '../controllers/adminServices.controller.js'
 import { listProjects, createProject, updateProject, deleteProject } from '../controllers/adminProjects.controller.js'
@@ -17,6 +17,11 @@ import {
   updateSettings, getMilestones, createMilestone, updateMilestone, deleteMilestone,
   listPartners, createPartner, updatePartner, deletePartner,
 } from '../controllers/content.controller.js'
+import {
+  listJobPostings, createJobPosting, updateJobPosting, deleteJobPosting,
+  listApplications, updateApplicationStatus, deleteApplication
+} from '../controllers/adminCareers.controller.js'
+import { listLegalPages, updateLegalPage } from '../controllers/legal.controller.js'
 
 const router = Router()
 
@@ -32,6 +37,11 @@ router.post('/change-password', verifyToken, [
   body('currentPassword').notEmpty(),
   body('newPassword').isLength({ min: 8 }).withMessage('Min 8 characters required'),
 ], validateRequest, changePassword)
+
+router.post('/change-email', verifyToken, [
+  body('newEmail').isEmail().normalizeEmail().withMessage('Valid email required'),
+  body('password').notEmpty().withMessage('Password is required'),
+], validateRequest, changeEmail)
 
 // ── Dashboard stats ────────────────────────────────────────────
 router.get('/stats', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), getDashboardStats)
@@ -74,6 +84,10 @@ router.delete('/faqs/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteFaq)
 // ── Site Settings ──────────────────────────────────────────────
 router.patch('/settings', verifyToken, requireRole('SUPER_ADMIN'), updateSettings)
 
+// ── Legal Pages ────────────────────────────────────────────────
+router.get('/legal', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listLegalPages)
+router.put('/legal/:pageType', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateLegalPage)
+
 // ── Milestones ─────────────────────────────────────────────────
 router.get('/milestones', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), getMilestones)
 router.post('/milestones', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), createMilestone)
@@ -85,5 +99,15 @@ router.get('/partners', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listPa
 router.post('/partners', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), createPartner)
 router.patch('/partners/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updatePartner)
 router.delete('/partners/:id', verifyToken, requireRole('SUPER_ADMIN'), deletePartner)
+
+// ── Careers ────────────────────────────────────────────────────
+router.get('/careers', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listJobPostings)
+router.post('/careers', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), createJobPosting)
+router.patch('/careers/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateJobPosting)
+router.delete('/careers/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteJobPosting)
+
+router.get('/applications', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listApplications)
+router.patch('/applications/:id/status', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateApplicationStatus)
+router.delete('/applications/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteApplication)
 
 export default router

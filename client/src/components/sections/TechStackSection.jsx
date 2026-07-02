@@ -74,13 +74,20 @@ export default function TechStackSection() {
             <button
               key={cat}
               onClick={() => setActiveCat(cat)}
-              className={`px-4 py-2 rounded-lg text-xs md:text-sm font-medium transition-all duration-200 border ${
+              className={`relative px-4 py-2 rounded-lg text-xs md:text-sm font-medium transition-all duration-200 border cursor-pointer overflow-hidden active:scale-95 ${
                 activeCat === cat
-                  ? 'bg-brand-red border-brand-red text-white shadow-md'
+                  ? 'border-brand-red text-white shadow-md'
                   : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
               }`}
             >
-              {cat}
+              {activeCat === cat && (
+                <motion.span
+                  layoutId="activeTechTab"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  className="absolute inset-0 bg-brand-red -z-10"
+                />
+              )}
+              <span className="relative z-10">{cat}</span>
             </button>
           ))}
         </div>

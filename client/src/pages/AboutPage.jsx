@@ -9,16 +9,9 @@ import {
 } from 'lucide-react'
 import { Container, Button, SEO } from '@/components/ui'
 import { useTeam } from '@/hooks/useTeam'
-import { useMilestones } from '@/hooks/useContent'
+import { useMilestones, useSiteSettings } from '@/hooks/useContent'
 
-/* ── Static data (company values, stats — not CMS managed) ─────── */
-const STATS = [
-  { value: '50+', label: 'Projects Delivered', icon: Rocket },
-  { value: '40+', label: 'Happy Clients', icon: Heart },
-  { value: '5+', label: 'Years Experience', icon: Award },
-  { value: '3+', label: 'Cities Served', icon: MapPin },
-]
-
+/* ── Static data (company values — not CMS managed) ─────── */
 const VALUES = [
   { icon: Users, title: 'Client-First Always', desc: 'Your success is our success. Every decision we make is centered around delivering real value to you.' },
   { icon: Shield, title: 'Transparent & Honest', desc: 'Clear communication, honest timelines, and no hidden costs — ever.' },
@@ -45,9 +38,19 @@ const FALLBACK_TEAM = [
 export default function AboutPage() {
   const { data: teamData, isLoading: teamLoading } = useTeam()
   const { data: milestonesData, isLoading: milestonesLoading } = useMilestones()
+  const { data: settingsData } = useSiteSettings()
 
   const team = teamData?.data?.length ? teamData.data : (teamLoading ? [] : FALLBACK_TEAM)
   const milestones = milestonesData?.data?.length ? milestonesData.data : (milestonesLoading ? [] : FALLBACK_MILESTONES)
+  const cfg = settingsData?.data || {}
+
+  const stats = [
+    { value: `${cfg.stat_projects || '50'}+`, label: 'Projects Delivered', icon: Rocket },
+    { value: `${cfg.stat_clients || '40'}+`, label: 'Happy Clients', icon: Heart },
+    { value: `${cfg.stat_experience || '5'}+`, label: 'Years Experience', icon: Award },
+    { value: `${cfg.stat_cities || '3'}+`, label: 'Cities Served', icon: MapPin },
+  ]
+
   return (
     <>
       <SEO
@@ -64,14 +67,14 @@ export default function AboutPage() {
         }]}
       />
       {/* ── Hero ─────────────────────────────────────────────────── */}
-      <section className="relative pt-36 pb-24 overflow-hidden bg-[#050e20]">
+      <section className="relative pt-24 sm:pt-32 lg:pt-36 pb-14 sm:pb-20 lg:pb-24 overflow-hidden bg-[#050e20]">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
         <div className="absolute top-0 left-1/3 w-96 h-96 bg-brand-blue/20 rounded-full blur-3xl -translate-y-1/2 pointer-events-none" />
         <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-brand-red/15 rounded-full blur-3xl translate-y-1/2 pointer-events-none" />
-
+ 
         <Container className="relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-
+ 
             {/* Left */}
             <div>
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-red/30 bg-brand-red/10 text-brand-red text-xs font-semibold uppercase tracking-widest mb-6">
@@ -99,7 +102,7 @@ export default function AboutPage() {
                 </Button>
               </div>
             </div>
-
+ 
             {/* Right: info cards in 2-column grid */}
             <div className="hidden lg:grid grid-cols-2 gap-3">
               {[
@@ -108,7 +111,7 @@ export default function AboutPage() {
                 { icon: Users,      label: 'Team Size',      value: '10+ Professionals' },
                 { icon: Star,       label: 'Client Rating',  value: '5.0 / 5.0' },
                 { icon: TrendingUp, label: 'Growth (YoY)',   value: '200%' },
-                { icon: Award,      label: 'Projects Done',  value: '50+' },
+                { icon: Award,      label: 'Projects Done',  value: `${cfg.stat_projects || '50'}+` },
               ].map((item) => (
                 <div
                   key={item.label}
@@ -127,13 +130,13 @@ export default function AboutPage() {
           </div>
         </Container>
       </section>
-
+ 
       {/* ── Stats Strip ──────────────────────────────────────────── */}
       <section className="bg-white border-b border-gray-100 py-0">
         <Container>
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-gray-100">
-            {STATS.map((stat) => (
-              <div key={stat.label} className="flex items-center gap-3 px-6 py-6 group hover:bg-brand-blue/3 transition-colors duration-200">
+          <div className="grid grid-cols-2 lg:grid-cols-4">
+            {stats.map((stat) => (
+              <div key={stat.label} className="flex items-center gap-3 px-4 sm:px-6 py-5 sm:py-6 group hover:bg-brand-blue/3 transition-colors duration-200 border-b border-r border-gray-100 [&:nth-child(2)]:border-r-0 lg:[&:nth-child(2)]:border-r lg:[&:nth-child(4)]:border-r-0">
                 <div className="w-11 h-11 rounded-xl bg-brand-blue/8 flex items-center justify-center shrink-0 group-hover:bg-brand-blue/14 transition-colors">
                   <stat.icon className="w-5 h-5 text-brand-blue" strokeWidth={1.8} />
                 </div>
@@ -148,9 +151,9 @@ export default function AboutPage() {
       </section>
 
       {/* ── Story Section ────────────────────────────────────────── */}
-      <section className="py-20 bg-gradient-to-b from-gray-50/60 to-white">
+      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-gray-50/60 to-white">
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
             {/* Left: Image + overlay */}
             <div className="relative">
@@ -240,7 +243,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Values ───────────────────────────────────────────────── */}
-      <section className="py-20 bg-white border-t border-gray-100">
+      <section className="py-12 sm:py-16 lg:py-20 bg-white border-t border-gray-100">
         <Container>
           <div className="text-center mb-14">
             <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">Our Culture</span>
@@ -269,7 +272,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Timeline / Milestones ─────────────────────────────────── */}
-      <section className="py-20 bg-gray-50/60 border-t border-gray-100">
+      <section className="py-12 sm:py-16 lg:py-20 bg-gray-50/60 border-t border-gray-100">
         <Container>
           <div className="text-center mb-14">
             <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">Our Journey</span>
@@ -310,9 +313,9 @@ export default function AboutPage() {
       </section>
 
       {/* ── Team ─────────────────────────────────────────────────── */}
-      <section className="py-20 bg-white border-t border-gray-100">
+      <section className="py-12 sm:py-16 lg:py-20 bg-white border-t border-gray-100">
         <Container>
-          <div className="text-center mb-14">
+          <div className="text-center mb-10 lg:mb-14">
             <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">The People</span>
             <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-blue mb-3">Meet Our Team</h2>
             <p className="text-text-muted max-w-md mx-auto text-sm">
@@ -360,7 +363,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────────── */}
-      <section className="relative py-20 overflow-hidden">
+      <section className="relative py-14 sm:py-16 lg:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-blue via-[#1e3a7a] to-[#0a1f5c]" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:30px_30px]" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-red/15 rounded-full blur-3xl" />

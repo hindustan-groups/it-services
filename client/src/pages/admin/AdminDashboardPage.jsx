@@ -7,7 +7,7 @@ import {
   MessageSquare, Briefcase, FolderKanban, Users,
   AlertCircle, ArrowRight, Star, HelpCircle, Flag,
   Handshake, SlidersHorizontal, TrendingUp, TrendingDown,
-  Activity, Settings,
+  Activity, Settings, UserCheck,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 import { SEO } from '@/components/ui'
@@ -44,6 +44,7 @@ const QUICK_ACTIONS = [
   { label: 'Services',        to: '/admin/services',      icon: Briefcase,        color: 'text-brand-blue',   bg: 'bg-blue-50' },
   { label: 'Projects',        to: '/admin/projects',      icon: FolderKanban,     color: 'text-indigo-600',   bg: 'bg-indigo-50' },
   { label: 'Team',            to: '/admin/team',          icon: Users,            color: 'text-violet-600',   bg: 'bg-violet-50' },
+  { label: 'Careers',         to: '/admin/careers',       icon: UserCheck,        color: 'text-emerald-700',  bg: 'bg-emerald-50' },
   { label: 'Testimonials',    to: '/admin/testimonials',  icon: Star,             color: 'text-amber-600',    bg: 'bg-amber-50' },
   { label: 'FAQs',            to: '/admin/faqs',          icon: HelpCircle,       color: 'text-sky-600',      bg: 'bg-sky-50' },
   { label: 'Milestones',      to: '/admin/milestones',    icon: Flag,             color: 'text-emerald-600',  bg: 'bg-emerald-50' },
@@ -110,11 +111,13 @@ export default function AdminDashboardPage() {
         )}
 
         {/* ── Stats grid ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard icon={MessageSquare} label="New Leads"       bg="bg-red-100"     color="text-brand-red"    to="/admin/leads"    value={isLoading ? '…' : data?.newLeads}      trend={{ up: true, label: 'This week' }} />
           <StatCard icon={TrendingUp}    label="Total Leads"     bg="bg-orange-100"  color="text-orange-600"   to="/admin/leads"    value={isLoading ? '…' : data?.totalLeads} />
           <StatCard icon={FolderKanban}  label="Projects"        bg="bg-blue-100"    color="text-brand-blue"   to="/admin/projects" value={isLoading ? '…' : data?.totalProjects} />
           <StatCard icon={Briefcase}     label="Active Services" bg="bg-emerald-100" color="text-emerald-600"  to="/admin/services" value={isLoading ? '…' : data?.totalServices} />
+          <StatCard icon={UserCheck}     label="Open Positions"  bg="bg-violet-100"  color="text-violet-600"   to="/admin/careers"  value={isLoading ? '…' : data?.openPositions} />
+          <StatCard icon={Users}         label="Applications"    bg="bg-indigo-100"  color="text-indigo-600"   to="/admin/careers"  value={isLoading ? '…' : data?.totalApplications} />
         </div>
 
         {/* ── Quick actions ── */}

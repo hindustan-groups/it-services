@@ -14,7 +14,12 @@ function ServiceCard({ service }) {
   const Icon = getServiceIcon(service.icon)
 
   return (
-    <Card hoverable className="p-6 flex flex-col group">
+    <Card
+      hoverable
+      as={Link}
+      to={`/services/${service.slug}`}
+      className="p-6 flex flex-col group text-left no-underline"
+    >
       {/* Icon */}
       <div className="w-12 h-12 rounded-lg bg-brand-blue/8 flex items-center justify-center mb-5
         group-hover:bg-brand-blue/12 transition-colors duration-200">
@@ -31,16 +36,14 @@ function ServiceCard({ service }) {
         {service.shortDescription}
       </p>
 
-      {/* Learn More link */}
-      <Link
-        to={`/services/${service.slug}`}
+      {/* Learn More indicator */}
+      <span
         className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-red
-          hover:gap-2.5 transition-all duration-200"
-        aria-label={`Learn more about ${service.title}`}
+          group-hover:gap-2.5 transition-all duration-200"
       >
         Learn More
         <ArrowRight className="w-4 h-4" />
-      </Link>
+      </span>
     </Card>
   )
 }

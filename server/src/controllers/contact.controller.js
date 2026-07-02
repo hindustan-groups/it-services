@@ -77,6 +77,22 @@ export const submitContact = async (req, res, next) => {
       })
     }
 
+    // ── Check for recent submission (24 hour lock) ─────────────────
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+    const existingLead = await prisma.contactLead.findFirst({
+      where: {
+        email: email.trim().toLowerCase(),
+        createdAt: { gte: oneDayAgo },
+      },
+    })
+
+    if (existingLead) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'You have already submitted an inquiry in the last 24 hours. Please wait before sending another message.',
+      })
+    }
+
     // ── 3. Save lead to database ───────────────────────────────
     const lead = await prisma.contactLead.create({
       data: {

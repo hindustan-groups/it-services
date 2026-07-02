@@ -8,6 +8,7 @@ const QUICK_LINKS = [
   { label: 'Services',  href: '/services' },
   { label: 'About Us',  href: '/about' },
   { label: 'Portfolio', href: '/portfolio' },
+  { label: 'Careers',   href: '/careers' },
   { label: 'Contact',   href: '/contact' },
 ]
 
@@ -160,6 +161,11 @@ export default function Footer() {
 
         <div className="border-t border-white/5 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/40">
           <p>© {year} Hindustan Projects. All rights reserved.</p>
+          <div className="flex gap-4">
+            <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link to="/refund-policy" className="hover:text-white transition-colors">Refund Policy</Link>
+          </div>
           <p>Bhilwara, Rajasthan, India</p>
         </div>
       </Container>
