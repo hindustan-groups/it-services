@@ -10,12 +10,39 @@ const QUICK_QUESTIONS = [
   { emoji: '📞', label: 'Contact', text: 'How can I contact you?' },
 ]
 
+/* Renders plain text with **bold** and newline support — crash-safe */
+function BotMessage({ text }) {
+  if (!text || typeof text !== 'string') return null
+
+  const lines = text.split('\n')
+  return (
+    <span>
+      {lines.map((line, li) => {
+        const parts = line.split(/\*\*(.*?)\*\*/g)
+        return (
+          <span key={li}>
+            {parts.map((part, pi) =>
+              pi % 2 === 1 ? (
+                <strong key={pi}>{part}</strong>
+              ) : (
+                <span key={pi}>{part}</span>
+              )
+            )}
+            {li < lines.length - 1 && <br />}
+          </span>
+        )
+      })}
+    </span>
+  )
+}
+
 export function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState([
     {
+      id: 0,
       sender: 'bot',
-      text: '👋 Hello! Welcome to **Hindustan Projects**. How can I help you today? You can ask me about our services, pricing, timings, or contact info.',
+      text: '👋 Hello! Welcome to **Hindustan Projects**. How can I help you today? Ask me about our services, pricing, timings, or contact info.',
       isAnswered: true,
     },
   ])
@@ -23,6 +50,7 @@ export function ChatbotWidget() {
   const [isLoading, setIsLoading] = useState(false)
   const chatEndRef = useRef(null)
   const inputRef = useRef(null)
+  const msgIdRef = useRef(1)
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -32,42 +60,35 @@ export function ChatbotWidget() {
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 200)
   }, [isOpen])
 
-  const renderText = (text) => {
-    // Simple bold markdown support: **text**
-    return text.split(/\*\*(.*?)\*\*/g).map((part, i) =>
-      i % 2 === 1 ? (
-        <strong key={i} className="font-bold">
-          {part}
-        </strong>
-      ) : (
-        part
-      )
-    )
-  }
-
   const handleSend = async (text) => {
-    const msg = text.trim()
+    const msg = (text || '').trim()
     if (!msg || isLoading) return
 
-    setMessages((prev) => [...prev, { sender: 'user', text: msg }])
+    const userMsgId = msgIdRef.current++
+    setMessages((prev) => [...prev, { id: userMsgId, sender: 'user', text: msg }])
     setInputValue('')
     setIsLoading(true)
 
     try {
-      const response = await api.post('/chatbot/ask', { question: msg })
-      const data = response.data
+      const data = await api.post('/chatbot/ask', { question: msg })
+      const botAnswer = typeof data.answer === 'string' && data.answer
+        ? data.answer
+        : "I couldn't find an answer. Please contact us directly!"
+
       setMessages((prev) => [
         ...prev,
         {
+          id: msgIdRef.current++,
           sender: 'bot',
-          text: data.answer,
-          isAnswered: data.answered,
+          text: botAnswer,
+          isAnswered: !!data.answered,
         },
       ])
     } catch {
       setMessages((prev) => [
         ...prev,
         {
+          id: msgIdRef.current++,
           sender: 'bot',
           text: "Sorry, I'm having trouble connecting right now. Please use our Contact form or WhatsApp us directly.",
           isAnswered: false,
@@ -82,60 +103,38 @@ export function ChatbotWidget() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50" style={{ fontFamily: 'inherit' }}>
-      {/* ── Floating Toggle Button ── */}
+
+      {/* ── Toggle Button ── */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           aria-label="Open Chat Assistant"
-          className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 active:scale-95"
-          style={{ backgroundColor: '#1a3e8c' }}
+          style={{ backgroundColor: '#1a3e8c', width: 56, height: 56, borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(26,62,140,0.4)', transition: 'transform 0.2s, box-shadow 0.2s', position: 'relative' }}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
         >
-          {/* Pulse ring */}
-          <span
-            className="absolute inset-0 rounded-full opacity-40 animate-ping"
-            style={{ backgroundColor: '#1a3e8c' }}
-          />
-          <MessageCircle className="w-6 h-6 text-white relative z-10" />
-          {/* Tooltip */}
-          <span className="absolute bottom-full right-0 mb-2 bg-gray-900 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg whitespace-nowrap opacity-0 hover:opacity-100 pointer-events-none shadow-lg">
-            Chat with us!
-          </span>
+          <span style={{ position: 'absolute', inset: 0, borderRadius: '50%', backgroundColor: '#1a3e8c', opacity: 0.35, animation: 'chatPing 1.5s ease-out infinite' }} />
+          <MessageCircle style={{ width: 24, height: 24, color: '#fff', position: 'relative', zIndex: 1 }} />
         </button>
       )}
 
       {/* ── Chat Window ── */}
       {isOpen && (
-        <div
-          className="flex flex-col bg-white rounded-2xl shadow-2xl overflow-hidden"
-          style={{
-            width: '360px',
-            height: '520px',
-            border: '1px solid #e5e7eb',
-            animation: 'slideUp 0.2s ease-out',
-          }}
-        >
+        <div style={{ width: 360, height: 520, backgroundColor: '#fff', borderRadius: 20, boxShadow: '0 10px 50px rgba(0,0,0,0.18)', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column', overflow: 'hidden', animation: 'chatSlideUp 0.2s ease-out' }}>
+
           {/* Header */}
-          <div
-            className="flex items-center justify-between px-4 py-3 shrink-0"
-            style={{ backgroundColor: '#1a3e8c' }}
-          >
-            <div className="flex items-center gap-3">
-              <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}
-              >
-                <Bot className="w-5 h-5" style={{ color: '#ffffff' }} />
+          <div style={{ backgroundColor: '#1a3e8c', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 38, height: 38, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Bot style={{ width: 20, height: 20, color: '#ffffff' }} />
               </div>
               <div>
-                <p className="text-sm font-bold leading-tight" style={{ color: '#ffffff' }}>
+                <p style={{ color: '#ffffff', fontWeight: 700, fontSize: 14, margin: 0, lineHeight: 1.3 }}>
                   Hindustan Projects
                 </p>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <span
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{ backgroundColor: '#4ade80' }}
-                  />
-                  <p className="text-[11px] font-medium" style={{ color: 'rgba(255,255,255,0.8)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#4ade80', display: 'inline-block' }} />
+                  <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 11, margin: 0, fontWeight: 500 }}>
                     Virtual Assistant • Online
                   </p>
                 </div>
@@ -143,143 +142,87 @@ export function ChatbotWidget() {
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
-              style={{ color: 'rgba(255,255,255,0.7)' }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'
-                e.currentTarget.style.color = '#ffffff'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent'
-                e.currentTarget.style.color = 'rgba(255,255,255,0.7)'
-              }}
               aria-label="Close chat"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.7)', width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, transition: 'background 0.15s' }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = '#fff' }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.7)' }}
             >
-              <X className="w-4 h-4" />
+              <X style={{ width: 16, height: 16 }} />
             </button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3" style={{ backgroundColor: '#f8fafc' }}>
-            {messages.map((m, idx) => (
-              <div
-                key={idx}
-                className={`flex flex-col gap-1 ${m.sender === 'user' ? 'items-end' : 'items-start'}`}
-              >
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 12, backgroundColor: '#f8fafc' }}>
+            {messages.map((m) => (
+              <div key={m.id} style={{ display: 'flex', flexDirection: 'column', alignItems: m.sender === 'user' ? 'flex-end' : 'flex-start', gap: 4 }}>
+
+                {/* Bot label */}
                 {m.sender === 'bot' && (
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <div
-                      className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
-                      style={{ backgroundColor: '#1a3e8c' }}
-                    >
-                      <Sparkles className="w-3 h-3 text-white" />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                    <div style={{ width: 20, height: 20, borderRadius: '50%', backgroundColor: '#1a3e8c', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Sparkles style={{ width: 11, height: 11, color: '#fff' }} />
                     </div>
-                    <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
-                      Assistant
-                    </span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Assistant</span>
                   </div>
                 )}
-                <div
-                  className="max-w-[85%] rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed"
-                  style={
-                    m.sender === 'user'
-                      ? {
-                          backgroundColor: '#1a3e8c',
-                          color: '#ffffff',
-                          borderTopRightRadius: '4px',
-                        }
-                      : {
-                          backgroundColor: '#ffffff',
-                          color: '#1f2937',
-                          borderTopLeftRadius: '4px',
-                          border: '1px solid #e5e7eb',
-                          boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-                        }
-                  }
-                >
-                  {renderText(m.text)}
+
+                {/* Bubble */}
+                <div style={{
+                  maxWidth: '85%',
+                  padding: '10px 14px',
+                  borderRadius: m.sender === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                  backgroundColor: m.sender === 'user' ? '#1a3e8c' : '#ffffff',
+                  color: m.sender === 'user' ? '#ffffff' : '#1f2937',
+                  fontSize: 13,
+                  lineHeight: 1.55,
+                  border: m.sender === 'bot' ? '1px solid #e5e7eb' : 'none',
+                  boxShadow: m.sender === 'bot' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
+                  wordBreak: 'break-word',
+                }}>
+                  {m.sender === 'bot' ? <BotMessage text={m.text} /> : m.text}
                 </div>
 
-                {/* Contact button when bot can't answer */}
+                {/* Fallback contact button */}
                 {m.sender === 'bot' && m.isAnswered === false && (
-                  <div className="flex gap-2 mt-1">
-                    <Link
-                      to="/contact"
-                      onClick={() => setIsOpen(false)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold text-white transition-all"
-                      style={{ backgroundColor: '#dc2626' }}
-                    >
-                      <span>Open Contact Form</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </Link>
-                  </div>
+                  <Link
+                    to="/contact"
+                    onClick={() => setIsOpen(false)}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', backgroundColor: '#dc2626', color: '#fff', borderRadius: 8, fontSize: 11, fontWeight: 700, textDecoration: 'none', marginTop: 2 }}
+                  >
+                    Open Contact Form <ExternalLink style={{ width: 11, height: 11 }} />
+                  </Link>
                 )}
               </div>
             ))}
 
-            {/* Loading dots */}
+            {/* Typing indicator */}
             {isLoading && (
-              <div className="flex items-start gap-3">
-                <div
-                  className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                  style={{ backgroundColor: '#1a3e8c' }}
-                >
-                  <Sparkles className="w-3 h-3 text-white" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 20, height: 20, borderRadius: '50%', backgroundColor: '#1a3e8c', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Sparkles style={{ width: 11, height: 11, color: '#fff' }} />
                 </div>
-                <div
-                  className="flex items-center gap-1.5 px-4 py-3 rounded-2xl"
-                  style={{
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e5e7eb',
-                    borderTopLeftRadius: '4px',
-                  }}
-                >
-                  <span
-                    className="w-2 h-2 rounded-full animate-bounce"
-                    style={{ backgroundColor: '#1a3e8c', animationDelay: '0ms' }}
-                  />
-                  <span
-                    className="w-2 h-2 rounded-full animate-bounce"
-                    style={{ backgroundColor: '#1a3e8c', animationDelay: '150ms' }}
-                  />
-                  <span
-                    className="w-2 h-2 rounded-full animate-bounce"
-                    style={{ backgroundColor: '#1a3e8c', animationDelay: '300ms' }}
-                  />
+                <div style={{ display: 'flex', gap: 5, padding: '10px 14px', backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '18px 18px 18px 4px' }}>
+                  {[0, 1, 2].map((i) => (
+                    <span key={i} style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#1a3e8c', display: 'inline-block', animation: 'chatBounce 1s infinite', animationDelay: `${i * 150}ms` }} />
+                  ))}
                 </div>
               </div>
             )}
-
             <div ref={chatEndRef} />
           </div>
 
-          {/* Quick Questions */}
+          {/* Quick Buttons */}
           {showQuickButtons && (
-            <div className="px-3 pt-2 pb-1 shrink-0" style={{ backgroundColor: '#ffffff', borderTop: '1px solid #f3f4f6' }}>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 px-1">
-                Quick Questions:
-              </p>
-              <div className="flex flex-wrap gap-1.5">
+            <div style={{ padding: '8px 12px 4px', backgroundColor: '#fff', borderTop: '1px solid #f3f4f6', flexShrink: 0 }}>
+              <p style={{ fontSize: 10, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 6px 4px' }}>Quick Questions:</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {QUICK_QUESTIONS.map((q) => (
                   <button
                     key={q.text}
                     onClick={() => handleSend(q.text)}
-                    className="text-[12px] font-semibold px-3 py-1.5 rounded-full border transition-all"
-                    style={{
-                      color: '#1a3e8c',
-                      borderColor: '#bfdbfe',
-                      backgroundColor: '#eff6ff',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#1a3e8c'
-                      e.currentTarget.style.color = '#ffffff'
-                      e.currentTarget.style.borderColor = '#1a3e8c'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#eff6ff'
-                      e.currentTarget.style.color = '#1a3e8c'
-                      e.currentTarget.style.borderColor = '#bfdbfe'
-                    }}
+                    style={{ fontSize: 12, fontWeight: 600, padding: '5px 12px', borderRadius: 20, border: '1px solid #bfdbfe', backgroundColor: '#eff6ff', color: '#1a3e8c', cursor: 'pointer', transition: 'all 0.15s' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#1a3e8c'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#1a3e8c' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#eff6ff'; e.currentTarget.style.color = '#1a3e8c'; e.currentTarget.style.borderColor = '#bfdbfe' }}
                   >
                     {q.emoji} {q.label}
                   </button>
@@ -290,12 +233,8 @@ export function ChatbotWidget() {
 
           {/* Input */}
           <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              handleSend(inputValue)
-            }}
-            className="flex items-center gap-2 px-3 py-3 shrink-0"
-            style={{ backgroundColor: '#ffffff', borderTop: '1px solid #e5e7eb' }}
+            onSubmit={(e) => { e.preventDefault(); handleSend(inputValue) }}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', backgroundColor: '#fff', borderTop: '1px solid #e5e7eb', flexShrink: 0 }}
           >
             <input
               ref={inputRef}
@@ -303,40 +242,34 @@ export function ChatbotWidget() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Type your question here..."
-              className="flex-1 text-[13px] rounded-xl px-3.5 py-2.5 outline-none transition-all"
-              style={{
-                backgroundColor: '#f1f5f9',
-                border: '1px solid #e2e8f0',
-                color: '#1f2937',
-              }}
-              onFocus={(e) => {
-                e.target.style.backgroundColor = '#ffffff'
-                e.target.style.borderColor = '#1a3e8c'
-              }}
-              onBlur={(e) => {
-                e.target.style.backgroundColor = '#f1f5f9'
-                e.target.style.borderColor = '#e2e8f0'
-              }}
+              style={{ flex: 1, fontSize: 13, padding: '9px 14px', borderRadius: 12, border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', color: '#1f2937', outline: 'none', transition: 'border 0.15s' }}
+              onFocus={(e) => { e.target.style.borderColor = '#1a3e8c'; e.target.style.backgroundColor = '#fff' }}
+              onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.backgroundColor = '#f8fafc' }}
             />
             <button
               type="submit"
               disabled={!inputValue.trim() || isLoading}
-              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all"
-              style={{
-                backgroundColor: inputValue.trim() && !isLoading ? '#1a3e8c' : '#e5e7eb',
-                color: inputValue.trim() && !isLoading ? '#ffffff' : '#9ca3af',
-              }}
+              style={{ width: 40, height: 40, borderRadius: 12, border: 'none', backgroundColor: inputValue.trim() && !isLoading ? '#1a3e8c' : '#e5e7eb', color: inputValue.trim() && !isLoading ? '#fff' : '#9ca3af', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: inputValue.trim() && !isLoading ? 'pointer' : 'not-allowed', flexShrink: 0, transition: 'background 0.15s' }}
             >
-              <Send className="w-4 h-4" />
+              <Send style={{ width: 16, height: 16 }} />
             </button>
           </form>
         </div>
       )}
 
       <style>{`
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(16px) scale(0.97); }
-          to   { opacity: 1; transform: translateY(0)     scale(1);    }
+        @keyframes chatSlideUp {
+          from { opacity: 0; transform: translateY(20px) scale(0.96); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes chatPing {
+          0%   { transform: scale(1); opacity: 0.35; }
+          70%  { transform: scale(1.8); opacity: 0; }
+          100% { transform: scale(1.8); opacity: 0; }
+        }
+        @keyframes chatBounce {
+          0%, 80%, 100% { transform: translateY(0); }
+          40%            { transform: translateY(-5px); }
         }
       `}</style>
     </div>
