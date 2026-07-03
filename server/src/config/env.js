@@ -18,6 +18,7 @@ export const env = {
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
   INTEGRATION_MASTER_KEY: process.env.INTEGRATION_MASTER_KEY,
+  RESEND_API_KEY: process.env.RESEND_API_KEY,
 }
 
 // Validate required env vars at startup

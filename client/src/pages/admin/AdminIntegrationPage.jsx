@@ -315,6 +315,7 @@ export default function AdminIntegrationPage() {
       sys_cloudinary_cloud_name: data.sys_cloudinary_cloud_name || '',
       sys_cloudinary_api_key:    data.sys_cloudinary_api_key    || '',
       sys_cloudinary_api_secret: data.sys_cloudinary_api_secret || '',
+      sys_resend_api_key:        data.sys_resend_api_key        || '',
       sys_smtp_host:  data.sys_smtp_host  || '',
       sys_smtp_port:  data.sys_smtp_port  || '587',
       sys_smtp_user:  data.sys_smtp_user  || '',
@@ -502,6 +503,43 @@ export default function AdminIntegrationPage() {
                 onClick={handleCloudinaryTest}
                 loading={cloudTesting}
                 result={cloudTest}
+              />
+            </Section>
+
+            {/* ── Resend ── */}
+            <Section
+              icon={Mail}
+              title="Resend — Email API (Recommended)"
+              accentColor="violet"
+              badge={<StatusBadge active={status.resend} />}
+            >
+              <div className="bg-violet-50/50 border border-violet-100 rounded-lg p-3 flex items-start gap-2 text-xs text-violet-700">
+                <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                <span>
+                  Resend is the recommended email provider — works with custom domains like{' '}
+                  <strong>info@hindustanprojects.in</strong>. Free plan: 3,000 emails/month.
+                  Get your API key at{' '}
+                  <a href="https://resend.com/api-keys" target="_blank" rel="noopener noreferrer"
+                    className="underline font-semibold inline-flex items-center gap-0.5">
+                    resend.com/api-keys <ExternalLink className="w-3 h-3" />
+                  </a>.
+                  {' '}If <strong>RESEND_API_KEY</strong> is set, it takes priority over SMTP below.
+                </span>
+              </div>
+
+              <SecretInput
+                label="Resend API Key"
+                name="sys_resend_api_key"
+                placeholder="re_xxxxxxxxxxxxxxxxxxxxxxxx"
+                register={register}
+                description="Starts with re_. Stored encrypted. Leave blank to keep existing value."
+              />
+
+              <TestButton
+                label="Send Test Email via Resend"
+                onClick={handleSmtpTest}
+                loading={smtpTesting}
+                result={smtpTest}
               />
             </Section>
 

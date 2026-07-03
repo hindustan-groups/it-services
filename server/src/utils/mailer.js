@@ -1,61 +1,71 @@
 /**
- * mailer.js — Nodemailer transporter + email helpers
+ * mailer.js — Email sending via Resend (primary) or Nodemailer SMTP (fallback)
  *
- * Uses SMTP credentials from environment variables only.
- * Never hardcode credentials here.
+ * Priority:
+ *  1. Resend SDK  — if RESEND_API_KEY is set (recommended)
+ *  2. Nodemailer  — if EMAIL_USER + EMAIL_PASS is set (SMTP fallback)
+ *  3. Console log — dev mode when neither is configured
  *
- * In development, if EMAIL_USER is not set, logs email to console instead
- * of attempting a real send — so dev works without SMTP config.
+ * Never hardcode credentials here. All from env vars.
  */
 
 import nodemailer from 'nodemailer'
+import { Resend } from 'resend'
 import { env } from '../config/env.js'
 
-// ── Build transporter ──────────────────────────────────────────
-function createTransporter() {
-  // Dev fallback: if no SMTP credentials, use a console "transport"
-  if (!env.EMAIL_USER || !env.EMAIL_PASS) {
-    return null
-  }
+// ── Determine sending strategy ─────────────────────────────────
+function getStrategy() {
+  if (env.RESEND_API_KEY) return 'resend'
+  if (env.EMAIL_USER && env.EMAIL_PASS) return 'smtp'
+  return 'console'
+}
 
-  return nodemailer.createTransport({
+// ── Resend sender ──────────────────────────────────────────────
+async function sendViaResend({ to, subject, html, text }) {
+  const resend = new Resend(env.RESEND_API_KEY)
+  const from = env.EMAIL_FROM || 'Hindustan Projects <info@hindustanprojects.in>'
+
+  const { data, error } = await resend.emails.send({ from, to, subject, html, text })
+  if (error) throw new Error(error.message || 'Resend send failed')
+  return { messageId: data?.id }
+}
+
+// ── Nodemailer SMTP sender ─────────────────────────────────────
+async function sendViaSMTP({ to, subject, html, text }) {
+  const transporter = nodemailer.createTransport({
     host: env.EMAIL_HOST || 'smtp.gmail.com',
     port: env.EMAIL_PORT || 587,
-    secure: env.EMAIL_PORT === 465, // true for port 465, false for others
-    auth: {
-      user: env.EMAIL_USER,
-      pass: env.EMAIL_PASS,
-    },
+    secure: env.EMAIL_PORT === 465,
+    auth: { user: env.EMAIL_USER, pass: env.EMAIL_PASS },
   })
+  const from = env.EMAIL_FROM || `"Hindustan Projects" <${env.EMAIL_USER}>`
+  const info = await transporter.sendMail({ from, to, subject, html, text })
+  return info
 }
 
 /**
- * sendEmail — sends an email or logs it to console in dev.
+ * sendEmail — unified send function.
+ * Automatically picks Resend → SMTP → console based on env config.
  *
  * @param {{ to: string, subject: string, html: string, text?: string }} options
  */
 export async function sendEmail({ to, subject, html, text }) {
-  const transporter = createTransporter()
+  const strategy = getStrategy()
 
-  if (!transporter) {
-    // Dev mode: just log — don't crash
+  if (strategy === 'console') {
     console.log('\n📧 [DEV — EMAIL NOT SENT — LOG ONLY]')
-    console.log(`  To:      ${to}`)
-    console.log(`  Subject: ${subject}`)
-    console.log(`  Body:    ${text || html}`)
+    console.log(`  To:       ${to}`)
+    console.log(`  Subject:  ${subject}`)
+    console.log(`  Body:     ${text || '(html only)'}`)
     console.log('─────────────────────────────────────\n')
     return { messageId: 'dev-console-log' }
   }
 
-  const info = await transporter.sendMail({
-    from: env.EMAIL_FROM || `"Hindustan Projects" <${env.EMAIL_USER}>`,
-    to,
-    subject,
-    html,
-    text,
-  })
+  if (strategy === 'resend') {
+    return sendViaResend({ to, subject, html, text })
+  }
 
-  return info
+  return sendViaSMTP({ to, subject, html, text })
 }
 
 // ── Email templates ────────────────────────────────────────────

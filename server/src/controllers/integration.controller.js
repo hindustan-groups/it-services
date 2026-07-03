@@ -28,6 +28,7 @@ const MASKED_KEYS = new Set([
   'sys_recaptcha_secret_key',
   'sys_database_url',
   'sys_jwt_secret',
+  'sys_resend_api_key',
 ])
 
 // Maps DB keys → process.env variable names
@@ -43,6 +44,7 @@ const ENV_MAP = {
   sys_recaptcha_secret_key:  'RECAPTCHA_SECRET_KEY',
   sys_database_url:          'DATABASE_URL',
   sys_jwt_secret:            'JWT_SECRET',
+  sys_resend_api_key:        'RESEND_API_KEY',
 }
 
 // All integration keys we manage
@@ -83,6 +85,7 @@ export const getIntegrationConfig = async (_req, res, next) => {
         config.sys_smtp_user &&
         rows.find(r => r.key === 'sys_smtp_pass')?.value
       ),
+      resend: !!rows.find(r => r.key === 'sys_resend_api_key')?.value,
       recaptcha: !!rows.find(r => r.key === 'sys_recaptcha_secret_key')?.value,
       database: !!rows.find(r => r.key === 'sys_database_url')?.value,
       jwt: !!rows.find(r => r.key === 'sys_jwt_secret')?.value,
@@ -190,34 +193,49 @@ export const testSmtpConnection = async (req, res, next) => {
   try {
     const { sendEmail } = await import('../utils/mailer.js')
 
-    const adminEmail = process.env.EMAIL_USER || process.env.EMAIL_FROM
-    if (!adminEmail) {
+    // Determine which strategy is active
+    const usingResend = !!process.env.RESEND_API_KEY
+    const usingSmtp   = !!(process.env.EMAIL_USER && process.env.EMAIL_PASS)
+
+    if (!usingResend && !usingSmtp) {
       return res.status(400).json({
         status: 'error',
-        message: 'SMTP not configured. Set EMAIL_USER first.',
+        message: 'No email provider configured. Set RESEND_API_KEY or EMAIL_USER + EMAIL_PASS.',
       })
     }
 
-    const targetEmail = adminEmail.replace(/.*<(.+)>/, '$1')
+    const targetEmail = process.env.EMAIL_USER ||
+      (process.env.EMAIL_FROM || '').replace(/.*<(.+)>/, '$1')
+
+    if (!targetEmail) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Set EMAIL_USER (or EMAIL_FROM) so the test email has a destination.',
+      })
+    }
 
     await sendEmail({
       to: targetEmail,
       subject: 'Test Email — Hindustan Projects Admin',
       html: `<div style="font-family:Arial,sans-serif;padding:20px;border:1px solid #e5e7eb;border-radius:8px;max-width:500px">
-        <h2 style="color:#1A3E8C;margin:0 0 12px">✅ SMTP Test Successful</h2>
+        <h2 style="color:#1A3E8C;margin:0 0 12px">✅ Email Test Successful</h2>
         <p style="color:#374151">Your email configuration is working correctly.</p>
+        <p style="color:#6B7280;font-size:13px">Provider: <strong>${usingResend ? 'Resend' : 'SMTP/Nodemailer'}</strong></p>
         <p style="color:#6B7280;font-size:13px;margin-top:20px;border-top:1px solid #f3f4f6;padding-top:12px">
           Sent from Hindustan Projects Admin Panel
         </p>
       </div>`,
-      text: 'SMTP Test Successful — Your email configuration is working.',
+      text: 'Email Test Successful — Your email configuration is working.',
     })
 
-    res.json({ status: 'ok', message: `Test email sent to ${targetEmail}.` })
+    res.json({
+      status: 'ok',
+      message: `Test email sent to ${targetEmail} via ${usingResend ? 'Resend' : 'SMTP'}.`,
+    })
   } catch (err) {
     res.status(500).json({
       status: 'error',
-      message: `SMTP test failed: ${err.message}`,
+      message: `Email test failed: ${err.message}`,
     })
   }
 }
