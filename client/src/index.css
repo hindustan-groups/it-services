@@ -1,21 +1,27 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* ── Font display: swap — prevents invisible text during font load ── */
-@font-face { font-family: 'Poppins'; font-display: swap; }
-@font-face { font-family: 'Inter'; font-display: swap; }
+@font-face {
+  font-family: 'Poppins';
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  font-display: swap;
+}
 
 /* ── Brand Design Tokens (Tailwind v4 @theme) ─────────────────── */
 @theme {
   /* Colors */
-  --color-brand-red: #E31E24;
-  --color-brand-red-dark: #C01A1F;
-  --color-brand-red-light: #F04046;
-  --color-brand-blue: #1A3E8C;
-  --color-brand-blue-dark: #122D6B;
-  --color-brand-blue-light: #2550B0;
-  --color-bg-base: #FDFBF9;
-  --color-text-dark: #1A1A1A;
-  --color-text-muted: #6B7280;
+  --color-brand-red: #e31e24;
+  --color-brand-red-dark: #c01a1f;
+  --color-brand-red-light: #f04046;
+  --color-brand-blue: #1a3e8c;
+  --color-brand-blue-dark: #122d6b;
+  --color-brand-blue-light: #2550b0;
+  --color-bg-base: #fdfbf9;
+  --color-text-dark: #1a1a1a;
+  --color-text-muted: #6b7280;
 
   /* Typography */
   --font-heading: 'Poppins', sans-serif;
@@ -29,7 +35,7 @@
   --spacing-120: 30rem;
 
   /* Border radius */
-  --radius-btn: 0.375rem;   /* rounded-md — corporate, not playful */
+  --radius-btn: 0.375rem; /* rounded-md — corporate, not playful */
 
   /* Shadows */
   --shadow-card: 0 2px 8px 0 rgba(26, 62, 140, 0.08);
@@ -38,7 +44,9 @@
 }
 
 /* ── Base styles ──────────────────────────────────────────────── */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -56,7 +64,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   line-height: 1.2;
   color: var(--color-brand-blue);
@@ -73,18 +86,23 @@ h1, h2, h3, h4, h5, h6 {
 /* Smooth transitions for interactive elements */
 button,
 a,
-[role="button"],
-input[type="submit"],
-input[type="button"] {
-  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+[role='button'],
+input[type='submit'],
+input[type='button'] {
+  transition:
+    transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 /* Tactile scale-down click feedback (only applies to block/inline-block/flex elements) */
-button:active:not([disabled]):not([class*="no-press"]),
-a:active:not([class*="no-press"]),
-[role="button"]:active:not([disabled]):not([class*="no-press"]),
-input[type="submit"]:active,
-input[type="button"]:active {
+button:active:not([disabled]):not([class*='no-press']),
+a:active:not([class*='no-press']),
+[role='button']:active:not([disabled]):not([class*='no-press']),
+input[type='submit']:active,
+input[type='button']:active {
   transform: scale(0.96);
 }
 
@@ -101,7 +119,11 @@ input[type="button"]:active {
 }
 
 /* Smooth cursor on interactive elements */
-button, a, [role="button"], label[for], select {
+button,
+a,
+[role='button'],
+label[for],
+select {
   cursor: pointer;
 }
 

@@ -3,9 +3,21 @@
  */
 import { Link } from 'react-router-dom'
 import {
-  MapPin, Target, Eye, CheckCircle2, ArrowRight,
-  Users, Award, Rocket, Heart, Code2, Handshake,
-  TrendingUp, Shield, Clock, Star
+  MapPin,
+  Target,
+  Eye,
+  CheckCircle2,
+  ArrowRight,
+  Users,
+  Award,
+  Rocket,
+  Heart,
+  Code2,
+  Handshake,
+  TrendingUp,
+  Shield,
+  Clock,
+  Star,
 } from 'lucide-react'
 import { Container, Button, SEO } from '@/components/ui'
 import { useTeam } from '@/hooks/useTeam'
@@ -13,26 +25,87 @@ import { useMilestones, useSiteSettings } from '@/hooks/useContent'
 
 /* ── Static data (company values — not CMS managed) ─────── */
 const VALUES = [
-  { icon: Users, title: 'Client-First Always', desc: 'Your success is our success. Every decision we make is centered around delivering real value to you.' },
-  { icon: Shield, title: 'Transparent & Honest', desc: 'Clear communication, honest timelines, and no hidden costs — ever.' },
-  { icon: Code2, title: 'Quality Code', desc: 'We write clean, maintainable, secure code built to last and scale with your business.' },
-  { icon: Handshake, title: 'Long-Term Partners', desc: 'We build lasting partnerships, not one-off transactions. We grow together.' },
+  {
+    icon: Users,
+    title: 'Client-First Always',
+    desc: 'Your success is our success. Every decision we make is centered around delivering real value to you.',
+  },
+  {
+    icon: Shield,
+    title: 'Transparent & Honest',
+    desc: 'Clear communication, honest timelines, and no hidden costs — ever.',
+  },
+  {
+    icon: Code2,
+    title: 'Quality Code',
+    desc: 'We write clean, maintainable, secure code built to last and scale with your business.',
+  },
+  {
+    icon: Handshake,
+    title: 'Long-Term Partners',
+    desc: 'We build lasting partnerships, not one-off transactions. We grow together.',
+  },
 ]
 
 // Fallbacks (shown if DB empty)
 const FALLBACK_MILESTONES = [
-  { id: '1', year: '2019', title: 'Founded', desc: 'Hindustan Projects was born in Bhilwara with a mission to bring world-class IT to local businesses.' },
-  { id: '2', year: '2020', title: 'First 10 Clients', desc: 'Delivered web development and digital marketing for 10 businesses across Rajasthan.' },
-  { id: '3', year: '2022', title: 'Expanded Services', desc: 'Launched cloud, DevOps, and mobile app development verticals.' },
-  { id: '4', year: '2024', title: '40+ Happy Clients', desc: 'Crossed 40 happy clients mark, serving businesses pan-India.' },
-  { id: '5', year: '2025', title: 'Growing Strong', desc: 'Expanding our team and services to cover enterprise-level digital transformation.' },
+  {
+    id: '1',
+    year: '2019',
+    title: 'Founded',
+    desc: 'Hindustan Projects was born in Bhilwara with a mission to bring world-class IT to local businesses.',
+  },
+  {
+    id: '2',
+    year: '2020',
+    title: 'First 10 Clients',
+    desc: 'Delivered web development and digital marketing for 10 businesses across Rajasthan.',
+  },
+  {
+    id: '3',
+    year: '2022',
+    title: 'Expanded Services',
+    desc: 'Launched cloud, DevOps, and mobile app development verticals.',
+  },
+  {
+    id: '4',
+    year: '2024',
+    title: '40+ Happy Clients',
+    desc: 'Crossed 40 happy clients mark, serving businesses pan-India.',
+  },
+  {
+    id: '5',
+    year: '2025',
+    title: 'Growing Strong',
+    desc: 'Expanding our team and services to cover enterprise-level digital transformation.',
+  },
 ]
 
 const FALLBACK_TEAM = [
-  { id: '1', name: 'Rahul Sharma', role: 'Founder & CEO', bio: 'Visionary leader with 8+ years in web tech and digital strategy.' },
-  { id: '2', name: 'Priya Singh', role: 'Lead Developer', bio: 'Full-stack expert specialising in React, Node.js, and cloud architecture.' },
-  { id: '3', name: 'Amit Verma', role: 'Digital Marketing Head', bio: "Growth hacker behind our clients' SEO and paid campaign results." },
-  { id: '4', name: 'Sneha Joshi', role: 'UI/UX Designer', bio: 'Crafts beautiful, intuitive interfaces that users love to interact with.' },
+  {
+    id: '1',
+    name: 'Rahul Sharma',
+    role: 'Founder & CEO',
+    bio: 'Visionary leader with 8+ years in web tech and digital strategy.',
+  },
+  {
+    id: '2',
+    name: 'Priya Singh',
+    role: 'Lead Developer',
+    bio: 'Full-stack expert specialising in React, Node.js, and cloud architecture.',
+  },
+  {
+    id: '3',
+    name: 'Amit Verma',
+    role: 'Digital Marketing Head',
+    bio: "Growth hacker behind our clients' SEO and paid campaign results.",
+  },
+  {
+    id: '4',
+    name: 'Sneha Joshi',
+    role: 'UI/UX Designer',
+    bio: 'Crafts beautiful, intuitive interfaces that users love to interact with.',
+  },
 ]
 
 export default function AboutPage() {
@@ -40,8 +113,12 @@ export default function AboutPage() {
   const { data: milestonesData, isLoading: milestonesLoading } = useMilestones()
   const { data: settingsData } = useSiteSettings()
 
-  const team = teamData?.data?.length ? teamData.data : (teamLoading ? [] : FALLBACK_TEAM)
-  const milestones = milestonesData?.data?.length ? milestonesData.data : (milestonesLoading ? [] : FALLBACK_MILESTONES)
+  const team = teamData?.data?.length ? teamData.data : teamLoading ? [] : FALLBACK_TEAM
+  const milestones = milestonesData?.data?.length
+    ? milestonesData.data
+    : milestonesLoading
+      ? []
+      : FALLBACK_MILESTONES
   const cfg = settingsData?.data || {}
 
   const stats = [
@@ -58,23 +135,25 @@ export default function AboutPage() {
         description="Hindustan Projects is a technology company based in Bhilwara, Rajasthan founded in 2019. Learn about our story, team, mission and vision."
         path="/about"
         keywords="IT company Bhilwara, technology company Rajasthan, web development company Bhilwara, about Hindustan Projects, IT firm Rajasthan"
-        schemas={[{
-          '@context': 'https://schema.org',
-          '@type': 'AboutPage',
-          name: 'About Hindustan Projects',
-          url: 'https://hindustanprojects.com/about',
-          description: 'Hindustan Projects is a technology company based in Bhilwara, Rajasthan, helping businesses grow through smart digital solutions.',
-        }]}
+        schemas={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'AboutPage',
+            name: 'About Hindustan Projects',
+            url: 'https://hindustanprojects.com/about',
+            description:
+              'Hindustan Projects is a technology company based in Bhilwara, Rajasthan, helping businesses grow through smart digital solutions.',
+          },
+        ]}
       />
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <section className="relative pt-24 sm:pt-32 lg:pt-36 pb-14 sm:pb-20 lg:pb-24 overflow-hidden bg-[#050e20]">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
         <div className="absolute top-0 left-1/3 w-96 h-96 bg-brand-blue/20 rounded-full blur-3xl -translate-y-1/2 pointer-events-none" />
         <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-brand-red/15 rounded-full blur-3xl translate-y-1/2 pointer-events-none" />
- 
+
         <Container className="relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
- 
             {/* Left */}
             <div>
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-red/30 bg-brand-red/10 text-brand-red text-xs font-semibold uppercase tracking-widest mb-6">
@@ -88,30 +167,35 @@ export default function AboutPage() {
                 </span>
               </h1>
               <p className="text-white/60 text-base sm:text-lg leading-relaxed mb-8">
-                Hindustan Projects is a technology company based in Bhilwara, Rajasthan —
-                helping businesses across India grow faster through smart, affordable,
-                and reliable digital solutions.
+                Hindustan Projects is a technology company based in Bhilwara, Rajasthan — helping
+                businesses across India grow faster through smart, affordable, and reliable digital
+                solutions.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button variant="primary" size="lg" as={Link} to="/contact">
                   Work With Us
                 </Button>
-                <Button variant="ghost" size="lg" as={Link} to="/portfolio"
-                  className="!text-white !border-white/20 hover:!bg-white/10">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  as={Link}
+                  to="/portfolio"
+                  className="!text-white !border-white/20 hover:!bg-white/10"
+                >
                   See Our Work
                 </Button>
               </div>
             </div>
- 
+
             {/* Right: info cards in 2-column grid */}
             <div className="hidden lg:grid grid-cols-2 gap-3">
               {[
-                { icon: MapPin,     label: 'Headquartered', value: 'Bhilwara, Rajasthan' },
-                { icon: Clock,      label: 'Founded',        value: '2019' },
-                { icon: Users,      label: 'Team Size',      value: '10+ Professionals' },
-                { icon: Star,       label: 'Client Rating',  value: '5.0 / 5.0' },
-                { icon: TrendingUp, label: 'Growth (YoY)',   value: '200%' },
-                { icon: Award,      label: 'Projects Done',  value: `${cfg.stat_projects || '50'}+` },
+                { icon: MapPin, label: 'Headquartered', value: 'Bhilwara, Rajasthan' },
+                { icon: Clock, label: 'Founded', value: '2019' },
+                { icon: Users, label: 'Team Size', value: '10+ Professionals' },
+                { icon: Star, label: 'Client Rating', value: '5.0 / 5.0' },
+                { icon: TrendingUp, label: 'Growth (YoY)', value: '200%' },
+                { icon: Award, label: 'Projects Done', value: `${cfg.stat_projects || '50'}+` },
               ].map((item) => (
                 <div
                   key={item.label}
@@ -121,7 +205,9 @@ export default function AboutPage() {
                     <item.icon className="w-4 h-4 text-brand-red" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-white/40 uppercase tracking-wider">{item.label}</p>
+                    <p className="text-[10px] text-white/40 uppercase tracking-wider">
+                      {item.label}
+                    </p>
                     <p className="text-sm font-semibold text-white">{item.value}</p>
                   </div>
                 </div>
@@ -130,13 +216,16 @@ export default function AboutPage() {
           </div>
         </Container>
       </section>
- 
+
       {/* ── Stats Strip ──────────────────────────────────────────── */}
       <section className="bg-white border-b border-gray-100 py-0">
         <Container>
           <div className="grid grid-cols-2 lg:grid-cols-4">
             {stats.map((stat) => (
-              <div key={stat.label} className="flex items-center gap-3 px-4 sm:px-6 py-5 sm:py-6 group hover:bg-brand-blue/3 transition-colors duration-200 border-b border-r border-gray-100 [&:nth-child(2)]:border-r-0 lg:[&:nth-child(2)]:border-r lg:[&:nth-child(4)]:border-r-0">
+              <div
+                key={stat.label}
+                className="flex items-center gap-3 px-4 sm:px-6 py-5 sm:py-6 group hover:bg-brand-blue/3 transition-colors duration-200 border-b border-r border-gray-100 [&:nth-child(2)]:border-r-0 lg:[&:nth-child(2)]:border-r lg:[&:nth-child(4)]:border-r-0"
+              >
                 <div className="w-11 h-11 rounded-xl bg-brand-blue/8 flex items-center justify-center shrink-0 group-hover:bg-brand-blue/14 transition-colors">
                   <stat.icon className="w-5 h-5 text-brand-blue" strokeWidth={1.8} />
                 </div>
@@ -154,7 +243,6 @@ export default function AboutPage() {
       <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-gray-50/60 to-white">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-
             {/* Left: Image + overlay */}
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden shadow-xl border border-gray-100">
@@ -172,7 +260,9 @@ export default function AboutPage() {
                     <MapPin className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-brand-blue uppercase tracking-wider">Headquartered in</p>
+                    <p className="text-[10px] font-bold text-brand-blue uppercase tracking-wider">
+                      Headquartered in
+                    </p>
                     <p className="text-xs text-text-muted font-semibold">Bhilwara, Rajasthan</p>
                   </div>
                 </div>
@@ -184,33 +274,39 @@ export default function AboutPage() {
 
               {/* Floating stat card */}
               <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl border border-gray-100 shadow-xl p-5 hidden lg:block">
-                <p className="text-3xl font-bold text-brand-blue font-heading">50<span className="text-brand-red">+</span></p>
+                <p className="text-3xl font-bold text-brand-blue font-heading">
+                  50<span className="text-brand-red">+</span>
+                </p>
                 <p className="text-xs text-text-muted mt-0.5">Projects Delivered</p>
               </div>
             </div>
 
             {/* Right: Story text */}
             <div>
-              <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">Our Story</span>
+              <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">
+                Our Story
+              </span>
               <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-blue mb-6 leading-tight">
-                Built in Bhilwara.<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-blue-400">Serving All of India.</span>
+                Built in Bhilwara.
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-blue-400">
+                  Serving All of India.
+                </span>
               </h2>
               <div className="space-y-4 text-text-muted text-sm leading-relaxed mb-8">
                 <p>
-                  Hindustan Projects was founded with a clear mission: to make world-class
-                  IT services accessible to businesses in Bhilwara and Rajasthan — not just
-                  the metros.
+                  Hindustan Projects was founded with a clear mission: to make world-class IT
+                  services accessible to businesses in Bhilwara and Rajasthan — not just the metros.
                 </p>
                 <p>
-                  We saw a gap — local businesses had the ambition to grow digitally but
-                  lacked access to affordable, high-quality technology partners who understood
-                  their context. That's exactly the gap we fill.
+                  We saw a gap — local businesses had the ambition to grow digitally but lacked
+                  access to affordable, high-quality technology partners who understood their
+                  context. That's exactly the gap we fill.
                 </p>
                 <p>
-                  From custom web development and digital marketing to enterprise software and
-                  IT consulting, we've helped over 40 businesses transform their operations
-                  and expand their online reach across India.
+                  From custom web development and digital marketing to enterprise software and IT
+                  consulting, we've helped over 40 businesses transform their operations and expand
+                  their online reach across India.
                 </p>
               </div>
 
@@ -221,9 +317,12 @@ export default function AboutPage() {
                   <div className="w-8 h-8 rounded-lg bg-brand-red/15 flex items-center justify-center mb-3">
                     <Target className="w-4 h-4 text-brand-red" />
                   </div>
-                  <h3 className="font-heading text-sm font-bold text-brand-blue mb-1">Our Mission</h3>
+                  <h3 className="font-heading text-sm font-bold text-brand-blue mb-1">
+                    Our Mission
+                  </h3>
                   <p className="text-xs text-text-muted leading-relaxed">
-                    Empower businesses with reliable, affordable technology that creates lasting competitive advantage.
+                    Empower businesses with reliable, affordable technology that creates lasting
+                    competitive advantage.
                   </p>
                 </div>
                 <div className="relative p-5 rounded-xl border border-brand-blue/15 bg-brand-blue/4 overflow-hidden">
@@ -231,7 +330,9 @@ export default function AboutPage() {
                   <div className="w-8 h-8 rounded-lg bg-brand-blue/15 flex items-center justify-center mb-3">
                     <Eye className="w-4 h-4 text-brand-blue" />
                   </div>
-                  <h3 className="font-heading text-sm font-bold text-brand-blue mb-1">Our Vision</h3>
+                  <h3 className="font-heading text-sm font-bold text-brand-blue mb-1">
+                    Our Vision
+                  </h3>
                   <p className="text-xs text-text-muted leading-relaxed">
                     Become the most trusted IT partner for growing businesses in Rajasthan.
                   </p>
@@ -246,10 +347,15 @@ export default function AboutPage() {
       <section className="py-12 sm:py-16 lg:py-20 bg-white border-t border-gray-100">
         <Container>
           <div className="text-center mb-14">
-            <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">Our Culture</span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-blue mb-3">What We Stand For</h2>
+            <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">
+              Our Culture
+            </span>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-blue mb-3">
+              What We Stand For
+            </h2>
             <p className="text-text-muted max-w-md mx-auto text-sm">
-              These values guide every project, every client interaction, and every line of code we write.
+              These values guide every project, every client interaction, and every line of code we
+              write.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -275,7 +381,9 @@ export default function AboutPage() {
       <section className="py-12 sm:py-16 lg:py-20 bg-gray-50/60 border-t border-gray-100">
         <Container>
           <div className="text-center mb-14">
-            <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">Our Journey</span>
+            <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">
+              Our Journey
+            </span>
             <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-blue">
               Milestones That Define Us
             </h2>
@@ -284,29 +392,35 @@ export default function AboutPage() {
             {/* Vertical line */}
             <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-brand-blue via-brand-red to-transparent hidden sm:block" />
             <div className="space-y-8">
-              {(milestonesLoading ? Array.from({length: 4}) : milestones).map((m, i) => (
+              {(milestonesLoading ? Array.from({ length: 4 }) : milestones).map((m, i) =>
                 milestonesLoading ? (
                   <div key={i} className="flex gap-6">
                     <div className="hidden sm:block w-16 h-16 rounded-full bg-gray-100 animate-pulse shrink-0" />
                     <div className="flex-1 h-20 bg-gray-100 rounded-2xl animate-pulse" />
                   </div>
                 ) : (
-                <div key={m.id} className="flex gap-6 group">
-                  <div className="hidden sm:flex flex-col items-center shrink-0">
-                    <div className="w-16 h-16 rounded-full border-2 border-brand-blue bg-white flex flex-col items-center justify-center shadow-md group-hover:bg-brand-blue transition-colors duration-300">
-                      <span className="text-xs font-bold text-brand-blue group-hover:text-white transition-colors leading-none">{m.year}</span>
+                  <div key={m.id} className="flex gap-6 group">
+                    <div className="hidden sm:flex flex-col items-center shrink-0">
+                      <div className="w-16 h-16 rounded-full border-2 border-brand-blue bg-white flex flex-col items-center justify-center shadow-md group-hover:bg-brand-blue transition-colors duration-300">
+                        <span className="text-xs font-bold text-brand-blue group-hover:text-white transition-colors leading-none">
+                          {m.year}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex-1 bg-white rounded-2xl border border-gray-100 p-5 group-hover:border-brand-blue/20 group-hover:shadow-md transition-all duration-300">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="sm:hidden text-xs font-bold text-brand-red">
+                          {m.year} —
+                        </span>
+                        <h3 className="font-heading text-base font-bold text-brand-blue">
+                          {m.title}
+                        </h3>
+                      </div>
+                      <p className="text-sm text-text-muted leading-relaxed">{m.desc}</p>
                     </div>
                   </div>
-                  <div className="flex-1 bg-white rounded-2xl border border-gray-100 p-5 group-hover:border-brand-blue/20 group-hover:shadow-md transition-all duration-300">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="sm:hidden text-xs font-bold text-brand-red">{m.year} —</span>
-                      <h3 className="font-heading text-base font-bold text-brand-blue">{m.title}</h3>
-                    </div>
-                    <p className="text-sm text-text-muted leading-relaxed">{m.desc}</p>
-                  </div>
-                </div>
                 )
-              ))}
+              )}
             </div>
           </div>
         </Container>
@@ -316,10 +430,15 @@ export default function AboutPage() {
       <section className="py-12 sm:py-16 lg:py-20 bg-white border-t border-gray-100">
         <Container>
           <div className="text-center mb-10 lg:mb-14">
-            <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">The People</span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-blue mb-3">Meet Our Team</h2>
+            <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">
+              The People
+            </span>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-blue mb-3">
+              Meet Our Team
+            </h2>
             <p className="text-text-muted max-w-md mx-auto text-sm">
-              A passionate group of technologists, marketers, and designers — united by one goal: your success.
+              A passionate group of technologists, marketers, and designers — united by one goal:
+              your success.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -328,36 +447,52 @@ export default function AboutPage() {
                   <div key={i} className="h-52 bg-gray-100 rounded-2xl animate-pulse" />
                 ))
               : team.map((member) => {
-                  const initials = member.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
+                  const initials = member.name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .slice(0, 2)
+                    .join('')
+                    .toUpperCase()
                   return (
-                    <div key={member.id}
+                    <div
+                      key={member.id}
                       className="group bg-white rounded-2xl border border-gray-100 p-6 text-center
                         hover:border-transparent hover:shadow-[0_12px_40px_rgba(26,62,140,0.10)]
                         hover:-translate-y-1.5 transition-all duration-300"
                     >
                       {member.photoUrl ? (
-                        <img src={member.photoUrl} alt={member.name}
+                        <img
+                          src={member.photoUrl}
+                          alt={member.name}
                           className="w-20 h-20 rounded-full object-cover mx-auto mb-4 ring-2 ring-brand-blue/10"
-                          loading="lazy" />
+                          loading="lazy"
+                        />
                       ) : (
                         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-blue to-blue-400 flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-white shadow-md group-hover:scale-105 transition-transform duration-300">
                           {initials}
                         </div>
                       )}
-                      <h3 className="font-heading text-base font-bold text-brand-blue mb-0.5">{member.name}</h3>
+                      <h3 className="font-heading text-base font-bold text-brand-blue mb-0.5">
+                        {member.name}
+                      </h3>
                       <p className="text-xs font-semibold text-brand-red mb-3">{member.role}</p>
-                      {member.bio && <p className="text-xs text-text-muted leading-relaxed">{member.bio}</p>}
+                      {member.bio && (
+                        <p className="text-xs text-text-muted leading-relaxed">{member.bio}</p>
+                      )}
                       {member.linkedinUrl && (
-                        <a href={member.linkedinUrl} target="_blank" rel="noopener noreferrer"
+                        <a
+                          href={member.linkedinUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 text-xs text-brand-blue/60
-                            hover:text-brand-blue mt-3 transition-colors">
+                            hover:text-brand-blue mt-3 transition-colors"
+                        >
                           LinkedIn →
                         </a>
                       )}
                     </div>
                   )
-                })
-            }
+                })}
           </div>
         </Container>
       </section>
@@ -383,21 +518,33 @@ export default function AboutPage() {
               </span>
             </h2>
             <p className="text-white/60 text-base sm:text-lg mb-10 max-w-xl mx-auto">
-              Let's talk about your goals. We'll suggest the best solutions — no jargon, no pressure.
+              Let's talk about your goals. We'll suggest the best solutions — no jargon, no
+              pressure.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button variant="primary" size="lg" as={Link} to="/contact">
                 Get a Free Consultation
               </Button>
-              <Button variant="ghost" size="lg" as={Link} to="/services"
-                className="!text-white !border-white/25 hover:!bg-white/10">
+              <Button
+                variant="ghost"
+                size="lg"
+                as={Link}
+                to="/services"
+                className="!text-white !border-white/25 hover:!bg-white/10"
+              >
                 Explore Services →
               </Button>
             </div>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-white/40 text-xs font-medium">
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> No upfront payment</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> Reply within 24 hours</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> 50+ happy clients</span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> No upfront payment
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> Reply within 24 hours
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> 50+ happy clients
+              </span>
             </div>
           </div>
         </Container>

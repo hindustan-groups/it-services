@@ -24,7 +24,7 @@ export function useApplyJob(slug) {
   return useMutation({
     mutationFn: (formData) => {
       return api.post(`/careers/${slug}/apply`, formData)
-    }
+    },
   })
 }
 
@@ -45,7 +45,7 @@ export function useCreateJob() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'careers'] })
       queryClient.invalidateQueries({ queryKey: ['careers', 'active'] })
-    }
+    },
   })
 }
 
@@ -57,7 +57,7 @@ export function useUpdateJob() {
       queryClient.invalidateQueries({ queryKey: ['admin', 'careers'] })
       queryClient.invalidateQueries({ queryKey: ['careers', 'active'] })
       queryClient.invalidateQueries({ queryKey: ['careers', 'detail', variables.slug] })
-    }
+    },
   })
 }
 
@@ -68,7 +68,7 @@ export function useDeleteJob() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'careers'] })
       queryClient.invalidateQueries({ queryKey: ['careers', 'active'] })
-    }
+    },
   })
 }
 
@@ -91,7 +91,7 @@ export function useUpdateApplicationStatus() {
     mutationFn: ({ id, status }) => api.patch(`/admin/applications/${id}/status`, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'applications'] })
-    }
+    },
   })
 }
 
@@ -101,6 +101,6 @@ export function useDeleteApplication() {
     mutationFn: (id) => api.delete(`/admin/applications/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'applications'] })
-    }
+    },
   })
 }

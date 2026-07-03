@@ -34,13 +34,18 @@ export default function NotFoundPage() {
               Page Not Found
             </h1>
             <p className="text-text-muted text-base leading-relaxed mb-8">
-              The page you're looking for doesn't exist or has been moved.
-              Let's get you back on track.
+              The page you're looking for doesn't exist or has been moved. Let's get you back on
+              track.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button variant="primary" size="lg" as={Link} to="/"
-                leftIcon={<Home className="w-4 h-4" />}>
+              <Button
+                variant="primary"
+                size="lg"
+                as={Link}
+                to="/"
+                leftIcon={<Home className="w-4 h-4" />}
+              >
                 Go to Homepage
               </Button>
               <Button variant="outline" size="lg" as={Link} to="/contact">
@@ -58,12 +63,15 @@ export default function NotFoundPage() {
                   { label: 'Services', href: '/services' },
                   { label: 'Portfolio', href: '/portfolio' },
                   { label: 'About Us', href: '/about' },
-                  { label: 'Contact',  href: '/contact' },
-                ].map(l => (
-                  <Link key={l.href} to={l.href}
+                  { label: 'Contact', href: '/contact' },
+                ].map((l) => (
+                  <Link
+                    key={l.href}
+                    to={l.href}
                     className="text-sm text-brand-blue hover:text-brand-red font-medium
                       transition-colors duration-150 px-3 py-1.5 rounded-lg
-                      hover:bg-brand-red/5">
+                      hover:bg-brand-red/5"
+                  >
                     {l.label}
                   </Link>
                 ))}

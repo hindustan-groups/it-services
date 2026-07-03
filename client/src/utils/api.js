@@ -15,7 +15,7 @@ export class ApiError extends Error {
 
 async function request(path, options = {}) {
   const isFormData = options.body instanceof FormData
-  
+
   const headers = { ...options.headers }
   if (!isFormData && !headers['Content-Type']) {
     headers['Content-Type'] = 'application/json'
@@ -41,20 +41,23 @@ async function request(path, options = {}) {
 
 export const api = {
   get: (path, options = {}) => request(path, { method: 'GET', ...options }),
-  post: (path, body, options = {}) => request(path, { 
-    method: 'POST', 
-    body: body instanceof FormData ? body : JSON.stringify(body),
-    ...options 
-  }),
-  put: (path, body, options = {}) => request(path, { 
-    method: 'PUT', 
-    body: body instanceof FormData ? body : JSON.stringify(body),
-    ...options 
-  }),
-  patch: (path, body, options = {}) => request(path, { 
-    method: 'PATCH', 
-    body: body instanceof FormData ? body : JSON.stringify(body),
-    ...options 
-  }),
+  post: (path, body, options = {}) =>
+    request(path, {
+      method: 'POST',
+      body: body instanceof FormData ? body : JSON.stringify(body),
+      ...options,
+    }),
+  put: (path, body, options = {}) =>
+    request(path, {
+      method: 'PUT',
+      body: body instanceof FormData ? body : JSON.stringify(body),
+      ...options,
+    }),
+  patch: (path, body, options = {}) =>
+    request(path, {
+      method: 'PATCH',
+      body: body instanceof FormData ? body : JSON.stringify(body),
+      ...options,
+    }),
   delete: (path, options = {}) => request(path, { method: 'DELETE', ...options }),
 }

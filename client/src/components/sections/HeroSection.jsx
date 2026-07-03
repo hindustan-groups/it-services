@@ -66,8 +66,7 @@ export default function HeroSection() {
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage:
-              'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)',
             backgroundSize: '32px 32px',
           }}
           aria-hidden="true"
@@ -85,8 +84,7 @@ export default function HeroSection() {
         <div
           className="absolute bottom-0 inset-x-0 h-48"
           style={{
-            background:
-              'linear-gradient(to bottom, transparent, rgba(7,21,48,0.6))',
+            background: 'linear-gradient(to bottom, transparent, rgba(7,21,48,0.6))',
           }}
           aria-hidden="true"
         />
@@ -96,19 +94,15 @@ export default function HeroSection() {
       <div className="flex-1 flex items-center pt-28 lg:pt-28 pb-12 lg:pb-8">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-
             {/* ── Left: text ── */}
             <div className="lg:col-span-7">
               {/* Eyebrow */}
-              <motion.div
-                custom={0}
-                variants={fadeUp}
-                initial="hidden"
-                animate="visible"
-              >
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 mb-3
+              <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible">
+                <span
+                  className="inline-flex items-center gap-2 px-4 py-1.5 mb-3
                   rounded-full border border-white/20 bg-white/8
-                  text-white/85 text-xs font-semibold tracking-widest uppercase">
+                  text-white/85 text-xs font-semibold tracking-widest uppercase"
+                >
                   <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
                   IT Services — Bhilwara, Rajasthan
                 </span>
@@ -248,7 +242,6 @@ export default function HeroSection() {
                 </div>
               </div>
             </motion.div>
-
           </div>
         </Container>
       </div>

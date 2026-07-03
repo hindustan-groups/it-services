@@ -1,12 +1,32 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
-import { CheckCircle2, AlertCircle, Phone, MessageCircle, Mail, MapPin, Type, Settings, Globe, Send, Share2 } from 'lucide-react'
+import {
+  CheckCircle2,
+  AlertCircle,
+  Phone,
+  MessageCircle,
+  Mail,
+  MapPin,
+  Type,
+  Settings,
+  Globe,
+  Send,
+  Share2,
+} from 'lucide-react'
 import { api } from '@/utils/api'
 import { SEO } from '@/components/ui'
 import { useSiteSettings } from '@/hooks/useContent'
 
 const LinkedinIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
     <rect x="2" y="9" width="4" height="12" />
     <circle cx="4" cy="4" r="2" />
@@ -14,7 +34,15 @@ const LinkedinIcon = ({ className }) => (
 )
 
 const InstagramIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
     <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
@@ -22,7 +50,15 @@ const InstagramIcon = ({ className }) => (
 )
 
 const FacebookIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
   </svg>
 )
@@ -31,49 +67,105 @@ const FIELD_GROUPS = [
   {
     label: 'Contact Details',
     fields: [
-      { key: 'phone',   label: 'Phone Number',   placeholder: '+91 99999 99999', Icon: Phone },
-      { key: 'whatsapp', label: 'WhatsApp Number', placeholder: '+91 99999 99999', Icon: MessageCircle },
-      { key: 'whatsappMessage', label: 'WhatsApp Welcome Message', placeholder: 'Hi! I visited your website and want to discuss a project.', Icon: MessageCircle, isTextarea: true },
-      { key: 'email',   label: 'Email Address',  placeholder: 'info@hindustanprojects.com', Icon: Mail },
-      { key: 'address', label: 'Office Address', placeholder: 'Bhilwara, Rajasthan 311001, India', Icon: MapPin, isTextarea: true },
-      { key: 'googleMapUrl', label: 'Google Maps Embed src URL (Copy only src="..." URL from Share -> Embed Map)', placeholder: 'https://www.google.com/maps/embed?pb=...', Icon: MapPin, isTextarea: true },
+      { key: 'phone', label: 'Phone Number', placeholder: '+91 99999 99999', Icon: Phone },
+      {
+        key: 'whatsapp',
+        label: 'WhatsApp Number',
+        placeholder: '+91 99999 99999',
+        Icon: MessageCircle,
+      },
+      {
+        key: 'whatsappMessage',
+        label: 'WhatsApp Welcome Message',
+        placeholder: 'Hi! I visited your website and want to discuss a project.',
+        Icon: MessageCircle,
+        isTextarea: true,
+      },
+      {
+        key: 'email',
+        label: 'Email Address',
+        placeholder: 'info@hindustanprojects.com',
+        Icon: Mail,
+      },
+      {
+        key: 'address',
+        label: 'Office Address',
+        placeholder: 'Bhilwara, Rajasthan 311001, India',
+        Icon: MapPin,
+        isTextarea: true,
+      },
+      {
+        key: 'googleMapUrl',
+        label: 'Google Maps Embed src URL (Copy only src="..." URL from Share -> Embed Map)',
+        placeholder: 'https://www.google.com/maps/embed?pb=...',
+        Icon: MapPin,
+        isTextarea: true,
+      },
     ],
   },
   {
     label: 'Social Media Links',
     fields: [
-      { key: 'linkedin',  label: 'LinkedIn URL',  placeholder: 'https://linkedin.com/company/...', Icon: LinkedinIcon },
-      { key: 'instagram', label: 'Instagram URL', placeholder: 'https://instagram.com/...', Icon: InstagramIcon },
-      { key: 'facebook',  label: 'Facebook URL',  placeholder: 'https://facebook.com/...', Icon: FacebookIcon },
+      {
+        key: 'linkedin',
+        label: 'LinkedIn URL',
+        placeholder: 'https://linkedin.com/company/...',
+        Icon: LinkedinIcon,
+      },
+      {
+        key: 'instagram',
+        label: 'Instagram URL',
+        placeholder: 'https://instagram.com/...',
+        Icon: InstagramIcon,
+      },
+      {
+        key: 'facebook',
+        label: 'Facebook URL',
+        placeholder: 'https://facebook.com/...',
+        Icon: FacebookIcon,
+      },
     ],
   },
   {
     label: 'Website Branding',
     fields: [
-      { key: 'tagline', label: 'Hero Tagline', placeholder: 'Building Digital Solutions...', Icon: Type, isTextarea: true },
+      {
+        key: 'tagline',
+        label: 'Hero Tagline',
+        placeholder: 'Building Digital Solutions...',
+        Icon: Type,
+        isTextarea: true,
+      },
     ],
   },
   {
     label: 'Company Statistics (Number only)',
     fields: [
-      { key: 'stat_projects',   label: 'Projects Delivered', placeholder: '50', Icon: Type },
-      { key: 'stat_clients',    label: 'Happy Clients',      placeholder: '40', Icon: Type },
-      { key: 'stat_experience', label: 'Years Experience',   placeholder: '5', Icon: Type },
-      { key: 'stat_cities',     label: 'Cities Served',      placeholder: '3', Icon: Type },
+      { key: 'stat_projects', label: 'Projects Delivered', placeholder: '50', Icon: Type },
+      { key: 'stat_clients', label: 'Happy Clients', placeholder: '40', Icon: Type },
+      { key: 'stat_experience', label: 'Years Experience', placeholder: '5', Icon: Type },
+      { key: 'stat_cities', label: 'Cities Served', placeholder: '3', Icon: Type },
     ],
   },
 ]
 
-const inputCls = 'w-full pl-9 pr-3.5 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all'
-const textareaCls = 'w-full pl-9 pr-3.5 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all min-h-[70px] resize-y'
+const inputCls =
+  'w-full pl-9 pr-3.5 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all'
+const textareaCls =
+  'w-full pl-9 pr-3.5 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all min-h-[70px] resize-y'
 
 export default function AdminSiteSettingsPage() {
   const qc = useQueryClient()
-  
+
   const { data, isLoading } = useSiteSettings()
 
   // Bind values dynamically so react-hook-form populates immediately when query finishes
-  const { register, handleSubmit, watch, formState: { isSubmitting } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { isSubmitting },
+  } = useForm({
     values: data?.data || {},
   })
 
@@ -81,17 +173,16 @@ export default function AdminSiteSettingsPage() {
   const watched = watch()
 
   const mutation = useMutation({
-    mutationFn: d => api.patch('/admin/settings', d),
+    mutationFn: (d) => api.patch('/admin/settings', d),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['site-settings'] }),
   })
 
-  const onSubmit = d => mutation.mutate(d)
+  const onSubmit = (d) => mutation.mutate(d)
 
   return (
     <>
       <SEO title="Site Settings" noIndex />
       <div className="space-y-6">
-
         {/* Page Header */}
         <div className="flex items-center gap-3.5">
           <div className="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center shrink-0">
@@ -99,7 +190,9 @@ export default function AdminSiteSettingsPage() {
           </div>
           <div>
             <h1 className="font-heading text-2xl font-bold text-gray-900">Site Settings</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Manage contact info, social links, and tagline shown across the public website.</p>
+            <p className="text-sm text-gray-500 mt-0.5">
+              Manage contact info, social links, and tagline shown across the public website.
+            </p>
           </div>
         </div>
 
@@ -118,21 +211,27 @@ export default function AdminSiteSettingsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
             {/* ── Left side: Form Settings ── */}
             <form onSubmit={handleSubmit(onSubmit)} className="lg:col-span-7 space-y-5">
-              {FIELD_GROUPS.map(group => (
-                <div key={group.label} className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden transition-all hover:shadow-md">
+              {FIELD_GROUPS.map((group) => (
+                <div
+                  key={group.label}
+                  className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden transition-all hover:shadow-md"
+                >
                   {/* Group Header */}
                   <div className="px-5 py-3.5 border-b border-gray-100 bg-gray-50/60">
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{group.label}</p>
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      {group.label}
+                    </p>
                   </div>
 
                   {/* Fields */}
                   <div className="p-5 space-y-4.5">
-                    {group.fields.map(f => (
+                    {group.fields.map((f) => (
                       <div key={f.key}>
-                        <label className="text-xs font-semibold text-gray-600 block mb-1.5">{f.label}</label>
+                        <label className="text-xs font-semibold text-gray-600 block mb-1.5">
+                          {f.label}
+                        </label>
                         <div className="relative">
                           <f.Icon className="absolute left-3 top-3 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
                           {f.isTextarea ? (
@@ -167,15 +266,17 @@ export default function AdminSiteSettingsPage() {
                 </div>
               )}
 
-              <button type="submit" disabled={isSubmitting || mutation.isPending}
-                className="w-full bg-brand-blue text-white font-semibold py-3 rounded-xl text-sm hover:shadow-md hover:-translate-y-[1px] transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+              <button
+                type="submit"
+                disabled={isSubmitting || mutation.isPending}
+                className="w-full bg-brand-blue text-white font-semibold py-3 rounded-xl text-sm hover:shadow-md hover:-translate-y-[1px] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+              >
                 {mutation.isPending ? 'Saving…' : 'Save Settings'}
               </button>
             </form>
 
             {/* ── Right side: Real-Time Live Preview ── */}
             <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-6">
-              
               {/* Preview Title */}
               <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">
                 <Globe className="w-3.5 h-3.5 text-gray-400" />
@@ -185,20 +286,32 @@ export default function AdminSiteSettingsPage() {
               {/* Mock Footer Layout */}
               <div className="border border-gray-100 rounded-2xl shadow-lg overflow-hidden bg-white">
                 <div className="bg-gray-50 border-b border-gray-100 px-4 py-2 flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Mock Footer Section</span>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    Mock Footer Section
+                  </span>
                   <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
                 </div>
-                <div className="p-6 text-white text-left" style={{ background: 'linear-gradient(135deg, #1A3E8C 0%, #0f2660 100%)' }}>
+                <div
+                  className="p-6 text-white text-left"
+                  style={{ background: 'linear-gradient(135deg, #1A3E8C 0%, #0f2660 100%)' }}
+                >
                   <div className="space-y-5">
-                    
                     {/* Header */}
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <img src="/apple-touch-icon.png" alt="Logo" className="w-6 h-6 object-contain bg-white/10 rounded border border-white/20 p-0.5" />
-                        <span className="font-heading font-black text-base tracking-tight text-white">Hindustan Projects</span>
+                        <img
+                          src="/apple-touch-icon.png"
+                          alt="Logo"
+                          className="w-6 h-6 object-contain bg-white/10 rounded border border-white/20 p-0.5"
+                        />
+                        <span className="font-heading font-black text-base tracking-tight text-white">
+                          Hindustan Projects
+                        </span>
                       </div>
                       <p className="text-xs text-white/60 italic leading-relaxed font-light font-sans max-w-sm">
-                        "{watched.tagline || 'Building Digital Solutions That Drive Business Growth'}"
+                        "
+                        {watched.tagline || 'Building Digital Solutions That Drive Business Growth'}
+                        "
                       </p>
                     </div>
 
@@ -208,7 +321,9 @@ export default function AdminSiteSettingsPage() {
                     <div className="space-y-2.5">
                       <div className="flex items-start gap-2.5 text-xs text-white/70">
                         <MapPin className="w-3.5 h-3.5 text-white/50 shrink-0 mt-0.5" />
-                        <span className="leading-tight">{watched.address || 'Office Address...'}</span>
+                        <span className="leading-tight">
+                          {watched.address || 'Office Address...'}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2.5 text-xs text-white/70">
                         <Phone className="w-3.5 h-3.5 text-white/50 shrink-0" />
@@ -216,7 +331,9 @@ export default function AdminSiteSettingsPage() {
                       </div>
                       <div className="flex items-center gap-2.5 text-xs text-white/70">
                         <Mail className="w-3.5 h-3.5 text-white/50 shrink-0" />
-                        <span className="underline decoration-white/20">{watched.email || 'Email address...'}</span>
+                        <span className="underline decoration-white/20">
+                          {watched.email || 'Email address...'}
+                        </span>
                       </div>
                     </div>
 
@@ -235,16 +352,16 @@ export default function AdminSiteSettingsPage() {
                           <FacebookIcon className="w-3.5 h-3.5" />
                         </span>
                       </div>
-                      <span className="text-[10px] text-white/30 font-medium">© {new Date().getFullYear()} Hindustan Projects</span>
+                      <span className="text-[10px] text-white/30 font-medium">
+                        © {new Date().getFullYear()} Hindustan Projects
+                      </span>
                     </div>
-
                   </div>
                 </div>
               </div>
 
               {/* Mock WhatsApp Chat widget */}
               <div className="border border-gray-100 rounded-2xl shadow-lg overflow-hidden bg-[#E5DDD5]">
-                
                 {/* Header */}
                 <div className="bg-[#075E54] text-white px-4 py-3 flex items-center gap-3 shrink-0 shadow">
                   <div className="relative w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center shrink-0 font-heading font-black text-xs text-brand-red">
@@ -253,17 +370,21 @@ export default function AdminSiteSettingsPage() {
                   </div>
                   <div>
                     <p className="text-xs font-bold leading-none">Hindustan Projects</p>
-                    <p className="text-[9px] text-white/70 mt-0.5 leading-none">Typically replies instantly</p>
+                    <p className="text-[9px] text-white/70 mt-0.5 leading-none">
+                      Typically replies instantly
+                    </p>
                   </div>
                 </div>
 
                 {/* Message Log */}
                 <div className="p-4 space-y-3 font-sans text-xs">
-                  
                   {/* Greeting bubble */}
                   <div className="bg-white rounded-r-xl rounded-bl-xl p-2.5 max-w-[85%] shadow-sm relative text-gray-800 leading-normal">
                     <p className="font-semibold text-[10px] text-[#075E54] mb-0.5">Support Desk</p>
-                    <p>Hello! Welcome to Hindustan Projects. How can we help you build your digital product today?</p>
+                    <p>
+                      Hello! Welcome to Hindustan Projects. How can we help you build your digital
+                      product today?
+                    </p>
                     <span className="text-[8px] text-gray-400 float-right mt-1">10:00 AM</span>
                   </div>
 
@@ -273,9 +394,12 @@ export default function AdminSiteSettingsPage() {
                       <Send className="w-2.5 h-2.5" /> Client WhatsApp Message Draft
                     </div>
                     <p className="italic text-gray-700 whitespace-pre-line font-mono text-[11px] bg-white/40 p-1.5 rounded border border-green-200/30">
-                      {watched.whatsappMessage || 'Hi! I visited your website and want to discuss a project.'}
+                      {watched.whatsappMessage ||
+                        'Hi! I visited your website and want to discuss a project.'}
                     </p>
-                    <span className="text-[8px] text-green-600/70 float-right mt-1.5">Draft template</span>
+                    <span className="text-[8px] text-green-600/70 float-right mt-1.5">
+                      Draft template
+                    </span>
                   </div>
                 </div>
 
@@ -283,14 +407,19 @@ export default function AdminSiteSettingsPage() {
                 <div className="bg-white/95 border-t border-gray-100 px-4 py-2.5 flex items-center justify-between text-[10px] text-gray-500">
                   <div className="flex items-center gap-1.5">
                     <MessageCircle className="w-3.5 h-3.5 text-green-600 shrink-0" />
-                    <span>Target Number: <strong className="font-semibold text-gray-700">{watched.whatsapp || 'Not set'}</strong></span>
+                    <span>
+                      Target Number:{' '}
+                      <strong className="font-semibold text-gray-700">
+                        {watched.whatsapp || 'Not set'}
+                      </strong>
+                    </span>
                   </div>
-                  <span className="px-2 py-0.5 bg-green-50 text-green-700 border border-green-200 rounded font-medium text-[9px]">ACTIVE</span>
+                  <span className="px-2 py-0.5 bg-green-50 text-green-700 border border-green-200 rounded font-medium text-[9px]">
+                    ACTIVE
+                  </span>
                 </div>
               </div>
-
             </div>
-
           </div>
         )}
       </div>

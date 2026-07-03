@@ -23,11 +23,9 @@ export const adminLogin = async (req, res, next) => {
       return res.status(401).json({ status: 'error', message: 'Invalid credentials.' })
     }
 
-    const token = jwt.sign(
-      { id: admin.id, email: admin.email, role: admin.role },
-      env.JWT_SECRET,
-      { expiresIn: env.JWT_EXPIRES_IN || '7d' },
-    )
+    const token = jwt.sign({ id: admin.id, email: admin.email, role: admin.role }, env.JWT_SECRET, {
+      expiresIn: env.JWT_EXPIRES_IN || '7d',
+    })
 
     // httpOnly cookie — not accessible from JS
     setAdminCookie(res, token)
@@ -100,7 +98,7 @@ export const changeEmail = async (req, res, next) => {
     const token = jwt.sign(
       { id: updatedAdmin.id, email: updatedAdmin.email, role: updatedAdmin.role },
       env.JWT_SECRET,
-      { expiresIn: env.JWT_EXPIRES_IN || '7d' },
+      { expiresIn: env.JWT_EXPIRES_IN || '7d' }
     )
 
     setAdminCookie(res, token)
@@ -121,7 +119,9 @@ export const changeEmail = async (req, res, next) => {
 export const getMasterKeyHint = async (req, res, next) => {
   try {
     const currentMaster = await resolveMasterKey()
-    const dbRow = await prisma.siteSetting.findUnique({ where: { key: 'sys_integration_master_key' } })
+    const dbRow = await prisma.siteSetting.findUnique({
+      where: { key: 'sys_integration_master_key' },
+    })
 
     res.json({
       status: 'ok',
@@ -139,13 +139,17 @@ export const changeMasterKey = async (req, res, next) => {
     const { currentKey, newKey } = req.body
 
     if (!newKey || typeof newKey !== 'string' || newKey.trim().length < 8) {
-      return res.status(400).json({ status: 'error', message: 'New key must be at least 8 characters.' })
+      return res
+        .status(400)
+        .json({ status: 'error', message: 'New key must be at least 8 characters.' })
     }
 
     const { match, masterKey } = await verifyMasterKey(currentKey)
 
     if (!masterKey) {
-      return res.status(500).json({ status: 'error', message: 'Master key not configured on server.' })
+      return res
+        .status(500)
+        .json({ status: 'error', message: 'Master key not configured on server.' })
     }
 
     if (!match) {
@@ -154,7 +158,7 @@ export const changeMasterKey = async (req, res, next) => {
 
     // Save new key to DB and update process.env
     await prisma.siteSetting.upsert({
-      where:  { key: 'sys_integration_master_key' },
+      where: { key: 'sys_integration_master_key' },
       update: { value: newKey.trim() },
       create: { key: 'sys_integration_master_key', value: newKey.trim() },
     })
@@ -176,7 +180,9 @@ export const getDashboardStats = async (_req, res, next) => {
       totalServices,
       totalTeam,
       totalApplications,
-      openPositions
+      openPositions,
+      clientProjects,
+      workTasks,
     ] = await Promise.all([
       prisma.contactLead.count(),
       prisma.contactLead.count({ where: { status: 'NEW' } }),
@@ -186,8 +192,26 @@ export const getDashboardStats = async (_req, res, next) => {
       prisma.service.count({ where: { isActive: true } }),
       prisma.teamMember.count(),
       prisma.jobApplication.count(),
-      prisma.jobPosting.count({ where: { isActive: true } })
+      prisma.jobPosting.count({ where: { isActive: true } }),
+      prisma.clientProject.findMany(),
+      prisma.workTask.findMany(),
     ])
+
+    const activeProjectsCount = clientProjects.filter((p) => p.status !== 'COMPLETED').length
+    const now = new Date()
+    const overdueProjectsCount = clientProjects.filter(
+      (p) => p.status !== 'COMPLETED' && new Date(p.deadline) < now
+    ).length
+
+    const todayStart = new Date()
+    todayStart.setHours(0, 0, 0, 0)
+    const todayEnd = new Date()
+    todayEnd.setHours(23, 59, 59, 999)
+    const dueTodayTasksCount = workTasks.filter((t) => {
+      if (!t.dueDate || t.status === 'DONE') return false
+      const d = new Date(t.dueDate)
+      return d >= todayStart && d <= todayEnd
+    }).length
 
     res.json({
       status: 'ok',
@@ -200,7 +224,11 @@ export const getDashboardStats = async (_req, res, next) => {
         totalServices,
         totalTeam,
         totalApplications,
-        openPositions
+        openPositions,
+        activeProjectsCount,
+        overdueProjectsCount,
+        dueTodayTasksCount,
+        totalClientProjectsCount: clientProjects.length,
       },
     })
   } catch (err) {

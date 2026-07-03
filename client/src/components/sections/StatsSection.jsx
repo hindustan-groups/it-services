@@ -7,8 +7,8 @@ import { useSiteSettings } from '@/hooks/useContent'
 const FALLBACK_STATS = [
   { value: 50, suffix: '+', label: 'Projects Delivered' },
   { value: 40, suffix: '+', label: 'Happy Clients' },
-  { value: 5,  suffix: '+', label: 'Years Experience' },
-  { value: 3,  suffix: '+', label: 'Cities Served' },
+  { value: 5, suffix: '+', label: 'Years Experience' },
+  { value: 3, suffix: '+', label: 'Cities Served' },
 ]
 
 function StatItem({ value, suffix = '', label }) {
@@ -19,7 +19,9 @@ function StatItem({ value, suffix = '', label }) {
         {count}
         <span className="text-brand-red-light">{suffix}</span>
       </p>
-      <p className="mt-3 text-[10px] md:text-xs text-white/70 font-bold tracking-widest uppercase">{label}</p>
+      <p className="mt-3 text-[10px] md:text-xs text-white/70 font-bold tracking-widest uppercase">
+        {label}
+      </p>
     </motion.div>
   )
 }
@@ -28,12 +30,14 @@ export default function StatsSection() {
   const { data: settingsData } = useSiteSettings()
   const s = settingsData?.data
 
-  const stats = s ? [
-    { value: parseInt(s.stat_projects)    || 50, suffix: '+', label: 'Projects Delivered' },
-    { value: parseInt(s.stat_clients)     || 40, suffix: '+', label: 'Happy Clients' },
-    { value: parseInt(s.stat_experience)  || 5,  suffix: '+', label: 'Years Experience' },
-    { value: parseInt(s.stat_cities)      || 3,  suffix: '+', label: 'Cities Served' },
-  ] : FALLBACK_STATS
+  const stats = s
+    ? [
+        { value: parseInt(s.stat_projects) || 50, suffix: '+', label: 'Projects Delivered' },
+        { value: parseInt(s.stat_clients) || 40, suffix: '+', label: 'Happy Clients' },
+        { value: parseInt(s.stat_experience) || 5, suffix: '+', label: 'Years Experience' },
+        { value: parseInt(s.stat_cities) || 3, suffix: '+', label: 'Cities Served' },
+      ]
+    : FALLBACK_STATS
 
   return (
     <section className="py-16 relative overflow-hidden bg-brand-blue-dark border-y border-white/5">

@@ -46,13 +46,16 @@ export default function HomePage() {
     setSubmitting(true)
     try {
       await api.post('/contact', {
-        name, email,
+        name,
+        email,
         serviceInterested: service,
         message: `Quick quote request from homepage for: ${service}`,
         recaptchaToken: 'dev-token',
         _hp: '',
       })
-    } catch { /* silent — UX first */ }
+    } catch {
+      /* silent — UX first */
+    }
     setSubmitted(true)
     setSubmitting(false)
   }
@@ -73,8 +76,11 @@ export default function HomePage() {
             Trusted By Forward-Thinking Brands & Businesses
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 md:gap-x-16 opacity-30 hover:opacity-50 transition-opacity duration-300 pointer-events-none select-none">
-            {partners.map(p => (
-              <span key={p.id} className="font-heading text-sm md:text-base font-black tracking-wider text-brand-blue uppercase">
+            {partners.map((p) => (
+              <span
+                key={p.id}
+                className="font-heading text-sm md:text-base font-black tracking-wider text-brand-blue uppercase"
+              >
                 {p.name}
               </span>
             ))}
@@ -123,8 +129,8 @@ export default function HomePage() {
                 Ready to Grow Your Business Digitally?
               </h2>
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-md">
-                Get a free consultation with our team. We will understand your goals and
-                recommend the right technology solution — no jargon, no pressure.
+                Get a free consultation with our team. We will understand your goals and recommend
+                the right technology solution — no jargon, no pressure.
               </p>
             </div>
 
@@ -136,9 +142,12 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400 font-bold text-lg">
                       ✓
                     </div>
-                    <h3 className="font-heading text-base font-bold text-white">Inquiry Received!</h3>
+                    <h3 className="font-heading text-base font-bold text-white">
+                      Inquiry Received!
+                    </h3>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      Thank you! Mohammad Dilshan and our technical advisors will get back to you within 2 hours.
+                      Thank you! Mohammad Dilshan and our technical advisors will get back to you
+                      within 2 hours.
                     </p>
                   </div>
                 ) : (
@@ -147,32 +156,38 @@ export default function HomePage() {
                       Request a Free Quote
                     </h3>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1">Your Name</label>
-                      <input 
-                        type="text" 
-                        required 
-                        value={name} 
-                        onChange={(e) => setName(e.target.value)} 
-                        placeholder="e.g. Aditya Sharma" 
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1">
+                        Your Name
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="e.g. Aditya Sharma"
                         className="w-full bg-slate-950/50 border border-white/10 rounded-lg px-3.5 py-2 text-xs text-white placeholder-white/30 focus:outline-none focus:border-brand-red-light focus:ring-1 focus:ring-brand-red-light/30 transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1">Your Email</label>
-                      <input 
-                        type="email" 
-                        required 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
-                        placeholder="e.g. aditya@textiles.com" 
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1">
+                        Your Email
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="e.g. aditya@textiles.com"
                         className="w-full bg-slate-950/50 border border-white/10 rounded-lg px-3.5 py-2 text-xs text-white placeholder-white/30 focus:outline-none focus:border-brand-red-light focus:ring-1 focus:ring-brand-red-light/30 transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1">Service Needed</label>
-                      <select 
-                        value={service} 
-                        onChange={(e) => setService(e.target.value)} 
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1">
+                        Service Needed
+                      </label>
+                      <select
+                        value={service}
+                        onChange={(e) => setService(e.target.value)}
                         className="w-full bg-slate-950 border border-white/10 rounded-lg px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-red-light transition-all cursor-pointer"
                       >
                         <option value="Web Development">Web Development</option>
@@ -181,8 +196,8 @@ export default function HomePage() {
                         <option value="E-Commerce Solutions">E-Commerce Solutions</option>
                       </select>
                     </div>
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="w-full mt-2.5 bg-brand-red hover:bg-brand-red-dark text-white font-bold py-2.5 rounded-lg text-xs transition-all shadow-md active:scale-[0.98] cursor-pointer disabled:opacity-60"
                       disabled={submitting}
                     >
@@ -190,9 +205,9 @@ export default function HomePage() {
                     </button>
                   </form>
                 )}
-                
+
                 <div className="border-t border-white/10 my-4" />
-                
+
                 <div className="space-y-3.5">
                   <a
                     href={`tel:${phone.replace(/\s+/g, '')}`}

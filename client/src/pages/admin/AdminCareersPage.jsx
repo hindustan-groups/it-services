@@ -1,12 +1,34 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useOutletContext } from 'react-router-dom'
-import { 
-  Briefcase, Plus, Edit2, Trash2, Check, X, FileText, 
-  Download, Eye, UserCheck, Users, Mail, Phone, ChevronRight,
-  Filter, AlertCircle, MessageCircle
+import {
+  Briefcase,
+  Plus,
+  Edit2,
+  Trash2,
+  Check,
+  X,
+  FileText,
+  Download,
+  Eye,
+  UserCheck,
+  Users,
+  Mail,
+  Phone,
+  ChevronRight,
+  Filter,
+  AlertCircle,
+  MessageCircle,
 } from 'lucide-react'
-import { useAdminJobs, useCreateJob, useUpdateJob, useDeleteJob, useAdminApplications, useUpdateApplicationStatus, useDeleteApplication } from '@/hooks/useCareers'
+import {
+  useAdminJobs,
+  useCreateJob,
+  useUpdateJob,
+  useDeleteJob,
+  useAdminApplications,
+  useUpdateApplicationStatus,
+  useDeleteApplication,
+} from '@/hooks/useCareers'
 import { SEO } from '@/components/ui'
 
 const JOB_TYPE_LABELS = {
@@ -29,7 +51,9 @@ const getWhatsAppLink = (fullName, jobTitle, rawPhone) => {
   if (cleaned.length === 10) {
     cleaned = '91' + cleaned
   }
-  const text = encodeURIComponent(`Hello ${fullName},\n\nThis is from Hindustan Projects. We reviewed your application for the "${jobTitle}" position. We would like to connect with you regarding the next steps.`)
+  const text = encodeURIComponent(
+    `Hello ${fullName},\n\nThis is from Hindustan Projects. We reviewed your application for the "${jobTitle}" position. We would like to connect with you regarding the next steps.`
+  )
   return `https://wa.me/${cleaned}?text=${text}`
 }
 
@@ -46,9 +70,13 @@ export default function AdminCareersPage() {
 
   // Queries & Mutations
   const { data: jobsData, isLoading: jobsLoading, isError: jobsError } = useAdminJobs()
-  const { data: appsData, isLoading: appsLoading, isError: appsError } = useAdminApplications({
+  const {
+    data: appsData,
+    isLoading: appsLoading,
+    isError: appsError,
+  } = useAdminApplications({
     jobPostingId: jobFilter,
-    status: statusFilter
+    status: statusFilter,
   })
 
   const createJobMut = useCreateJob()
@@ -58,7 +86,13 @@ export default function AdminCareersPage() {
   const deleteAppMut = useDeleteApplication()
 
   // Form Setup for Job Posting CRUD
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm()
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm()
 
   const handleOpenCreateModal = () => {
     reset({
@@ -95,8 +129,14 @@ export default function AdminCareersPage() {
   const onJobSubmit = async (data) => {
     const payload = {
       ...data,
-      responsibilities: data.responsibilities.split('\n').map(line => line.trim()).filter(Boolean),
-      requirements: data.requirements.split('\n').map(line => line.trim()).filter(Boolean),
+      responsibilities: data.responsibilities
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean),
+      requirements: data.requirements
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean),
     }
 
     try {
@@ -113,7 +153,11 @@ export default function AdminCareersPage() {
   }
 
   const handleDeleteJob = async (id) => {
-    if (confirm('Are you sure you want to delete this job posting? This will delete all applications submitted for this role.')) {
+    if (
+      confirm(
+        'Are you sure you want to delete this job posting? This will delete all applications submitted for this role.'
+      )
+    ) {
       try {
         await deleteJobMut.mutateAsync(id)
       } catch (err) {
@@ -127,7 +171,7 @@ export default function AdminCareersPage() {
       await updateJobMut.mutateAsync({
         id: job.id,
         slug: job.slug,
-        isActive: !job.isActive
+        isActive: !job.isActive,
       })
     } catch (err) {
       alert(err.message || 'Failed to toggle job status')
@@ -138,7 +182,7 @@ export default function AdminCareersPage() {
     try {
       await updateAppStatusMut.mutateAsync({ id: appId, status: newStatus })
       if (viewingApp && viewingApp.id === appId) {
-        setViewingApp(prev => ({ ...prev, status: newStatus }))
+        setViewingApp((prev) => ({ ...prev, status: newStatus }))
       }
     } catch (err) {
       alert(err.message || 'Failed to update application status')
@@ -160,8 +204,18 @@ export default function AdminCareersPage() {
 
   const handleExportApplications = () => {
     if (!appsList.length) return
-    const headers = ['Candidate Name', 'Job Title', 'Department', 'Email', 'Phone', 'Status', 'Applied Date', 'Resume URL', 'Cover Letter']
-    const rows = appsList.map(app => [
+    const headers = [
+      'Candidate Name',
+      'Job Title',
+      'Department',
+      'Email',
+      'Phone',
+      'Status',
+      'Applied Date',
+      'Resume URL',
+      'Cover Letter',
+    ]
+    const rows = appsList.map((app) => [
       app.fullName,
       app.jobPosting?.title || 'General Application',
       app.jobPosting?.department || 'General',
@@ -170,15 +224,19 @@ export default function AdminCareersPage() {
       app.status,
       new Date(app.createdAt).toLocaleDateString(),
       app.resumeUrl,
-      (app.coverLetter || '').replace(/\n/g, '  ')
+      (app.coverLetter || '').replace(/\n/g, '  '),
     ])
-    
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + [headers.join(','), ...rows.map(e => e.map(val => `"${val}"`).join(","))].join("\n")
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map((e) => e.map((val) => `"${val}"`).join(','))].join('\n')
     const encodedUri = encodeURI(csvContent)
-    const link = document.createElement("a")
-    link.setAttribute("href", encodedUri)
-    link.setAttribute("download", `Hindustan_Projects_Job_Applications_${new Date().toISOString().split('T')[0]}.csv`)
+    const link = document.createElement('a')
+    link.setAttribute('href', encodedUri)
+    link.setAttribute(
+      'download',
+      `Hindustan_Projects_Job_Applications_${new Date().toISOString().split('T')[0]}.csv`
+    )
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -187,18 +245,20 @@ export default function AdminCareersPage() {
   const jobsList = jobsData?.data || []
   const appsList = appsData?.data || []
 
-  const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue/20 transition-all placeholder-gray-400"
+  const inputCls =
+    'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue/20 transition-all placeholder-gray-400'
 
   return (
     <>
       <SEO title="Manage Careers" noIndex />
       <div className="space-y-6">
-        
         {/* Header Block */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-200 pb-5">
           <div>
             <h1 className="text-2xl font-bold font-heading text-gray-900">Careers Management</h1>
-            <p className="text-sm text-gray-500">Post open roles, manage job descriptions, and track applicant files.</p>
+            <p className="text-sm text-gray-500">
+              Post open roles, manage job descriptions, and track applicant files.
+            </p>
           </div>
           {activeTab === 'postings' && (
             <button
@@ -253,19 +313,33 @@ export default function AdminCareersPage() {
               <div className="py-16 text-center space-y-3">
                 <Briefcase className="w-10 h-10 text-gray-300 mx-auto" />
                 <h3 className="text-sm font-bold text-gray-800">No Job Postings Yet</h3>
-                <p className="text-xs text-gray-400 max-w-xs mx-auto">Create a new posting and toggle active to display it on the public careers page.</p>
+                <p className="text-xs text-gray-400 max-w-xs mx-auto">
+                  Create a new posting and toggle active to display it on the public careers page.
+                </p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-200">
-                      <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Role Info</th>
-                      <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Department</th>
-                      <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Location</th>
-                      <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Job Type</th>
-                      <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Status</th>
-                      <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                      <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                        Role Info
+                      </th>
+                      <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                        Department
+                      </th>
+                      <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                        Location
+                      </th>
+                      <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                        Job Type
+                      </th>
+                      <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">
+                        Status
+                      </th>
+                      <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-sm">
@@ -273,7 +347,9 @@ export default function AdminCareersPage() {
                       <tr key={job.id} className="hover:bg-gray-50/50 transition-colors">
                         <td className="py-3.5 px-4">
                           <p className="font-bold text-gray-800">{job.title}</p>
-                          <p className="text-[10px] text-gray-400 font-mono select-all">/{job.slug}</p>
+                          <p className="text-[10px] text-gray-400 font-mono select-all">
+                            /{job.slug}
+                          </p>
                         </td>
                         <td className="py-3.5 px-4 text-gray-600 font-medium">{job.department}</td>
                         <td className="py-3.5 px-4 text-gray-500">{job.location}</td>
@@ -341,8 +417,10 @@ export default function AdminCareersPage() {
                     className="border border-gray-200 rounded-lg text-xs font-semibold px-3 py-1.5 text-gray-600 focus:outline-none cursor-pointer"
                   >
                     <option value="">All Job Postings</option>
-                    {jobsList.map(j => (
-                      <option key={j.id} value={j.id}>{j.title}</option>
+                    {jobsList.map((j) => (
+                      <option key={j.id} value={j.id}>
+                        {j.title}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -378,51 +456,78 @@ export default function AdminCareersPage() {
                   <div className="w-8 h-8 border-2 border-brand-blue border-t-transparent rounded-full animate-spin mx-auto" />
                 </div>
               ) : appsError ? (
-                <div className="p-8 text-center text-red-500">
-                  Failed to load applications.
-                </div>
+                <div className="p-8 text-center text-red-500">Failed to load applications.</div>
               ) : appsList.length === 0 ? (
                 <div className="py-16 text-center space-y-3">
                   <Users className="w-10 h-10 text-gray-300 mx-auto" />
                   <h3 className="text-sm font-bold text-gray-800">No applications found</h3>
-                  <p className="text-xs text-gray-400">Modify filters or promote open roles to receive resumes.</p>
+                  <p className="text-xs text-gray-400">
+                    Modify filters or promote open roles to receive resumes.
+                  </p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="bg-gray-50 border-b border-gray-200">
-                        <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Job Title</th>
-                        <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Candidate</th>
-                        <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Contact Info</th>
-                        <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Resume</th>
-                        <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                        <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                        <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                          Job Title
+                        </th>
+                        <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                          Candidate
+                        </th>
+                        <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                          Contact Info
+                        </th>
+                        <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                          Resume
+                        </th>
+                        <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                          Status
+                        </th>
+                        <th className="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 text-sm">
                       {appsList.map((app) => (
                         <tr key={app.id} className="hover:bg-gray-50/50 transition-colors">
                           <td className="py-3.5 px-4">
-                            <p className="font-bold text-gray-800">{app.jobPosting?.title || 'General App'}</p>
-                            <p className="text-[10px] text-gray-400 uppercase tracking-wider">{app.jobPosting?.department || 'General'}</p>
+                            <p className="font-bold text-gray-800">
+                              {app.jobPosting?.title || 'General App'}
+                            </p>
+                            <p className="text-[10px] text-gray-400 uppercase tracking-wider">
+                              {app.jobPosting?.department || 'General'}
+                            </p>
                           </td>
                           <td className="py-3.5 px-4">
-                            <span className="font-semibold text-gray-800 block">{app.fullName}</span>
-                            <span className="text-[10px] text-gray-400">Applied: {new Date(app.createdAt).toLocaleDateString()}</span>
+                            <span className="font-semibold text-gray-800 block">
+                              {app.fullName}
+                            </span>
+                            <span className="text-[10px] text-gray-400">
+                              Applied: {new Date(app.createdAt).toLocaleDateString()}
+                            </span>
                           </td>
                           <td className="py-3.5 px-4 space-y-0.5 text-xs text-gray-500">
-                            <p className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 shrink-0" /> {app.email}</p>
+                            <p className="flex items-center gap-1.5">
+                              <Mail className="w-3.5 h-3.5 shrink-0" /> {app.email}
+                            </p>
                             <p className="flex items-center gap-1.5">
                               <Phone className="w-3.5 h-3.5 shrink-0" /> {app.phone}
                               <a
-                                href={getWhatsAppLink(app.fullName, app.jobPosting?.title || 'General App', app.phone)}
+                                href={getWhatsAppLink(
+                                  app.fullName,
+                                  app.jobPosting?.title || 'General App',
+                                  app.phone
+                                )}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="inline-flex items-center gap-0.5 text-[9px] font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-1 py-0.5 rounded border border-emerald-200 transition-colors ml-1"
                                 title="Chat on WhatsApp"
                               >
-                                <MessageCircle className="w-2.5 h-2.5 fill-emerald-500 text-emerald-600" /> WA
+                                <MessageCircle className="w-2.5 h-2.5 fill-emerald-500 text-emerald-600" />{' '}
+                                WA
                               </a>
                             </p>
                           </td>
@@ -486,41 +591,80 @@ export default function AdminCareersPage() {
                 <h3 className="font-heading text-lg font-bold text-gray-900">
                   {editingJob.id ? 'Edit Job Posting' : 'Create Job Posting'}
                 </h3>
-                <button onClick={() => setEditingJob(null)} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                <button
+                  onClick={() => setEditingJob(null)}
+                  className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Modal Body */}
-              <form onSubmit={handleSubmit(onJobSubmit)} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+              <form
+                onSubmit={handleSubmit(onJobSubmit)}
+                className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4"
+              >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-semibold text-gray-600 block mb-1">Job Title *</label>
-                    <input {...register('title', { required: true })} className={inputCls} placeholder="e.g. Node.js Developer" />
-                    {errors.title && <p className="text-[10px] text-red-500 mt-1">Title is required</p>}
+                    <label className="text-xs font-semibold text-gray-600 block mb-1">
+                      Job Title *
+                    </label>
+                    <input
+                      {...register('title', { required: true })}
+                      className={inputCls}
+                      placeholder="e.g. Node.js Developer"
+                    />
+                    {errors.title && (
+                      <p className="text-[10px] text-red-500 mt-1">Title is required</p>
+                    )}
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-gray-600 block mb-1">Slug * (lowercase-hyphens)</label>
-                    <input {...register('slug', { required: true })} className={inputCls} placeholder="e.g. node-developer" />
-                    {errors.slug && <p className="text-[10px] text-red-500 mt-1">Slug is required</p>}
+                    <label className="text-xs font-semibold text-gray-600 block mb-1">
+                      Slug * (lowercase-hyphens)
+                    </label>
+                    <input
+                      {...register('slug', { required: true })}
+                      className={inputCls}
+                      placeholder="e.g. node-developer"
+                    />
+                    {errors.slug && (
+                      <p className="text-[10px] text-red-500 mt-1">Slug is required</p>
+                    )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-semibold text-gray-600 block mb-1">Department *</label>
-                    <input {...register('department', { required: true })} className={inputCls} placeholder="e.g. Engineering" />
+                    <label className="text-xs font-semibold text-gray-600 block mb-1">
+                      Department *
+                    </label>
+                    <input
+                      {...register('department', { required: true })}
+                      className={inputCls}
+                      placeholder="e.g. Engineering"
+                    />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-gray-600 block mb-1">Location *</label>
-                    <input {...register('location', { required: true })} className={inputCls} placeholder="e.g. Bhilwara (On-site) or Remote" />
+                    <label className="text-xs font-semibold text-gray-600 block mb-1">
+                      Location *
+                    </label>
+                    <input
+                      {...register('location', { required: true })}
+                      className={inputCls}
+                      placeholder="e.g. Bhilwara (On-site) or Remote"
+                    />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-semibold text-gray-600 block mb-1">Job Type *</label>
-                    <select {...register('jobType')} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none cursor-pointer">
+                    <label className="text-xs font-semibold text-gray-600 block mb-1">
+                      Job Type *
+                    </label>
+                    <select
+                      {...register('jobType')}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none cursor-pointer"
+                    >
                       <option value="FULL_TIME">Full Time</option>
                       <option value="PART_TIME">Part Time</option>
                       <option value="INTERNSHIP">Internship</option>
@@ -528,41 +672,84 @@ export default function AdminCareersPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-gray-600 block mb-1">Experience Required *</label>
-                    <input {...register('experienceRequired', { required: true })} className={inputCls} placeholder="e.g. 1–3 Years" />
+                    <label className="text-xs font-semibold text-gray-600 block mb-1">
+                      Experience Required *
+                    </label>
+                    <input
+                      {...register('experienceRequired', { required: true })}
+                      className={inputCls}
+                      placeholder="e.g. 1–3 Years"
+                    />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-gray-600 block mb-1">Role Description *</label>
-                  <textarea rows={3} {...register('description', { required: true })} className={`${inputCls} resize-none`} placeholder="Overview of the vacancy..." />
+                  <label className="text-xs font-semibold text-gray-600 block mb-1">
+                    Role Description *
+                  </label>
+                  <textarea
+                    rows={3}
+                    {...register('description', { required: true })}
+                    className={`${inputCls} resize-none`}
+                    placeholder="Overview of the vacancy..."
+                  />
                 </div>
 
                 <div>
                   <label className="text-xs font-semibold text-gray-600 block mb-1">
-                    Key Responsibilities <span className="text-gray-400 font-normal">(one per line)</span>
+                    Key Responsibilities{' '}
+                    <span className="text-gray-400 font-normal">(one per line)</span>
                   </label>
-                  <textarea rows={4} {...register('responsibilities')} className={`${inputCls} resize-none font-mono text-xs`} placeholder={'Implement API routes\nCollaborate with designer'} />
+                  <textarea
+                    rows={4}
+                    {...register('responsibilities')}
+                    className={`${inputCls} resize-none font-mono text-xs`}
+                    placeholder={'Implement API routes\nCollaborate with designer'}
+                  />
                 </div>
 
                 <div>
                   <label className="text-xs font-semibold text-gray-600 block mb-1">
-                    Requirements / Skills <span className="text-gray-400 font-normal">(one per line)</span>
+                    Requirements / Skills{' '}
+                    <span className="text-gray-400 font-normal">(one per line)</span>
                   </label>
-                  <textarea rows={4} {...register('requirements')} className={`${inputCls} resize-none font-mono text-xs`} placeholder={'Strong Node.js knowledge\nFamiliar with Git'} />
+                  <textarea
+                    rows={4}
+                    {...register('requirements')}
+                    className={`${inputCls} resize-none font-mono text-xs`}
+                    placeholder={'Strong Node.js knowledge\nFamiliar with Git'}
+                  />
                 </div>
 
                 <div className="flex items-center gap-2 pt-2">
-                  <input type="checkbox" id="jobActive" {...register('isActive')} className="w-4 h-4 text-brand-blue cursor-pointer" />
-                  <label htmlFor="jobActive" className="text-xs font-semibold text-gray-600 cursor-pointer">Active Posting (Visible on website)</label>
+                  <input
+                    type="checkbox"
+                    id="jobActive"
+                    {...register('isActive')}
+                    className="w-4 h-4 text-brand-blue cursor-pointer"
+                  />
+                  <label
+                    htmlFor="jobActive"
+                    className="text-xs font-semibold text-gray-600 cursor-pointer"
+                  >
+                    Active Posting (Visible on website)
+                  </label>
                 </div>
 
                 {/* Modal Actions */}
                 <div className="flex gap-3 pt-4 border-t border-gray-100 justify-end">
-                  <button type="button" onClick={() => setEditingJob(null)} className="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors cursor-pointer">
+                  <button
+                    type="button"
+                    onClick={() => setEditingJob(null)}
+                    className="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors cursor-pointer"
+                  >
                     Cancel
                   </button>
-                  <button type="submit" disabled={createJobMut.isPending || updateJobMut.isPending} className="px-5 py-2 bg-brand-blue text-white rounded-lg text-xs font-bold hover:bg-brand-blue/90 shadow-sm transition-colors cursor-pointer disabled:opacity-60">
+                  <button
+                    type="submit"
+                    disabled={createJobMut.isPending || updateJobMut.isPending}
+                    className="px-5 py-2 bg-brand-blue text-white rounded-lg text-xs font-bold hover:bg-brand-blue/90 shadow-sm transition-colors cursor-pointer disabled:opacity-60"
+                  >
                     Save Job Posting
                   </button>
                 </div>
@@ -578,12 +765,19 @@ export default function AdminCareersPage() {
               {/* Header */}
               <div className="bg-gray-50 p-5 border-b border-gray-100 flex items-center justify-between">
                 <div>
-                  <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${STATUS_COLORS[viewingApp.status]}`}>
+                  <span
+                    className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${STATUS_COLORS[viewingApp.status]}`}
+                  >
                     {viewingApp.status}
                   </span>
-                  <h3 className="font-heading text-base font-bold text-gray-900 mt-1.5">Application Details</h3>
+                  <h3 className="font-heading text-base font-bold text-gray-900 mt-1.5">
+                    Application Details
+                  </h3>
                 </div>
-                <button onClick={() => setViewingApp(null)} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-white transition-colors cursor-pointer">
+                <button
+                  onClick={() => setViewingApp(null)}
+                  className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-white transition-colors cursor-pointer"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -593,9 +787,15 @@ export default function AdminCareersPage() {
                 {/* Job Info */}
                 <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex justify-between items-center">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-gray-400">Position Applied</span>
-                    <h4 className="font-bold text-gray-800 text-sm mt-0.5">{viewingApp.jobPosting?.title || 'General Application'}</h4>
-                    <p className="text-xs text-gray-500">{viewingApp.jobPosting?.department || 'General'}</p>
+                    <span className="text-[10px] uppercase font-bold text-gray-400">
+                      Position Applied
+                    </span>
+                    <h4 className="font-bold text-gray-800 text-sm mt-0.5">
+                      {viewingApp.jobPosting?.title || 'General Application'}
+                    </h4>
+                    <p className="text-xs text-gray-500">
+                      {viewingApp.jobPosting?.department || 'General'}
+                    </p>
                   </div>
                   <a
                     href={viewingApp.resumeUrl}
@@ -609,7 +809,9 @@ export default function AdminCareersPage() {
 
                 {/* Candidate Info */}
                 <div className="space-y-3.5">
-                  <h5 className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Candidate Profile</h5>
+                  <h5 className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                    Candidate Profile
+                  </h5>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <span className="text-xs text-gray-400 block">Full Name</span>
@@ -617,30 +819,43 @@ export default function AdminCareersPage() {
                     </div>
                     <div>
                       <span className="text-xs text-gray-400 block">Applied Date</span>
-                      <span className="text-sm font-semibold text-gray-800">{new Date(viewingApp.createdAt).toLocaleDateString()}</span>
+                      <span className="text-sm font-semibold text-gray-800">
+                        {new Date(viewingApp.createdAt).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <span className="text-xs text-gray-400 block">Email Address</span>
-                      <a href={`mailto:${viewingApp.email}`} className="text-sm font-semibold text-brand-blue hover:underline flex items-center gap-1">
+                      <a
+                        href={`mailto:${viewingApp.email}`}
+                        className="text-sm font-semibold text-brand-blue hover:underline flex items-center gap-1"
+                      >
                         <Mail className="w-3.5 h-3.5" /> {viewingApp.email}
                       </a>
                     </div>
                     <div>
                       <span className="text-xs text-gray-400 block">Phone / WhatsApp</span>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <a href={`tel:${viewingApp.phone}`} className="text-sm font-semibold text-gray-700 hover:text-brand-blue flex items-center gap-1">
+                        <a
+                          href={`tel:${viewingApp.phone}`}
+                          className="text-sm font-semibold text-gray-700 hover:text-brand-blue flex items-center gap-1"
+                        >
                           <Phone className="w-3.5 h-3.5" /> {viewingApp.phone}
                         </a>
-                        <a 
-                          href={getWhatsAppLink(viewingApp.fullName, viewingApp.jobPosting?.title || 'General App', viewingApp.phone)}
+                        <a
+                          href={getWhatsAppLink(
+                            viewingApp.fullName,
+                            viewingApp.jobPosting?.title || 'General App',
+                            viewingApp.phone
+                          )}
                           target="_blank"
                           rel="noreferrer"
                           className="flex items-center gap-1 text-[10px] font-bold text-emerald-600 hover:text-emerald-755 hover:bg-emerald-100 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 transition-colors"
                         >
-                          <MessageCircle className="w-3 h-3 fill-emerald-500 text-emerald-600" /> WhatsApp
+                          <MessageCircle className="w-3 h-3 fill-emerald-500 text-emerald-600" />{' '}
+                          WhatsApp
                         </a>
                       </div>
                     </div>
@@ -649,7 +864,9 @@ export default function AdminCareersPage() {
 
                 {/* Cover Letter */}
                 <div className="space-y-2">
-                  <h5 className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Cover Letter / Notes</h5>
+                  <h5 className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                    Cover Letter / Notes
+                  </h5>
                   <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 text-xs text-gray-600 leading-relaxed max-h-[150px] overflow-y-auto whitespace-pre-wrap">
                     {viewingApp.coverLetter || 'No cover letter provided by the candidate.'}
                   </div>
@@ -678,7 +895,6 @@ export default function AdminCareersPage() {
             </div>
           </div>
         )}
-
       </div>
     </>
   )

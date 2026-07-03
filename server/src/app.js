@@ -28,9 +28,9 @@ app.use(helmetConfig)
 app.use(corsOptions)
 
 // ── 3. Body parsers ───────────────────────────────────────────
-app.use(express.json({ limit: '10kb' }))       // limit body size → prevent payload attacks
+app.use(express.json({ limit: '10kb' })) // limit body size → prevent payload attacks
 app.use(express.urlencoded({ extended: true, limit: '10kb' }))
-app.use(cookieParser())                         // needed for httpOnly JWT cookies
+app.use(cookieParser()) // needed for httpOnly JWT cookies
 
 // ── 4. General API rate limiter ───────────────────────────────
 app.use('/api', apiLimiter)

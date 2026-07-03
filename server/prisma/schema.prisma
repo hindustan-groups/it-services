@@ -276,3 +276,102 @@ model LegalPage {
   @@index([pageType])
   @@map("legal_pages")
 }
+
+// ─────────────────────────────────────────────────────────────────
+// Work Management System Models
+// ─────────────────────────────────────────────────────────────────
+
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+  ON_HOLD
+}
+
+enum ProjectPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model ClientProject {
+  id            String          @id @default(cuid())
+  clientName    String
+  projectTitle  String
+  description   String?
+  status        ProjectStatus   @default(PLANNING)
+  priority      ProjectPriority @default(MEDIUM)
+  progress      Int             @default(0)
+  startDate     DateTime
+  deadline      DateTime
+  assignedTo    String?
+  budget        String?
+  tags          String[]
+  notes         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  tasks         WorkTask[]
+
+  @@map("client_projects")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+  BLOCKED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model WorkTask {
+  id              String         @id @default(cuid())
+  title           String
+  description     String?
+  status          TaskStatus     @default(TODO)
+  priority        TaskPriority   @default(MEDIUM)
+  dueDate         DateTime?
+  assignedTo      String?
+  clientProjectId String?
+  clientProject   ClientProject? @relation(fields: [clientProjectId], references: [id], onDelete: Cascade)
+  tags            String[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([clientProjectId])
+  @@map("work_tasks")
+}
+
+model QuickNote {
+  id        String   @id @default(cuid())
+  title     String?
+  content   String
+  color     String   @default("yellow") // yellow | blue | green | pink | purple
+  isPinned  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("quick_notes")
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  adminId    String
+  adminEmail String
+  action     String   // e.g. "CREATE", "UPDATE", "DELETE"
+  entity     String   // e.g. "ClientProject", "WorkTask", "QuickNote"
+  details    String   // Description of the action (e.g. "Created project 'E-Commerce Website'")
+  createdAt  DateTime @default(now())
+
+  @@index([adminId])
+  @@index([createdAt])
+  @@map("activity_logs")
+}
+

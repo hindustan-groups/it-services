@@ -12,13 +12,13 @@ import { useSiteSettings } from '@/hooks/useContent'
 
 /* ── Colour palette — cycles through services ─────────────────── */
 const COLORS = [
-  { gradient: 'from-blue-500 to-cyan-400',     glow: 'bg-blue-500/10' },
-  { gradient: 'from-orange-500 to-rose-400',   glow: 'bg-orange-500/10' },
+  { gradient: 'from-blue-500 to-cyan-400', glow: 'bg-blue-500/10' },
+  { gradient: 'from-orange-500 to-rose-400', glow: 'bg-orange-500/10' },
   { gradient: 'from-violet-500 to-purple-400', glow: 'bg-violet-500/10' },
-  { gradient: 'from-emerald-500 to-teal-400',  glow: 'bg-emerald-500/10' },
-  { gradient: 'from-sky-500 to-indigo-400',    glow: 'bg-sky-500/10' },
-  { gradient: 'from-pink-500 to-rose-400',     glow: 'bg-pink-500/10' },
-  { gradient: 'from-amber-500 to-yellow-400',  glow: 'bg-amber-500/10' },
+  { gradient: 'from-emerald-500 to-teal-400', glow: 'bg-emerald-500/10' },
+  { gradient: 'from-sky-500 to-indigo-400', glow: 'bg-sky-500/10' },
+  { gradient: 'from-pink-500 to-rose-400', glow: 'bg-pink-500/10' },
+  { gradient: 'from-amber-500 to-yellow-400', glow: 'bg-amber-500/10' },
 ]
 
 /* ── Local Fallback Services data (when DB is not connected) ── */
@@ -30,7 +30,8 @@ const SERVICES = [
     icon: 'Code2',
     tag: 'Most Popular',
     features: ['React & Next.js', 'SEO Optimised', 'Mobile Responsive'],
-    shortDescription: 'Custom, responsive websites built with modern technologies like React, Node.js, and WordPress — optimised for speed, SEO, and conversions.',
+    shortDescription:
+      'Custom, responsive websites built with modern technologies like React, Node.js, and WordPress — optimised for speed, SEO, and conversions.',
   },
   {
     id: '2',
@@ -39,7 +40,8 @@ const SERVICES = [
     icon: 'Megaphone',
     tag: 'High ROI',
     features: ['Google & Meta Ads', 'SEO & Content', 'Analytics Reports'],
-    shortDescription: 'Result-driven digital marketing campaigns spanning SEO, Google Ads, Meta Ads, and content marketing to drive high-intent leads.',
+    shortDescription:
+      'Result-driven digital marketing campaigns spanning SEO, Google Ads, Meta Ads, and content marketing to drive high-intent leads.',
   },
   {
     id: '3',
@@ -48,7 +50,8 @@ const SERVICES = [
     icon: 'Lightbulb',
     tag: 'Expert Advice',
     features: ['Tech Roadmap', 'System Architecture', 'Growth Planning'],
-    shortDescription: 'Strategic IT advisory to align your technology roadmap with business growth. We help you choose the right systems and architecture.',
+    shortDescription:
+      'Strategic IT advisory to align your technology roadmap with business growth. We help you choose the right systems and architecture.',
   },
   {
     id: '4',
@@ -57,7 +60,8 @@ const SERVICES = [
     icon: 'Monitor',
     tag: 'Sell More',
     features: ['Secure Payments', 'Inventory Mgmt', 'Checkout Optimized'],
-    shortDescription: 'End-to-end e-commerce store setup, checkout optimisation, inventory management systems, and secure payment gateway integrations.',
+    shortDescription:
+      'End-to-end e-commerce store setup, checkout optimisation, inventory management systems, and secure payment gateway integrations.',
   },
   {
     id: '5',
@@ -66,7 +70,8 @@ const SERVICES = [
     icon: 'Settings',
     tag: 'Scale Fast',
     features: ['AWS & Google Cloud', 'CI/CD Pipelines', 'Zero Downtime'],
-    shortDescription: 'Secure cloud hosting setup, AWS/Google Cloud management, server scaling, and continuous deployment workflows for zero downtime.',
+    shortDescription:
+      'Secure cloud hosting setup, AWS/Google Cloud management, server scaling, and continuous deployment workflows for zero downtime.',
   },
   {
     id: '6',
@@ -75,7 +80,8 @@ const SERVICES = [
     icon: 'Layers',
     tag: 'Premium Look',
     features: ['Logo & Guidelines', 'Modern UI/UX', 'Prototypes'],
-    shortDescription: 'Premium user interface and user experience designs coupled with complete corporate brand identity systems, logos, and guidelines.',
+    shortDescription:
+      'Premium user interface and user experience designs coupled with complete corporate brand identity systems, logos, and guidelines.',
   },
   {
     id: '7',
@@ -84,8 +90,9 @@ const SERVICES = [
     icon: 'Smartphone',
     tag: 'Custom Apps',
     features: ['React Native & Flutter', 'iOS & Android', 'Store Publishing'],
-    shortDescription: 'Native and cross-platform mobile apps for iOS and Android built with React Native and Flutter. Secure, high-performing, and published on App Stores.',
-  }
+    shortDescription:
+      'Native and cross-platform mobile apps for iOS and Android built with React Native and Flutter. Secure, high-performing, and published on App Stores.',
+  },
 ]
 
 /* ── Skeleton card ────────────────────────────────────────────── */
@@ -110,15 +117,15 @@ function ServiceSkeleton() {
 export default function ServicesPage() {
   const { data, isLoading, isError, refetch } = useServices()
   const { data: settingsData } = useSiteSettings()
-  
-  const services = data?.data?.length ? data.data : (isLoading ? [] : SERVICES)
+
+  const services = data?.data?.length ? data.data : isLoading ? [] : SERVICES
   const cfg = settingsData?.data || {}
 
   const whyStats = [
-    { icon: Zap,    label: 'Fast Delivery',    value: '2–4 Weeks' },
+    { icon: Zap, label: 'Fast Delivery', value: '2–4 Weeks' },
     { icon: Shield, label: 'Trusted & Secure', value: '100% Safe' },
-    { icon: Clock,  label: 'Support',          value: '24/7 Available' },
-    { icon: Users,  label: 'Happy Clients',    value: `${cfg.stat_clients || '50'}+ Businesses` },
+    { icon: Clock, label: 'Support', value: '24/7 Available' },
+    { icon: Users, label: 'Happy Clients', value: `${cfg.stat_clients || '50'}+ Businesses` },
   ]
 
   return (
@@ -129,13 +136,18 @@ export default function ServicesPage() {
         path="/services"
         keywords="IT services Bhilwara, web development Rajasthan, digital marketing company Bhilwara, mobile app development India, SEO services Rajasthan"
         schemas={[
-          breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Services', path: '/services' }]),
-          ...(services.map(s => serviceSchema({
-            title: s.title,
-            description: s.shortDescription,
-            url: `${SITE.url}/services/${s.slug}`,
-            serviceType: s.title,
-          }))),
+          breadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'Services', path: '/services' },
+          ]),
+          ...services.map((s) =>
+            serviceSchema({
+              title: s.title,
+              description: s.shortDescription,
+              url: `${SITE.url}/services/${s.slug}`,
+              serviceType: s.title,
+            })
+          ),
         ]}
       />
 
@@ -159,16 +171,20 @@ export default function ServicesPage() {
                 </span>
               </h1>
               <p className="text-white/60 text-base sm:text-lg leading-relaxed mb-8">
-                From custom web apps to cloud infrastructure — we deliver end-to-end
-                technology solutions that help businesses in Bhilwara and across India
-                grow faster online.
+                From custom web apps to cloud infrastructure — we deliver end-to-end technology
+                solutions that help businesses in Bhilwara and across India grow faster online.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button variant="primary" size="lg" as={Link} to="/contact">
                   Get a Free Consultation
                 </Button>
-                <Button variant="ghost" size="lg" as={Link} to="/portfolio"
-                  className="!text-white !border-white/20 hover:!bg-white/10">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  as={Link}
+                  to="/portfolio"
+                  className="!text-white !border-white/20 hover:!bg-white/10"
+                >
                   View Our Work
                 </Button>
               </div>
@@ -184,16 +200,19 @@ export default function ServicesPage() {
                     const Icon = getServiceIcon(s.icon)
                     const c = COLORS[i % COLORS.length]
                     return (
-                      <div key={s.id}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-white/25 hover:bg-white/10 transition-all duration-300">
-                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${c.gradient} flex items-center justify-center shrink-0`}>
+                      <div
+                        key={s.id}
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-white/25 hover:bg-white/10 transition-all duration-300"
+                      >
+                        <div
+                          className={`w-8 h-8 rounded-lg bg-gradient-to-br ${c.gradient} flex items-center justify-center shrink-0`}
+                        >
                           <Icon className="w-4 h-4 text-white" strokeWidth={1.8} />
                         </div>
                         <span className="text-sm text-white/80 font-medium">{s.title}</span>
                       </div>
                     )
-                  })
-              }
+                  })}
             </div>
           </div>
         </Container>
@@ -204,7 +223,10 @@ export default function ServicesPage() {
         <Container>
           <div className="grid grid-cols-2 lg:grid-cols-4">
             {whyStats.map((stat) => (
-              <div key={stat.label} className="flex items-center gap-3 px-4 sm:px-6 py-4 sm:py-5 group hover:bg-brand-blue/3 transition-colors duration-200 border-b border-r border-gray-100 [&:nth-child(2)]:border-r-0 lg:[&:nth-child(2)]:border-r lg:[&:nth-child(4)]:border-r-0">
+              <div
+                key={stat.label}
+                className="flex items-center gap-3 px-4 sm:px-6 py-4 sm:py-5 group hover:bg-brand-blue/3 transition-colors duration-200 border-b border-r border-gray-100 [&:nth-child(2)]:border-r-0 lg:[&:nth-child(2)]:border-r lg:[&:nth-child(4)]:border-r-0"
+              >
                 <div className="w-10 h-10 rounded-xl bg-brand-blue/8 flex items-center justify-center shrink-0 group-hover:bg-brand-blue/14 transition-colors">
                   <stat.icon className="w-5 h-5 text-brand-blue" strokeWidth={1.8} />
                 </div>
@@ -222,20 +244,25 @@ export default function ServicesPage() {
       <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-gray-50/60 to-white">
         <Container>
           <div className="text-center mb-14">
-            <span className="text-xs font-semibold tracking-widest uppercase text-brand-red">All Services</span>
+            <span className="text-xs font-semibold tracking-widest uppercase text-brand-red">
+              All Services
+            </span>
             <h2 className="font-heading text-3xl sm:text-4xl font-bold text-brand-blue mt-2 mb-3">
               Everything Your Business Needs
             </h2>
             <p className="text-text-muted max-w-xl mx-auto text-sm sm:text-base">
-              Pick a single service or bundle them — we tailor every engagement to your goals and budget.
+              Pick a single service or bundle them — we tailor every engagement to your goals and
+              budget.
             </p>
           </div>
 
           {isError ? (
             <div className="text-center py-16">
               <p className="text-text-muted mb-4">Could not load services. Please try again.</p>
-              <button onClick={refetch}
-                className="text-sm font-medium text-brand-blue underline hover:text-brand-red transition-colors">
+              <button
+                onClick={refetch}
+                className="text-sm font-medium text-brand-blue underline hover:text-brand-red transition-colors"
+              >
                 Retry
               </button>
             </div>
@@ -255,7 +282,9 @@ export default function ServicesPage() {
                           hover:-translate-y-1.5 transition-all duration-300 overflow-hidden"
                       >
                         {/* Glow on hover */}
-                        <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl ${c.glow}`} />
+                        <div
+                          className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl ${c.glow}`}
+                        />
 
                         {/* Number */}
                         <div className="relative flex items-center justify-between mb-5">
@@ -265,7 +294,9 @@ export default function ServicesPage() {
                         </div>
 
                         {/* Icon */}
-                        <div className={`relative w-14 h-14 rounded-2xl bg-gradient-to-br ${c.gradient} flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                        <div
+                          className={`relative w-14 h-14 rounded-2xl bg-gradient-to-br ${c.gradient} flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                        >
                           <Icon className="w-7 h-7 text-white" strokeWidth={1.6} />
                         </div>
 
@@ -286,8 +317,7 @@ export default function ServicesPage() {
                         </div>
                       </Link>
                     )
-                  })
-              }
+                  })}
             </div>
           )}
         </Container>
@@ -298,23 +328,30 @@ export default function ServicesPage() {
         <Container>
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="max-w-lg">
-              <span className="text-xs font-semibold tracking-widest uppercase text-brand-red">How It Works</span>
+              <span className="text-xs font-semibold tracking-widest uppercase text-brand-red">
+                How It Works
+              </span>
               <h2 className="font-heading text-2xl sm:text-3xl font-bold text-brand-blue mt-2 mb-3">
                 From Idea to Launch — In 4 Simple Steps
               </h2>
               <p className="text-text-muted text-sm leading-relaxed">
-                Our proven process ensures every project is delivered on time, within budget, and built to scale.
+                Our proven process ensures every project is delivered on time, within budget, and
+                built to scale.
               </p>
             </div>
             <div className="flex gap-4 flex-wrap md:flex-nowrap shrink-0">
               {['Discovery', 'Planning', 'Execution', 'Delivery'].map((step, i) => (
                 <div key={step} className="flex flex-col items-center gap-1.5">
-                  <div className="w-12 h-12 rounded-full border-2 border-brand-blue/20 bg-brand-blue/5
+                  <div
+                    className="w-12 h-12 rounded-full border-2 border-brand-blue/20 bg-brand-blue/5
                     flex items-center justify-center font-heading font-bold text-brand-blue text-lg
-                    hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all duration-300 cursor-default">
+                    hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all duration-300 cursor-default"
+                  >
                     {i + 1}
                   </div>
-                  <span className="text-xs font-medium text-text-muted whitespace-nowrap">{step}</span>
+                  <span className="text-xs font-medium text-text-muted whitespace-nowrap">
+                    {step}
+                  </span>
                 </div>
               ))}
             </div>
@@ -334,7 +371,10 @@ export default function ServicesPage() {
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
               Free Consultation Available
             </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4 leading-tight" style={{ color: '#ffffff' }}>
+            <h2
+              className="font-heading text-3xl sm:text-4xl font-bold mb-4 leading-tight"
+              style={{ color: '#ffffff' }}
+            >
               Not Sure Which Service to Choose?
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red to-orange-400">
@@ -345,16 +385,29 @@ export default function ServicesPage() {
               Tell us about your business — our experts will suggest the perfect service package.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="primary" size="lg" as={Link} to="/contact">Book a Free Call</Button>
-              <Button variant="ghost" size="lg" as={Link} to="/portfolio"
-                className="!text-white !border-white/25 hover:!bg-white/10">
+              <Button variant="primary" size="lg" as={Link} to="/contact">
+                Book a Free Call
+              </Button>
+              <Button
+                variant="ghost"
+                size="lg"
+                as={Link}
+                to="/portfolio"
+                className="!text-white !border-white/25 hover:!bg-white/10"
+              >
                 See Our Portfolio →
               </Button>
             </div>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-white/40 text-xs font-medium">
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> No upfront payment</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> Reply within 24 hours</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> 50+ happy clients</span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> No upfront payment
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> Reply within 24 hours
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> 50+ happy clients
+              </span>
             </div>
           </div>
         </Container>

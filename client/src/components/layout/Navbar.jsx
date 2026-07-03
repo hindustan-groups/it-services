@@ -82,7 +82,9 @@ export default function Navbar() {
   }, [])
 
   useEffect(() => {
-    const onResize = () => { if (window.innerWidth >= 768) setMenuOpen(false) }
+    const onResize = () => {
+      if (window.innerWidth >= 768) setMenuOpen(false)
+    }
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
@@ -99,8 +101,10 @@ export default function Navbar() {
       }`}
     >
       <Container>
-        <nav className="flex items-center justify-between h-16 md:h-18" aria-label="Main navigation">
-
+        <nav
+          className="flex items-center justify-between h-16 md:h-18"
+          aria-label="Main navigation"
+        >
           {/* ── Logo ── */}
           <Link to="/" className="flex items-center shrink-0 focus-visible:outline-none">
             <AnimatedLogo isTransparent={isTransparent} />
@@ -113,13 +117,14 @@ export default function Navbar() {
                 <Link
                   to={link.href}
                   className={`relative px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 group/navlink inline-block
-                    ${isTransparent
-                      ? isActive(link.href)
-                        ? 'text-white bg-white/15'
-                        : 'text-white/80 hover:text-white hover:bg-white/10'
-                      : isActive(link.href)
-                        ? 'text-brand-blue bg-brand-blue/5'
-                        : 'text-text-dark hover:text-brand-blue hover:bg-brand-blue/5'
+                    ${
+                      isTransparent
+                        ? isActive(link.href)
+                          ? 'text-white bg-white/15'
+                          : 'text-white/80 hover:text-white hover:bg-white/10'
+                        : isActive(link.href)
+                          ? 'text-brand-blue bg-brand-blue/5'
+                          : 'text-text-dark hover:text-brand-blue hover:bg-brand-blue/5'
                     }`}
                 >
                   {link.label}
@@ -128,9 +133,10 @@ export default function Navbar() {
                     className={`absolute bottom-0.5 left-3 right-3 h-[2px] rounded-full origin-left
                       transition-transform duration-250 ease-out
                       ${isTransparent ? 'bg-white' : 'bg-brand-red'}
-                      ${isActive(link.href)
-                        ? 'scale-x-100'
-                        : 'scale-x-0 group-hover/navlink:scale-x-100'
+                      ${
+                        isActive(link.href)
+                          ? 'scale-x-100'
+                          : 'scale-x-0 group-hover/navlink:scale-x-100'
                       }`}
                   />
                 </Link>
@@ -159,12 +165,18 @@ export default function Navbar() {
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
           >
-            <span className="block w-5 h-0.5 bg-current mb-1.5 transition-all duration-200"
-              style={menuOpen ? { transform: 'translateY(8px) rotate(45deg)' } : {}} />
-            <span className="block w-5 h-0.5 bg-current mb-1.5 transition-all duration-200"
-              style={menuOpen ? { opacity: 0 } : {}} />
-            <span className="block w-5 h-0.5 bg-current transition-all duration-200"
-              style={menuOpen ? { transform: 'translateY(-8px) rotate(-45deg)' } : {}} />
+            <span
+              className="block w-5 h-0.5 bg-current mb-1.5 transition-all duration-200"
+              style={menuOpen ? { transform: 'translateY(8px) rotate(45deg)' } : {}}
+            />
+            <span
+              className="block w-5 h-0.5 bg-current mb-1.5 transition-all duration-200"
+              style={menuOpen ? { opacity: 0 } : {}}
+            />
+            <span
+              className="block w-5 h-0.5 bg-current transition-all duration-200"
+              style={menuOpen ? { transform: 'translateY(-8px) rotate(-45deg)' } : {}}
+            />
           </button>
         </nav>
       </Container>
@@ -194,8 +206,14 @@ export default function Navbar() {
               </li>
             ))}
             <li className="pt-2 pb-1">
-              <Button variant="primary" size="sm" fullWidth as={Link} to="/contact"
-                onClick={() => setMenuOpen(false)}>
+              <Button
+                variant="primary"
+                size="sm"
+                fullWidth
+                as={Link}
+                to="/contact"
+                onClick={() => setMenuOpen(false)}
+              >
                 Get a Quote
               </Button>
             </li>

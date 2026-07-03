@@ -29,9 +29,11 @@ export default defineConfig({
           if (id.includes('node_modules')) {
             if (id.includes('framer-motion')) return 'vendor-motion'
             if (id.includes('@tanstack')) return 'vendor-query'
-            if (id.includes('react-hook-form') || id.includes('@hookform') || id.includes('zod')) return 'vendor-forms'
+            if (id.includes('react-hook-form') || id.includes('@hookform') || id.includes('zod'))
+              return 'vendor-forms'
             if (id.includes('lucide-react')) return 'vendor-icons'
-            if (id.includes('react-dom') || id.includes('react-router') || id.includes('/react/')) return 'vendor-react'
+            if (id.includes('react-dom') || id.includes('react-router') || id.includes('/react/'))
+              return 'vendor-react'
           }
         },
       },

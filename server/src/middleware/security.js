@@ -40,17 +40,13 @@ export const helmetConfig = helmet({
         'blob:',
         'https://res.cloudinary.com', // Cloudinary images
       ],
-      connectSrc: [
-        "'self'",
-        process.env.CLIENT_URL || 'http://localhost:5173',
-      ],
+      connectSrc: ["'self'", process.env.CLIENT_URL || 'http://localhost:5173'],
       frameSrc: [
         'https://www.google.com', // reCAPTCHA iframe
         'https://maps.google.com', // Google Maps embed
       ],
       objectSrc: ["'none'"],
-      upgradeInsecureRequests:
-        process.env.NODE_ENV === 'production' ? [] : null,
+      upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
     },
   },
   crossOriginEmbedderPolicy: false, // needed for Google Maps / Cloudinary

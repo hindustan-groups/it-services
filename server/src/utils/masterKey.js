@@ -34,7 +34,7 @@ export async function verifyMasterKey(inputKey) {
 
   if (!masterKey) return { match: false, masterKey: null }
 
-  const inputBuf  = Buffer.from((inputKey || '').trim())
+  const inputBuf = Buffer.from((inputKey || '').trim())
   const masterBuf = Buffer.from(masterKey)
 
   let match = false

@@ -32,7 +32,7 @@ export function useCountUp(target, duration = 1800) {
           requestAnimationFrame(step)
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.3 }
     )
 
     observer.observe(el)

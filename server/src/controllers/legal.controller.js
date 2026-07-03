@@ -7,7 +7,7 @@ export const getLegalPage = async (req, res, next) => {
     const cleanType = String(pageType).toUpperCase()
 
     const page = await prisma.legalPage.findUnique({
-      where: { pageType: cleanType }
+      where: { pageType: cleanType },
     })
 
     if (!page) {
@@ -27,8 +27,8 @@ export const getLegalPage = async (req, res, next) => {
       status: 'ok',
       data: {
         ...page,
-        adminEmail
-      }
+        adminEmail,
+      },
     })
   } catch (err) {
     next(err)
@@ -39,7 +39,7 @@ export const getLegalPage = async (req, res, next) => {
 export const listLegalPages = async (_req, res, next) => {
   try {
     const pages = await prisma.legalPage.findMany({
-      orderBy: { pageType: 'asc' }
+      orderBy: { pageType: 'asc' },
     })
 
     const dataWithEmails = await Promise.all(
@@ -53,7 +53,7 @@ export const listLegalPages = async (_req, res, next) => {
         }
         return {
           ...page,
-          adminEmail
+          adminEmail,
         }
       })
     )
@@ -78,15 +78,15 @@ export const updateLegalPage = async (req, res, next) => {
         title,
         content,
         updatedBy: adminId,
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       },
       create: {
         pageType: cleanType,
         title,
         content,
         updatedBy: adminId,
-        lastUpdated: new Date()
-      }
+        lastUpdated: new Date(),
+      },
     })
 
     res.json({ status: 'ok', data: page })

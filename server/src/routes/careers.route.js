@@ -1,6 +1,10 @@
 import { Router } from 'express'
 import { body } from 'express-validator'
-import { getActiveJobs, getJobBySlug, submitApplication } from '../controllers/careers.controller.js'
+import {
+  getActiveJobs,
+  getJobBySlug,
+  submitApplication,
+} from '../controllers/careers.controller.js'
 import { uploadResume } from '../utils/cloudinary.js'
 import { validateRequest, contactLimiter } from '../middleware/security.js'
 

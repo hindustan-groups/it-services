@@ -3,12 +3,7 @@
  * Usage: <Skeleton className="h-6 w-40" />
  */
 export default function Skeleton({ className = '' }) {
-  return (
-    <div
-      className={`bg-gray-200 rounded-md animate-pulse ${className}`}
-      aria-hidden="true"
-    />
-  )
+  return <div className={`bg-gray-200 rounded-md animate-pulse ${className}`} aria-hidden="true" />
 }
 
 /** Pre-built skeleton for a service card */

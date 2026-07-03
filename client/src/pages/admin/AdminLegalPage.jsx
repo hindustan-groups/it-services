@@ -1,6 +1,17 @@
 import { useState, useRef, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { FileText, Save, AlertTriangle, CheckCircle2, AlertCircle, Bold, Heading2, List, Link as LinkIcon, Sparkles } from 'lucide-react'
+import {
+  FileText,
+  Save,
+  AlertTriangle,
+  CheckCircle2,
+  AlertCircle,
+  Bold,
+  Heading2,
+  List,
+  Link as LinkIcon,
+  Sparkles,
+} from 'lucide-react'
 import { api } from '@/utils/api'
 import { SEO } from '@/components/ui'
 import DOMPurify from 'dompurify'
@@ -21,11 +32,11 @@ export default function AdminLegalPage() {
   // Fetch all legal pages
   const { data: response, isLoading } = useQuery({
     queryKey: ['admin-legal-pages'],
-    queryFn: () => api.get('/admin/legal').then(r => r.data),
+    queryFn: () => api.get('/admin/legal').then((r) => r.data),
   })
 
   const pages = response || []
-  const currentPage = pages.find(p => p.pageType === activeTab)
+  const currentPage = pages.find((p) => p.pageType === activeTab)
 
   // Set page title when page loaded or tab changed
   useEffect(() => {
@@ -40,11 +51,11 @@ export default function AdminLegalPage() {
 
   // Update legal page mutation
   const mutation = useMutation({
-    mutationFn: ({ pageType, title, content }) => 
-      api.put(`/admin/legal/${pageType}`, { title, content }).then(r => r.data),
+    mutationFn: ({ pageType, title, content }) =>
+      api.put(`/admin/legal/${pageType}`, { title, content }).then((r) => r.data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin-legal-pages'] })
-    }
+    },
   })
 
   const handleSave = () => {
@@ -52,8 +63,8 @@ export default function AdminLegalPage() {
     const htmlContent = editorRef.current ? editorRef.current.innerHTML : editorContent
     mutation.mutate({
       pageType: activeTab,
-      title: pageTitle || PAGES.find(p => p.type === activeTab).label,
-      content: htmlContent
+      title: pageTitle || PAGES.find((p) => p.type === activeTab).label,
+      content: htmlContent,
     })
   }
 
@@ -83,13 +94,15 @@ export default function AdminLegalPage() {
           </div>
           <div>
             <h1 className="font-heading text-2xl font-bold text-gray-900">Legal Pages</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Manage Privacy Policy, Terms of Service, and Refund Policy texts.</p>
+            <p className="text-sm text-gray-500 mt-0.5">
+              Manage Privacy Policy, Terms of Service, and Refund Policy texts.
+            </p>
           </div>
         </div>
 
         {/* Tab switcher */}
         <div className="flex border-b border-gray-200 overflow-x-auto scrollbar-none gap-2">
-          {PAGES.map(tab => (
+          {PAGES.map((tab) => (
             <button
               key={tab.type}
               onClick={() => setActiveTab(tab.type)}
@@ -114,29 +127,30 @@ export default function AdminLegalPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Editor Workspace */}
             <div className="lg:col-span-8 space-y-5">
-              
               {/* Warnings Banner */}
               <div className="flex items-start gap-3 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3.5 shadow-sm">
                 <AlertTriangle className="w-5 h-5 shrink-0 text-amber-600 mt-0.5" />
                 <div>
                   <p className="font-semibold text-amber-900">Important Compliance Reminder</p>
                   <p className="text-amber-700/90 text-xs mt-0.5 leading-relaxed">
-                    Changes to legal pages should be reviewed by a legal professional before saving, especially for compliance-related sections (GDPR, IT Act, or local state laws).
+                    Changes to legal pages should be reviewed by a legal professional before saving,
+                    especially for compliance-related sections (GDPR, IT Act, or local state laws).
                   </p>
                 </div>
               </div>
 
               {/* Title & Editor Container */}
               <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-                
                 {/* Title field */}
                 <div className="px-5 py-4 border-b border-gray-100 bg-gray-50/40">
-                  <label className="text-xs font-semibold text-gray-500 block mb-1 uppercase tracking-wide">Page Header Title</label>
+                  <label className="text-xs font-semibold text-gray-500 block mb-1 uppercase tracking-wide">
+                    Page Header Title
+                  </label>
                   <input
                     type="text"
                     value={pageTitle}
                     onChange={(e) => setPageTitle(e.target.value)}
-                    placeholder={PAGES.find(p => p.type === activeTab).label}
+                    placeholder={PAGES.find((p) => p.type === activeTab).label}
                     className="w-full text-base font-bold text-gray-900 bg-transparent border-0 focus:outline-none focus:ring-0 p-0"
                   />
                 </div>
@@ -182,7 +196,7 @@ export default function AdminLegalPage() {
                 </div>
 
                 {/* WYSIWYG Editor area */}
-                <div 
+                <div
                   key={activeTab}
                   ref={editorRef}
                   contentEditable
@@ -191,7 +205,9 @@ export default function AdminLegalPage() {
                       setEditorContent(editorRef.current.innerHTML)
                     }
                   }}
-                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(currentPage?.content || '') }}
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(currentPage?.content || ''),
+                  }}
                   className="p-6 min-h-[350px] max-h-[500px] overflow-y-auto focus:outline-none prose prose-slate max-w-none prose-headings:font-heading prose-headings:font-bold prose-headings:text-brand-blue prose-p:leading-relaxed"
                   style={{ minHeight: '350px' }}
                 />
@@ -222,23 +238,34 @@ export default function AdminLegalPage() {
 
             {/* Revision & Info Sidebar */}
             <div className="lg:col-span-4 bg-white border border-gray-150 rounded-2xl p-5 space-y-4.5 shadow-sm">
-              <h3 className="font-heading font-bold text-gray-900 text-sm border-b border-gray-100 pb-2.5">Revision Info</h3>
-              
+              <h3 className="font-heading font-bold text-gray-900 text-sm border-b border-gray-100 pb-2.5">
+                Revision Info
+              </h3>
+
               <div className="space-y-3.5 text-xs text-gray-600">
                 <div>
-                  <span className="text-gray-400 font-medium block uppercase tracking-wider text-[10px]">Page Type Code</span>
+                  <span className="text-gray-400 font-medium block uppercase tracking-wider text-[10px]">
+                    Page Type Code
+                  </span>
                   <span className="font-mono text-gray-800 font-bold">{activeTab}</span>
                 </div>
                 <div>
-                  <span className="text-gray-400 font-medium block uppercase tracking-wider text-[10px]">Last Updated On</span>
+                  <span className="text-gray-400 font-medium block uppercase tracking-wider text-[10px]">
+                    Last Updated On
+                  </span>
                   <span className="text-gray-800 font-semibold">
-                    {currentPage?.lastUpdated 
-                      ? new Date(currentPage.lastUpdated).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
+                    {currentPage?.lastUpdated
+                      ? new Date(currentPage.lastUpdated).toLocaleString('en-IN', {
+                          dateStyle: 'medium',
+                          timeStyle: 'short',
+                        })
                       : 'Never'}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-400 font-medium block uppercase tracking-wider text-[10px]">Updated By Account</span>
+                  <span className="text-gray-400 font-medium block uppercase tracking-wider text-[10px]">
+                    Updated By Account
+                  </span>
                   <span className="text-gray-800 font-semibold truncate block max-w-full">
                     {currentPage?.adminEmail || 'System Seed'}
                   </span>
@@ -251,9 +278,15 @@ export default function AdminLegalPage() {
                   <span>Editor Tips</span>
                 </div>
                 <ul className="list-disc pl-4 text-[11px] text-gray-500 space-y-1.5 leading-relaxed">
-                  <li>Use the <strong>Heading2</strong> button to format section titles.</li>
-                  <li>Use the <strong>P</strong> button to return to normal body text.</li>
-                  <li>Link terms dynamically to external sites using the <strong>Link</strong> tool.</li>
+                  <li>
+                    Use the <strong>Heading2</strong> button to format section titles.
+                  </li>
+                  <li>
+                    Use the <strong>P</strong> button to return to normal body text.
+                  </li>
+                  <li>
+                    Link terms dynamically to external sites using the <strong>Link</strong> tool.
+                  </li>
                 </ul>
               </div>
             </div>

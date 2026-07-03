@@ -35,17 +35,17 @@ const MASKED_KEYS = new Set([
 // Maps DB keys → process.env variable names
 const ENV_MAP = {
   sys_cloudinary_cloud_name: 'CLOUDINARY_CLOUD_NAME',
-  sys_cloudinary_api_key:    'CLOUDINARY_API_KEY',
+  sys_cloudinary_api_key: 'CLOUDINARY_API_KEY',
   sys_cloudinary_api_secret: 'CLOUDINARY_API_SECRET',
-  sys_smtp_host:             'EMAIL_HOST',
-  sys_smtp_port:             'EMAIL_PORT',
-  sys_smtp_user:             'EMAIL_USER',
-  sys_smtp_pass:             'EMAIL_PASS',
-  sys_smtp_from:             'EMAIL_FROM',
-  sys_recaptcha_secret_key:  'RECAPTCHA_SECRET_KEY',
-  sys_database_url:          'DATABASE_URL',
-  sys_jwt_secret:            'JWT_SECRET',
-  sys_resend_api_key:        'RESEND_API_KEY',
+  sys_smtp_host: 'EMAIL_HOST',
+  sys_smtp_port: 'EMAIL_PORT',
+  sys_smtp_user: 'EMAIL_USER',
+  sys_smtp_pass: 'EMAIL_PASS',
+  sys_smtp_from: 'EMAIL_FROM',
+  sys_recaptcha_secret_key: 'RECAPTCHA_SECRET_KEY',
+  sys_database_url: 'DATABASE_URL',
+  sys_jwt_secret: 'JWT_SECRET',
+  sys_resend_api_key: 'RESEND_API_KEY',
 }
 
 // All integration keys we manage
@@ -64,7 +64,7 @@ export const getIntegrationConfig = async (_req, res, next) => {
     // Build response object, masking secrets
     const config = {}
     for (const key of ALL_KEYS) {
-      const row = rows.find(r => r.key === key)
+      const row = rows.find((r) => r.key === key)
       const value = row?.value || ''
 
       if (MASKED_KEYS.has(key) && value) {
@@ -80,16 +80,13 @@ export const getIntegrationConfig = async (_req, res, next) => {
       cloudinary: !!(
         config.sys_cloudinary_cloud_name &&
         config.sys_cloudinary_api_key &&
-        rows.find(r => r.key === 'sys_cloudinary_api_secret')?.value
+        rows.find((r) => r.key === 'sys_cloudinary_api_secret')?.value
       ),
-      smtp: !!(
-        config.sys_smtp_user &&
-        rows.find(r => r.key === 'sys_smtp_pass')?.value
-      ),
-      resend: !!rows.find(r => r.key === 'sys_resend_api_key')?.value,
-      recaptcha: !!rows.find(r => r.key === 'sys_recaptcha_secret_key')?.value,
-      database: !!rows.find(r => r.key === 'sys_database_url')?.value,
-      jwt: !!rows.find(r => r.key === 'sys_jwt_secret')?.value,
+      smtp: !!(config.sys_smtp_user && rows.find((r) => r.key === 'sys_smtp_pass')?.value),
+      resend: !!rows.find((r) => r.key === 'sys_resend_api_key')?.value,
+      recaptcha: !!rows.find((r) => r.key === 'sys_recaptcha_secret_key')?.value,
+      database: !!rows.find((r) => r.key === 'sys_database_url')?.value,
+      jwt: !!rows.find((r) => r.key === 'sys_jwt_secret')?.value,
     }
 
     res.json({ status: 'ok', data: config })
@@ -118,9 +115,7 @@ export const updateIntegrationConfig = async (req, res, next) => {
 
       if (value === '__CLEAR__') {
         // Explicit clear — delete from DB and unset env
-        opsToRun.push(
-          prisma.siteSetting.deleteMany({ where: { key } }).catch(() => {})
-        )
+        opsToRun.push(prisma.siteSetting.deleteMany({ where: { key } }).catch(() => {}))
         delete process.env[ENV_MAP[key]]
         continue
       }
@@ -152,14 +147,18 @@ export const updateIntegrationConfig = async (req, res, next) => {
     await Promise.all(opsToRun)
 
     // Reconfigure Cloudinary SDK if cloud keys were updated
-    const cloudinaryKeys = ['sys_cloudinary_cloud_name', 'sys_cloudinary_api_key', 'sys_cloudinary_api_secret']
-    const cloudinaryUpdated = Object.keys(updates).some(k => cloudinaryKeys.includes(k))
+    const cloudinaryKeys = [
+      'sys_cloudinary_cloud_name',
+      'sys_cloudinary_api_key',
+      'sys_cloudinary_api_secret',
+    ]
+    const cloudinaryUpdated = Object.keys(updates).some((k) => cloudinaryKeys.includes(k))
     if (cloudinaryUpdated) {
       try {
         const { cloudinary } = await import('../utils/cloudinary.js')
         cloudinary.config({
           cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-          api_key:    process.env.CLOUDINARY_API_KEY,
+          api_key: process.env.CLOUDINARY_API_KEY,
           api_secret: process.env.CLOUDINARY_API_SECRET,
         })
       } catch (e) {
@@ -168,9 +167,12 @@ export const updateIntegrationConfig = async (req, res, next) => {
     }
 
     // Reconnect Prisma if DATABASE_URL was changed
-    if (updates.sys_database_url && typeof updates.sys_database_url === 'string'
-        && updates.sys_database_url.trim() !== ''
-        && !/^•+/.test(updates.sys_database_url.trim())) {
+    if (
+      updates.sys_database_url &&
+      typeof updates.sys_database_url === 'string' &&
+      updates.sys_database_url.trim() !== '' &&
+      !/^•+/.test(updates.sys_database_url.trim())
+    ) {
       try {
         await prisma.$disconnect()
         await prisma.$connect()
@@ -196,7 +198,7 @@ export const testSmtpConnection = async (req, res, next) => {
 
     // Determine which strategy is active
     const usingResend = !!process.env.RESEND_API_KEY
-    const usingSmtp   = !!(process.env.EMAIL_USER && process.env.EMAIL_PASS)
+    const usingSmtp = !!(process.env.EMAIL_USER && process.env.EMAIL_PASS)
 
     if (!usingResend && !usingSmtp) {
       return res.status(400).json({
@@ -205,8 +207,8 @@ export const testSmtpConnection = async (req, res, next) => {
       })
     }
 
-    const targetEmail = process.env.EMAIL_USER ||
-      (process.env.EMAIL_FROM || '').replace(/.*<(.+)>/, '$1')
+    const targetEmail =
+      process.env.EMAIL_USER || (process.env.EMAIL_FROM || '').replace(/.*<(.+)>/, '$1')
 
     if (!targetEmail) {
       return res.status(400).json({
@@ -238,8 +240,8 @@ export const testSmtpConnection = async (req, res, next) => {
     const safeMsg = err.message?.includes('Invalid login')
       ? 'Authentication failed. Check your email credentials.'
       : err.message?.includes('ECONNREFUSED') || err.message?.includes('ETIMEDOUT')
-      ? 'Could not connect to email server. Check HOST and PORT settings.'
-      : 'Email test failed. Check your configuration and try again.'
+        ? 'Could not connect to email server. Check HOST and PORT settings.'
+        : 'Email test failed. Check your configuration and try again.'
     res.status(500).json({ status: 'error', message: safeMsg })
   }
 }
@@ -252,7 +254,11 @@ export const testCloudinaryConnection = async (req, res, next) => {
   try {
     const { cloudinary } = await import('../utils/cloudinary.js')
 
-    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+    if (
+      !process.env.CLOUDINARY_CLOUD_NAME ||
+      !process.env.CLOUDINARY_API_KEY ||
+      !process.env.CLOUDINARY_API_SECRET
+    ) {
       return res.status(400).json({
         status: 'error',
         message: 'Cloudinary credentials are not configured.',
@@ -265,9 +271,10 @@ export const testCloudinaryConnection = async (req, res, next) => {
     res.json({ status: 'ok', message: 'Cloudinary connection verified successfully.' })
   } catch (err) {
     // Sanitize — never leak API keys from error messages
-    const safeMsg = err.message?.includes('401') || err.message?.includes('Invalid')
-      ? 'Authentication failed. Check your Cloudinary API Key and Secret.'
-      : 'Cloudinary connection failed. Verify your credentials and try again.'
+    const safeMsg =
+      err.message?.includes('401') || err.message?.includes('Invalid')
+        ? 'Authentication failed. Check your Cloudinary API Key and Secret.'
+        : 'Cloudinary connection failed. Verify your credentials and try again.'
     res.status(500).json({ status: 'error', message: safeMsg })
   }
 }
@@ -307,7 +314,9 @@ export const verifyIntegrationKey = async (req, res, next) => {
     const { match, masterKey } = await verifyMasterKey(key)
 
     if (!masterKey) {
-      return res.status(500).json({ status: 'error', message: 'Master key not configured on server.' })
+      return res
+        .status(500)
+        .json({ status: 'error', message: 'Master key not configured on server.' })
     }
 
     if (!match) {

@@ -32,7 +32,7 @@ async function verifyRecaptcha(token) {
 
   const response = await fetch(
     `https://www.google.com/recaptcha/api/siteverify?${params.toString()}`,
-    { method: 'POST' },
+    { method: 'POST' }
   )
 
   if (!response.ok) {
@@ -89,7 +89,8 @@ export const submitContact = async (req, res, next) => {
     if (existingLead) {
       return res.status(400).json({
         status: 'error',
-        message: 'You have already submitted an inquiry in the last 24 hours. Please wait before sending another message.',
+        message:
+          'You have already submitted an inquiry in the last 24 hours. Please wait before sending another message.',
       })
     }
 
@@ -109,19 +110,17 @@ export const submitContact = async (req, res, next) => {
     const adminEmail = adminNotificationTemplate({ name, email, phone, message, serviceInterested })
     const userReply = autoReplyTemplate({ name })
 
-    const emailTarget = env.EMAIL_FROM
-      ? env.EMAIL_FROM.replace(/.*<(.+)>/, '$1')
-      : env.EMAIL_USER
+    const emailTarget = env.EMAIL_FROM ? env.EMAIL_FROM.replace(/.*<(.+)>/, '$1') : env.EMAIL_USER
 
     // Fire-and-forget with error logging
     Promise.all([
       emailTarget
         ? sendEmail({ to: emailTarget, ...adminEmail }).catch((err) =>
-            console.error('[mailer] Admin notification failed:', err.message),
+            console.error('[mailer] Admin notification failed:', err.message)
           )
         : Promise.resolve(),
       sendEmail({ to: email, ...userReply }).catch((err) =>
-        console.error('[mailer] Auto-reply failed:', err.message),
+        console.error('[mailer] Auto-reply failed:', err.message)
       ),
     ])
 

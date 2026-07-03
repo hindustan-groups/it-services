@@ -50,7 +50,8 @@ export const verifyToken = (req, res, next) => {
  * Role-based access guard — use after verifyToken.
  * @param {...string} roles — allowed roles e.g. 'ADMIN', 'SUPER_ADMIN'
  */
-export const requireRole = (...roles) =>
+export const requireRole =
+  (...roles) =>
   (req, res, next) => {
     if (!req.admin) {
       return res.status(401).json({ status: 'error', message: 'Not authenticated.' })

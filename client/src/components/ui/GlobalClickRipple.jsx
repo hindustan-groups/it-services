@@ -11,11 +11,7 @@ export default function GlobalClickRipple() {
 
       // Don't trigger ripple inside inputs/textareas to avoid typing distraction
       const target = e.target
-      if (
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.isContentEditable
-      ) {
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
         return
       }
 

@@ -5,9 +5,18 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
-  Download, Database, CheckSquare, Square, Loader2,
-  ShieldAlert, Info, FileJson, RefreshCw, CheckCircle2,
-  AlertCircle, Package,
+  Download,
+  Database,
+  CheckSquare,
+  Square,
+  Loader2,
+  ShieldAlert,
+  Info,
+  FileJson,
+  RefreshCw,
+  CheckCircle2,
+  AlertCircle,
+  Package,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 import { SEO } from '@/components/ui'
@@ -19,25 +28,28 @@ function TableRow({ tableKey, label, count, selected, onToggle }) {
       type="button"
       onClick={() => onToggle(tableKey)}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-left
-        ${selected
-          ? 'border-brand-blue/40 bg-brand-blue/5'
-          : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+        ${
+          selected
+            ? 'border-brand-blue/40 bg-brand-blue/5'
+            : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
         }`}
     >
       <span className="shrink-0 text-brand-blue">
-        {selected
-          ? <CheckSquare className="w-4.5 h-4.5" />
-          : <Square className="w-4.5 h-4.5 text-gray-300" />
-        }
+        {selected ? (
+          <CheckSquare className="w-4.5 h-4.5" />
+        ) : (
+          <Square className="w-4.5 h-4.5 text-gray-300" />
+        )}
       </span>
-      <span className={`flex-1 text-sm font-medium ${selected ? 'text-brand-blue' : 'text-gray-700'}`}>
+      <span
+        className={`flex-1 text-sm font-medium ${selected ? 'text-brand-blue' : 'text-gray-700'}`}
+      >
         {label}
       </span>
-      <span className={`text-xs font-mono px-2 py-0.5 rounded-full font-semibold
-        ${selected
-          ? 'bg-brand-blue/10 text-brand-blue'
-          : 'bg-gray-100 text-gray-500'
-        }`}>
+      <span
+        className={`text-xs font-mono px-2 py-0.5 rounded-full font-semibold
+        ${selected ? 'bg-brand-blue/10 text-brand-blue' : 'bg-gray-100 text-gray-500'}`}
+      >
         {count} records
       </span>
     </button>
@@ -53,20 +65,20 @@ export default function AdminBackupPage() {
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['backup-tables'],
-    queryFn: () => api.get('/admin/backup/tables').then(r => r.data),
+    queryFn: () => api.get('/admin/backup/tables').then((r) => r.data),
     onSuccess: (tables) => {
       // Auto-select all on first load
-      setSelected(new Set(tables.map(t => t.key)))
+      setSelected(new Set(tables.map((t) => t.key)))
     },
   })
 
   // Auto-select all when data loads
   const tables = data || []
-  const allSelected = tables.length > 0 && tables.every(t => selected.has(t.key))
+  const allSelected = tables.length > 0 && tables.every((t) => selected.has(t.key))
   const someSelected = selected.size > 0
 
   const toggleTable = (key) => {
-    setSelected(prev => {
+    setSelected((prev) => {
       const next = new Set(prev)
       next.has(key) ? next.delete(key) : next.add(key)
       return next
@@ -77,12 +89,12 @@ export default function AdminBackupPage() {
     if (allSelected) {
       setSelected(new Set())
     } else {
-      setSelected(new Set(tables.map(t => t.key)))
+      setSelected(new Set(tables.map((t) => t.key)))
     }
   }
 
   const totalRecords = tables
-    .filter(t => selected.has(t.key))
+    .filter((t) => selected.has(t.key))
     .reduce((acc, t) => acc + t.count, 0)
 
   const handleDownload = async () => {
@@ -92,10 +104,13 @@ export default function AdminBackupPage() {
     try {
       const tableParam = [...selected].join(',')
       // Use fetch directly to handle file download
-      const res = await fetch(`${import.meta.env.VITE_API_URL || '/api'}/admin/backup?tables=${tableParam}`, {
-        method: 'GET',
-        credentials: 'include',
-      })
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL || '/api'}/admin/backup?tables=${tableParam}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+        }
+      )
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
         throw new Error(err.message || 'Backup failed')
@@ -121,7 +136,6 @@ export default function AdminBackupPage() {
     <>
       <SEO title="Data Backup" noIndex />
       <div className="space-y-6 max-w-2xl">
-
         {/* Header */}
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3.5">
@@ -151,9 +165,9 @@ export default function AdminBackupPage() {
           <div>
             <p className="text-xs font-semibold text-blue-800 mb-0.5">About Backups</p>
             <p className="text-xs text-blue-700 leading-relaxed">
-              Backup is downloaded as a <strong>.json</strong> file to your computer.
-              Sensitive credentials (API keys, passwords) are <strong>never included</strong>.
-              Download regularly — once a week is recommended.
+              Backup is downloaded as a <strong>.json</strong> file to your computer. Sensitive
+              credentials (API keys, passwords) are <strong>never included</strong>. Download
+              regularly — once a week is recommended.
             </p>
           </div>
         </div>
@@ -162,9 +176,8 @@ export default function AdminBackupPage() {
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
           <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
           <p className="text-xs text-amber-700 leading-relaxed">
-            <strong>SUPER_ADMIN only.</strong> Keep backup files secure —
-            they contain contact leads, team details, and other business data.
-            Do not share backup files publicly.
+            <strong>SUPER_ADMIN only.</strong> Keep backup files secure — they contain contact
+            leads, team details, and other business data. Do not share backup files publicly.
           </p>
         </div>
 
@@ -173,7 +186,9 @@ export default function AdminBackupPage() {
           <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Package className="w-4 h-4 text-gray-500" />
-              <h2 className="font-heading text-base font-semibold text-gray-800">Select Tables to Export</h2>
+              <h2 className="font-heading text-base font-semibold text-gray-800">
+                Select Tables to Export
+              </h2>
             </div>
             <button
               type="button"
@@ -195,7 +210,7 @@ export default function AdminBackupPage() {
                 Failed to load table info. Is the server running?
               </div>
             ) : (
-              tables.map(t => (
+              tables.map((t) => (
                 <TableRow
                   key={t.key}
                   tableKey={t.key}
@@ -249,19 +264,23 @@ export default function AdminBackupPage() {
               flex items-center justify-center gap-2"
           >
             {downloading ? (
-              <><Loader2 className="w-4 h-4 animate-spin" /> Preparing Download…</>
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" /> Preparing Download…
+              </>
             ) : (
-              <><Download className="w-4 h-4" /> Download Backup ({selected.size} tables)</>
+              <>
+                <Download className="w-4 h-4" /> Download Backup ({selected.size} tables)
+              </>
             )}
           </button>
 
           <p className="text-center text-xs text-gray-400">
-            File: <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-[11px]">
+            File:{' '}
+            <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-[11px]">
               hindustan-projects-backup-{new Date().toISOString().slice(0, 10)}.json
             </code>
           </p>
         </div>
-
       </div>
     </>
   )

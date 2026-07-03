@@ -17,18 +17,18 @@ router.get('/', async (_req, res, next) => {
     })
 
     const staticPages = [
-      { path: '/',                   priority: '1.0', freq: 'weekly' },
-      { path: '/services',           priority: '0.9', freq: 'weekly' },
-      { path: '/about',              priority: '0.7', freq: 'monthly' },
-      { path: '/portfolio',          priority: '0.7', freq: 'weekly' },
-      { path: '/contact',            priority: '0.8', freq: 'monthly' },
-      { path: '/careers',            priority: '0.6', freq: 'weekly' },
-      { path: '/privacy-policy',     priority: '0.3', freq: 'yearly' },
-      { path: '/terms-of-service',   priority: '0.3', freq: 'yearly' },
-      { path: '/refund-policy',      priority: '0.3', freq: 'yearly' },
+      { path: '/', priority: '1.0', freq: 'weekly' },
+      { path: '/services', priority: '0.9', freq: 'weekly' },
+      { path: '/about', priority: '0.7', freq: 'monthly' },
+      { path: '/portfolio', priority: '0.7', freq: 'weekly' },
+      { path: '/contact', priority: '0.8', freq: 'monthly' },
+      { path: '/careers', priority: '0.6', freq: 'weekly' },
+      { path: '/privacy-policy', priority: '0.3', freq: 'yearly' },
+      { path: '/terms-of-service', priority: '0.3', freq: 'yearly' },
+      { path: '/refund-policy', priority: '0.3', freq: 'yearly' },
     ]
 
-    const servicePages = services.map(s => ({
+    const servicePages = services.map((s) => ({
       path: `/services/${s.slug}`,
       priority: '0.8',
       freq: 'monthly',
@@ -40,12 +40,16 @@ router.get('/', async (_req, res, next) => {
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allPages.map(p => `  <url>
+${allPages
+  .map(
+    (p) => `  <url>
     <loc>${BASE}${p.path}</loc>
     <lastmod>${p.lastmod || today}</lastmod>
     <changefreq>${p.freq}</changefreq>
     <priority>${p.priority}</priority>
-  </url>`).join('\n')}
+  </url>`
+  )
+  .join('\n')}
 </urlset>`
 
     res.setHeader('Content-Type', 'application/xml')

@@ -12,21 +12,68 @@ import prisma from '../config/db.js'
 
 // Tables available for backup — display name + prisma model key
 const BACKUP_TABLES = {
-  services:     { label: 'Services',      fetch: () => prisma.service.findMany({ orderBy: { order: 'asc' } }) },
-  projects:     { label: 'Projects',      fetch: () => prisma.project.findMany({ orderBy: { createdAt: 'desc' } }) },
-  team:         { label: 'Team Members',  fetch: () => prisma.teamMember.findMany({ orderBy: { order: 'asc' } }) },
-  testimonials: { label: 'Testimonials',  fetch: () => prisma.testimonial.findMany({ orderBy: { order: 'asc' } }) },
-  faqs:         { label: 'FAQs',          fetch: () => prisma.faq.findMany({ orderBy: { order: 'asc' } }) },
-  milestones:   { label: 'Milestones',    fetch: () => prisma.milestone.findMany({ orderBy: { order: 'asc' } }) },
-  partners:     { label: 'Partners',      fetch: () => prisma.partner.findMany({ orderBy: { order: 'asc' } }) },
-  leads:        { label: 'Contact Leads', fetch: () => prisma.contactLead.findMany({ orderBy: { createdAt: 'desc' } }) },
-  careers:      { label: 'Job Postings',  fetch: () => prisma.jobPosting.findMany({ orderBy: { createdAt: 'desc' } }) },
-  applications: { label: 'Applications',  fetch: () => prisma.jobApplication.findMany({ orderBy: { createdAt: 'desc' } }) },
-  legal:        { label: 'Legal Pages',   fetch: () => prisma.legalPage.findMany() },
-  siteSettings: { label: 'Site Settings', fetch: () => prisma.siteSetting.findMany({
-    // Exclude all sys_* keys — these contain credentials
-    where: { key: { not: { startsWith: 'sys_' } } }
-  })},
+  services: {
+    label: 'Services',
+    fetch: () => prisma.service.findMany({ orderBy: { order: 'asc' } }),
+  },
+  projects: {
+    label: 'Projects',
+    fetch: () => prisma.project.findMany({ orderBy: { createdAt: 'desc' } }),
+  },
+  team: {
+    label: 'Team Members',
+    fetch: () => prisma.teamMember.findMany({ orderBy: { order: 'asc' } }),
+  },
+  testimonials: {
+    label: 'Testimonials',
+    fetch: () => prisma.testimonial.findMany({ orderBy: { order: 'asc' } }),
+  },
+  faqs: { label: 'FAQs', fetch: () => prisma.faq.findMany({ orderBy: { order: 'asc' } }) },
+  milestones: {
+    label: 'Milestones',
+    fetch: () => prisma.milestone.findMany({ orderBy: { order: 'asc' } }),
+  },
+  partners: {
+    label: 'Partners',
+    fetch: () => prisma.partner.findMany({ orderBy: { order: 'asc' } }),
+  },
+  leads: {
+    label: 'Contact Leads',
+    fetch: () => prisma.contactLead.findMany({ orderBy: { createdAt: 'desc' } }),
+  },
+  careers: {
+    label: 'Job Postings',
+    fetch: () => prisma.jobPosting.findMany({ orderBy: { createdAt: 'desc' } }),
+  },
+  applications: {
+    label: 'Applications',
+    fetch: () => prisma.jobApplication.findMany({ orderBy: { createdAt: 'desc' } }),
+  },
+  legal: { label: 'Legal Pages', fetch: () => prisma.legalPage.findMany() },
+  siteSettings: {
+    label: 'Site Settings',
+    fetch: () =>
+      prisma.siteSetting.findMany({
+        // Exclude all sys_* keys — these contain credentials
+        where: { key: { not: { startsWith: 'sys_' } } },
+      }),
+  },
+  clientProjects: {
+    label: 'Client Projects',
+    fetch: () => prisma.clientProject.findMany({ orderBy: { createdAt: 'desc' } }),
+  },
+  workTasks: {
+    label: 'Work Tasks',
+    fetch: () => prisma.workTask.findMany({ orderBy: { createdAt: 'desc' } }),
+  },
+  quickNotes: {
+    label: 'Quick Notes',
+    fetch: () => prisma.quickNote.findMany({ orderBy: { createdAt: 'desc' } }),
+  },
+  activityLogs: {
+    label: 'Activity Logs',
+    fetch: () => prisma.activityLog.findMany({ orderBy: { createdAt: 'desc' } }),
+  },
 }
 
 /**
@@ -37,7 +84,10 @@ const BACKUP_TABLES = {
 export const downloadBackup = async (req, res, next) => {
   try {
     const requested = req.query.tables
-      ? req.query.tables.split(',').map(t => t.trim()).filter(t => BACKUP_TABLES[t])
+      ? req.query.tables
+          .split(',')
+          .map((t) => t.trim())
+          .filter((t) => BACKUP_TABLES[t])
       : Object.keys(BACKUP_TABLES)
 
     if (requested.length === 0) {
@@ -99,9 +149,7 @@ export const getBackupTableInfo = async (req, res, next) => {
       })
     )
 
-    const tables = counts
-      .filter(r => r.status === 'fulfilled')
-      .map(r => r.value)
+    const tables = counts.filter((r) => r.status === 'fulfilled').map((r) => r.value)
 
     res.json({ status: 'ok', data: tables })
   } catch (err) {

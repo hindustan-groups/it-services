@@ -3,7 +3,16 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
-import { MapPin, Phone, Mail, MessageCircle, Send, CheckCircle, AlertCircle, ChevronDown } from 'lucide-react'
+import {
+  MapPin,
+  Phone,
+  Mail,
+  MessageCircle,
+  Send,
+  CheckCircle,
+  AlertCircle,
+  ChevronDown,
+} from 'lucide-react'
 import { Container, Button, SEO } from '@/components/ui'
 import { useServices } from '@/hooks/useServices'
 import { useFaqs, useSiteSettings } from '@/hooks/useContent'
@@ -19,17 +28,11 @@ const contactSchema = z.object({
     .min(2, 'Name must be at least 2 characters.')
     .max(100, 'Name is too long.')
     .trim(),
-  email: z
-    .string()
-    .min(1, 'Email is required.')
-    .email('Please enter a valid email address.'),
+  email: z.string().min(1, 'Email is required.').email('Please enter a valid email address.'),
   phone: z
     .string()
     .optional()
-    .refine(
-      (v) => !v || /^[+\d\s\-().]{7,20}$/.test(v),
-      'Please enter a valid phone number.',
-    ),
+    .refine((v) => !v || /^[+\d\s\-().]{7,20}$/.test(v), 'Please enter a valid phone number.'),
   serviceInterested: z.string().optional(),
   message: z
     .string()
@@ -42,7 +45,10 @@ const contactSchema = z.object({
 function Field({ label, required, error, children, htmlFor }) {
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={htmlFor} className="text-xs font-bold text-brand-blue uppercase tracking-wider flex justify-between items-center">
+      <label
+        htmlFor={htmlFor}
+        className="text-xs font-bold text-brand-blue uppercase tracking-wider flex justify-between items-center"
+      >
         <span>
           {label}
           {required && <span className="text-brand-red ml-0.5">*</span>}
@@ -50,7 +56,10 @@ function Field({ label, required, error, children, htmlFor }) {
       </label>
       {children}
       {error && (
-        <p className="text-xs text-brand-red flex items-center gap-1 font-semibold mt-0.5" role="alert">
+        <p
+          className="text-xs text-brand-red flex items-center gap-1 font-semibold mt-0.5"
+          role="alert"
+        >
           <AlertCircle className="w-3.5 h-3.5 shrink-0" />
           {error}
         </p>
@@ -76,13 +85,16 @@ function ContactInfoCard({ icon: Icon, label, value, href, borderColor }) {
   const inner = (
     <div className="flex items-start gap-4">
       <span className="w-11 h-11 rounded-xl bg-brand-blue/5 border border-brand-blue/10 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 group-hover:bg-brand-blue group-hover:text-white transition-all duration-300">
-        <Icon className="w-5 h-5 text-brand-blue group-hover:text-white transition-colors duration-300" strokeWidth={1.5} />
+        <Icon
+          className="w-5 h-5 text-brand-blue group-hover:text-white transition-colors duration-300"
+          strokeWidth={1.5}
+        />
       </span>
       <div className="space-y-0.5">
-        <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">
-          {label}
+        <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">{label}</p>
+        <p className="text-sm text-brand-blue font-bold group-hover:text-brand-red transition-colors duration-200">
+          {value}
         </p>
-        <p className="text-sm text-brand-blue font-bold group-hover:text-brand-red transition-colors duration-200">{value}</p>
       </div>
     </div>
   )
@@ -102,20 +114,41 @@ function ContactInfoCard({ icon: Icon, label, value, href, borderColor }) {
     )
   }
 
-  return (
-    <div className={baseClass.replace('hover:border-brand-blue/30', '')}>
-      {inner}
-    </div>
-  )
+  return <div className={baseClass.replace('hover:border-brand-blue/30', '')}>{inner}</div>
 }
 
 // ── FAQ Fallback (when DB empty) ───────────────────────────────
 const FAQ_FALLBACK = [
-  { id: '1', question: "What services does Hindustan Projects offer?", answer: "We provide custom Web Development, Mobile App Development, Digital Marketing, Brand Identity Design, and custom ERP/Software Solutions." },
-  { id: '2', question: "Where is your office?", answer: "Our office is in Bhilwara, Rajasthan, India (311001). We also work remotely with clients across India." },
-  { id: '3', question: "How long to start a new project?", answer: "We typically onboard and kick off new projects within 3–5 business days after requirement discovery." },
-  { id: '4', question: "Do you offer post-launch support?", answer: "Yes! Every project includes a standard support window. We also offer monthly maintenance contracts." },
-  { id: '5', question: "How is pricing calculated?", answer: "Pricing is based on project scope, features, and complexity. We provide clear itemized quotes with no hidden fees." },
+  {
+    id: '1',
+    question: 'What services does Hindustan Projects offer?',
+    answer:
+      'We provide custom Web Development, Mobile App Development, Digital Marketing, Brand Identity Design, and custom ERP/Software Solutions.',
+  },
+  {
+    id: '2',
+    question: 'Where is your office?',
+    answer:
+      'Our office is in Bhilwara, Rajasthan, India (311001). We also work remotely with clients across India.',
+  },
+  {
+    id: '3',
+    question: 'How long to start a new project?',
+    answer:
+      'We typically onboard and kick off new projects within 3–5 business days after requirement discovery.',
+  },
+  {
+    id: '4',
+    question: 'Do you offer post-launch support?',
+    answer:
+      'Yes! Every project includes a standard support window. We also offer monthly maintenance contracts.',
+  },
+  {
+    id: '5',
+    question: 'How is pricing calculated?',
+    answer:
+      'Pricing is based on project scope, features, and complexity. We provide clear itemized quotes with no hidden fees.',
+  },
 ]
 
 // ── Main Page Component ────────────────────────────────────────
@@ -133,9 +166,9 @@ export default function ContactPage() {
 
   const { data: settingsData } = useSiteSettings()
   const cfg = settingsData?.data || {}
-  const phone    = cfg.phone    || '+91 99999 99999'
-  const email    = cfg.email    || 'info@hindustanprojects.com'
-  const address  = cfg.address  || 'Bhilwara, Rajasthan 311001, India'
+  const phone = cfg.phone || '+91 99999 99999'
+  const email = cfg.email || 'info@hindustanprojects.com'
+  const address = cfg.address || 'Bhilwara, Rajasthan 311001, India'
   const whatsapp = cfg.whatsapp || cfg.phone || '919999999999'
   const whatsappNum = whatsapp.replace(/[^0-9]/g, '')
 
@@ -169,7 +202,7 @@ export default function ContactPage() {
   const onSubmit = async (data) => {
     // Check local lockout before calling API
     const lastSubmit = localStorage.getItem('last_submit_lead')
-    if (lastSubmit && (Date.now() - parseInt(lastSubmit, 10)) < 24 * 60 * 60 * 1000) {
+    if (lastSubmit && Date.now() - parseInt(lastSubmit, 10) < 24 * 60 * 60 * 1000) {
       setSubmitState('error')
       setApiError('You have already submitted an inquiry recently. Please wait 24 hours.')
       return
@@ -220,19 +253,24 @@ export default function ContactPage() {
         path="/contact"
         keywords="contact IT company Bhilwara, web development consultation Rajasthan, IT services quote India, hire web developer Bhilwara"
         schemas={[
-          breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact' }]),
-          ...(faqs.length ? [faqSchema(faqs.map(f => ({ question: f.question, answer: f.answer })))] : []),
+          breadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'Contact', path: '/contact' },
+          ]),
+          ...(faqs.length
+            ? [faqSchema(faqs.map((f) => ({ question: f.question, answer: f.answer })))]
+            : []),
         ]}
       />
       {/* ── Page Hero Header ── */}
       <section className="pt-24 sm:pt-32 lg:pt-36 pb-14 sm:pb-20 lg:pb-24 bg-[#050e20] border-b border-white/5 relative overflow-hidden">
         {/* Mesh Background grid */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:30px_30px] pointer-events-none" />
-        
+
         {/* Subtle Brand Red Glow to replace heavy blur blobs */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-brand-red/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-10 w-80 h-80 bg-brand-blue/10 rounded-full blur-3xl pointer-events-none" />
-        
+
         <Container className="relative">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left text column */}
@@ -242,28 +280,35 @@ export default function ContactPage() {
                 GET IN TOUCH
               </span>
               <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
-                Let&apos;s Build Something <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red to-orange-400">Extraordinary</span>
+                Let&apos;s Build Something{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red to-orange-400">
+                  Extraordinary
+                </span>
               </h1>
               <p className="text-white/70 text-base sm:text-lg max-w-2xl leading-relaxed">
-                Have a project in mind, need a consultation, or just want to say hello? Fill out the form, WhatsApp us, or visit our office. We respond within 24 hours.
+                Have a project in mind, need a consultation, or just want to say hello? Fill out the
+                form, WhatsApp us, or visit our office. We respond within 24 hours.
               </p>
 
               {/* Advanced Trust Blocks */}
               <div className="grid grid-cols-2 gap-4 pt-2 max-w-md">
                 <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors duration-300">
                   <p className="text-2xl font-black text-emerald-400">99.4%</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Client Satisfaction</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                    Client Satisfaction
+                  </p>
                 </div>
                 <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors duration-300">
                   <p className="text-2xl font-black text-blue-400">&lt; 24h</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Response Guarantee</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                    Response Guarantee
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* Right graphic/portrait column (Advanced 2026 Style) */}
             <div className="hidden lg:flex lg:col-span-5 justify-center lg:justify-end relative h-[440px]">
-              
               {/* Main Futuristic Glass Panel */}
               <div className="absolute bottom-4 left-4 right-4 lg:left-12 lg:right-0 top-12 rounded-3xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-lg shadow-[0_30px_100px_rgba(0,0,0,0.5)] overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:16px_16px]" />
@@ -272,8 +317,14 @@ export default function ContactPage() {
               </div>
 
               {/* Interactive 3D floating circles */}
-              <div className="absolute top-4 right-1/2 translate-x-1/2 lg:right-24 w-[280px] h-[280px] rounded-full border border-dashed border-cyan-400/20 animate-spin" style={{ animationDuration: '30s' }} />
-              <div className="absolute top-12 right-1/2 translate-x-1/2 lg:right-28 w-[230px] h-[230px] rounded-full border border-dotted border-blue-500/20 animate-spin" style={{ animationDuration: '45s', animationDirection: 'reverse' }} />
+              <div
+                className="absolute top-4 right-1/2 translate-x-1/2 lg:right-24 w-[280px] h-[280px] rounded-full border border-dashed border-cyan-400/20 animate-spin"
+                style={{ animationDuration: '30s' }}
+              />
+              <div
+                className="absolute top-12 right-1/2 translate-x-1/2 lg:right-28 w-[230px] h-[230px] rounded-full border border-dotted border-blue-500/20 animate-spin"
+                style={{ animationDuration: '45s', animationDirection: 'reverse' }}
+              />
 
               {/* High-Tech blended specialist cutout */}
               <div className="relative h-full w-full max-w-[340px] flex items-end justify-center z-10">
@@ -284,12 +335,17 @@ export default function ContactPage() {
                 />
 
                 {/* Overlapping Glass chat widget */}
-                <div className="absolute top-1/3 -left-6 z-20 bg-slate-900/80 border border-white/10 p-3 rounded-2xl shadow-[0_15px_30px_rgba(0,0,0,0.4)] backdrop-blur-md flex items-center gap-3 animate-bounce" style={{ animationDuration: '4s' }}>
+                <div
+                  className="absolute top-1/3 -left-6 z-20 bg-slate-900/80 border border-white/10 p-3 rounded-2xl shadow-[0_15px_30px_rgba(0,0,0,0.4)] backdrop-blur-md flex items-center gap-3 animate-bounce"
+                  style={{ animationDuration: '4s' }}
+                >
                   <span className="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
                     <MessageCircle className="w-4 h-4" />
                   </span>
                   <div className="text-left">
-                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">ONLINE NOW</p>
+                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
+                      ONLINE NOW
+                    </p>
                     <p className="text-xs font-bold text-white">How can we help?</p>
                   </div>
                 </div>
@@ -301,7 +357,9 @@ export default function ContactPage() {
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                   </span>
                   <div className="text-left">
-                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">PRIORITY CONNECT</p>
+                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
+                      PRIORITY CONNECT
+                    </p>
                     <p className="text-xs font-bold text-white">Bhilwara, RJ</p>
                   </div>
                 </div>
@@ -315,7 +373,6 @@ export default function ContactPage() {
       <section className="py-12 sm:py-16 lg:py-20 bg-slate-50/30">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
-
             {/* ── Left Column: Contact Cards + WhatsApp + Map ── */}
             <motion.aside
               variants={staggerContainer}
@@ -379,11 +436,17 @@ export default function ContactPage() {
               </motion.div>
 
               {/* Grayscale Map Container */}
-              <motion.div variants={fadeUp} className="rounded-2xl overflow-hidden border border-slate-200/60 shadow-md hover:shadow-lg transition-all duration-300 bg-white p-1.5">
+              <motion.div
+                variants={fadeUp}
+                className="rounded-2xl overflow-hidden border border-slate-200/60 shadow-md hover:shadow-lg transition-all duration-300 bg-white p-1.5"
+              >
                 <div className="rounded-xl overflow-hidden h-56 relative group">
                   <iframe
                     title="Hindustan Projects Office Location — Bhilwara, Rajasthan"
-                    src={cfg.googleMapUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57692.35!2d74.6!3d25.35!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3968a5!2sBhilwara%2C+Rajasthan!5e0!3m2!1sen!2sin!4v1"}
+                    src={
+                      cfg.googleMapUrl ||
+                      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57692.35!2d74.6!3d25.35!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3968a5!2sBhilwara%2C+Rajasthan!5e0!3m2!1sen!2sin!4v1'
+                    }
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
@@ -404,8 +467,10 @@ export default function ContactPage() {
               viewport={{ once: true }}
               className="lg:col-span-3"
             >
-              <div className="bg-white rounded-3xl border border-slate-100
-                shadow-[0_20px_50px_rgba(26,62,140,0.06)] p-8 sm:p-10 relative overflow-hidden">
+              <div
+                className="bg-white rounded-3xl border border-slate-100
+                shadow-[0_20px_50px_rgba(26,62,140,0.06)] p-8 sm:p-10 relative overflow-hidden"
+              >
                 <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-cyan-400 to-emerald-400" />
 
                 {/* Success state */}
@@ -419,14 +484,11 @@ export default function ContactPage() {
                         Message Received!
                       </h3>
                       <p className="text-text-muted text-sm max-w-sm">
-                        Thank you for reaching out. We&apos;ll review your requirements and get back to you within 24 hours.
+                        Thank you for reaching out. We&apos;ll review your requirements and get back
+                        to you within 24 hours.
                       </p>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSubmitState('idle')}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => setSubmitState('idle')}>
                       Send Another Message
                     </Button>
                   </div>
@@ -440,7 +502,8 @@ export default function ContactPage() {
                         Submission Locked
                       </h3>
                       <p className="text-text-muted text-sm max-w-sm leading-relaxed">
-                        You have already submitted an inquiry in the last 24 hours. To prevent spam and duplicate records, please wait before sending another message.
+                        You have already submitted an inquiry in the last 24 hours. To prevent spam
+                        and duplicate records, please wait before sending another message.
                       </p>
                     </div>
                   </div>
@@ -585,7 +648,8 @@ export default function ContactPage() {
                           {submitState === 'loading' ? 'Sending Message…' : 'Send Message'}
                         </Button>
                         <p className="text-[10px] text-text-muted text-center mt-3 font-medium">
-                          By submitting, you agree to our privacy policy. We strictly respect your privacy.
+                          By submitting, you agree to our privacy policy. We strictly respect your
+                          privacy.
                         </p>
                       </div>
                     </form>
@@ -602,7 +666,9 @@ export default function ContactPage() {
         <Container>
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
-              <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">Got Questions?</span>
+              <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">
+                Got Questions?
+              </span>
               <h2 className="font-heading text-3xl font-bold text-brand-blue mb-4">
                 Frequently Asked Questions
               </h2>
@@ -627,19 +693,21 @@ export default function ContactPage() {
                       aria-expanded={isOpen}
                     >
                       <span className="text-sm sm:text-base leading-snug">{question}</span>
-                      <span className={`p-1 rounded-full bg-slate-50 text-slate-400 group-hover:bg-brand-blue/5 transition-transform duration-350 ${isOpen ? 'rotate-180 text-brand-blue' : ''}`}>
+                      <span
+                        className={`p-1 rounded-full bg-slate-50 text-slate-400 group-hover:bg-brand-blue/5 transition-transform duration-350 ${isOpen ? 'rotate-180 text-brand-blue' : ''}`}
+                      >
                         <ChevronDown className="w-4 h-4" />
                       </span>
                     </button>
 
                     <div
                       className={`transition-all duration-350 ease-in-out overflow-hidden ${
-                        isOpen ? 'max-h-60 opacity-100 border-t border-slate-50' : 'max-h-0 opacity-0 pointer-events-none'
+                        isOpen
+                          ? 'max-h-60 opacity-100 border-t border-slate-50'
+                          : 'max-h-0 opacity-0 pointer-events-none'
                       }`}
                     >
-                      <div className="p-5 text-sm text-text-muted leading-relaxed">
-                        {answer}
-                      </div>
+                      <div className="p-5 text-sm text-text-muted leading-relaxed">{answer}</div>
                     </div>
                   </div>
                 )

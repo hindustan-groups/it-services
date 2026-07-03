@@ -32,7 +32,10 @@ const STEPS = [
 
 export default function ProcessSection() {
   return (
-    <section className="py-20 bg-bg-base border-t border-gray-100/50" aria-labelledby="process-heading">
+    <section
+      className="py-20 bg-bg-base border-t border-gray-100/50"
+      aria-labelledby="process-heading"
+    >
       <Container>
         <motion.div
           initial="hidden"
@@ -57,10 +60,11 @@ export default function ProcessSection() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 relative"
         >
           {/* Connector dashed line for large screens */}
-          <div 
+          <div
             className="absolute top-[32px] left-[15%] right-[15%] h-[2px] hidden lg:block -z-10"
             style={{
-              backgroundImage: 'linear-gradient(to right, transparent 50%, rgba(26,62,140,0.2) 50%)',
+              backgroundImage:
+                'linear-gradient(to right, transparent 50%, rgba(26,62,140,0.2) 50%)',
               backgroundSize: '16px 2px',
               backgroundRepeat: 'repeat-x',
             }}
@@ -70,11 +74,7 @@ export default function ProcessSection() {
           {STEPS.map((s) => {
             const Icon = s.icon
             return (
-              <motion.div
-                key={s.step}
-                variants={fadeUp}
-                className="relative text-center group"
-              >
+              <motion.div key={s.step} variants={fadeUp} className="relative text-center group">
                 {/* Large Ghost Step Number */}
                 <span className="absolute -top-6 left-1/2 -translate-x-1/2 font-heading text-6xl font-black text-brand-blue/5 group-hover:text-brand-red-light/10 transition-colors pointer-events-none select-none">
                   {s.step}
@@ -82,15 +82,16 @@ export default function ProcessSection() {
 
                 {/* Circular Icon Wrapper */}
                 <div className="w-16 h-16 rounded-full bg-white border border-black/5 shadow-md flex items-center justify-center mx-auto mb-6 relative z-10 group-hover:bg-brand-red group-hover:text-white transition-all duration-300">
-                  <Icon className="w-6 h-6 text-brand-blue group-hover:text-white transition-colors" strokeWidth={1.5} />
+                  <Icon
+                    className="w-6 h-6 text-brand-blue group-hover:text-white transition-colors"
+                    strokeWidth={1.5}
+                  />
                 </div>
 
                 <h3 className="font-heading text-base font-bold text-brand-blue mb-3 relative z-10">
                   {s.title}
                 </h3>
-                <p className="text-sm text-text-muted leading-relaxed px-2">
-                  {s.desc}
-                </p>
+                <p className="text-sm text-text-muted leading-relaxed px-2">{s.desc}</p>
               </motion.div>
             )
           })}

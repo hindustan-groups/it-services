@@ -21,7 +21,11 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(schema),
   })
 
@@ -41,15 +45,24 @@ export default function AdminLoginPage() {
   return (
     <>
       <SEO title="Admin Login" noIndex />
-      <div className="min-h-screen flex" style={{ background: 'linear-gradient(135deg, #f0f4ff 0%, #e8eeff 50%, #f5f0ff 100%)' }}>
-
+      <div
+        className="min-h-screen flex"
+        style={{ background: 'linear-gradient(135deg, #f0f4ff 0%, #e8eeff 50%, #f5f0ff 100%)' }}
+      >
         {/* ── Left panel — Brand ── */}
-        <div className="hidden lg:flex flex-col justify-between w-[420px] shrink-0 p-10 relative overflow-hidden"
-          style={{ background: 'linear-gradient(175deg, #1A3E8C 0%, #0f2660 100%)' }}>
-
+        <div
+          className="hidden lg:flex flex-col justify-between w-[420px] shrink-0 p-10 relative overflow-hidden"
+          style={{ background: 'linear-gradient(175deg, #1A3E8C 0%, #0f2660 100%)' }}
+        >
           {/* Grid pattern */}
-          <div className="absolute inset-0 opacity-10"
-            style={{ backgroundImage: 'linear-gradient(to right,#fff 1px,transparent 1px),linear-gradient(to bottom,#fff 1px,transparent 1px)', backgroundSize: '32px 32px' }} />
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage:
+                'linear-gradient(to right,#fff 1px,transparent 1px),linear-gradient(to bottom,#fff 1px,transparent 1px)',
+              backgroundSize: '32px 32px',
+            }}
+          />
 
           {/* Glow orbs */}
           <div className="absolute top-20 left-10 w-48 h-48 bg-brand-red/20 rounded-full blur-3xl" />
@@ -57,7 +70,11 @@ export default function AdminLoginPage() {
 
           {/* Logo */}
           <div className="relative flex items-center gap-3">
-            <img src="/logo-with-bg.png" alt="Logo" className="w-10 h-10 rounded-xl object-contain" />
+            <img
+              src="/logo-with-bg.png"
+              alt="Logo"
+              className="w-10 h-10 rounded-xl object-contain"
+            />
             <div>
               <p className="font-heading font-bold text-white text-base">Hindustan Projects</p>
               <p className="text-white/40 text-xs">Admin Panel</p>
@@ -67,8 +84,12 @@ export default function AdminLoginPage() {
           {/* Center content */}
           <div className="relative space-y-6">
             <div>
-              <h2 className="text-white font-heading text-3xl font-bold leading-tight mb-3" style={{ color: '#fff' }}>
-                Manage Your<br />
+              <h2
+                className="text-white font-heading text-3xl font-bold leading-tight mb-3"
+                style={{ color: '#fff' }}
+              >
+                Manage Your
+                <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-300">
                   Digital Presence
                 </span>
@@ -84,7 +105,7 @@ export default function AdminLoginPage() {
                 'Manage services & portfolio projects',
                 'Track and respond to client leads',
                 'Update team, FAQs & testimonials',
-              ].map(text => (
+              ].map((text) => (
                 <div key={text} className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-full bg-brand-red/20 border border-brand-red/30 flex items-center justify-center shrink-0">
                     <div className="w-1.5 h-1.5 rounded-full bg-brand-red" />
@@ -104,12 +125,17 @@ export default function AdminLoginPage() {
         {/* ── Right panel — Form ── */}
         <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
           <div className="w-full max-w-md">
-
             {/* Mobile logo */}
             <div className="lg:hidden text-center mb-8">
               <div className="inline-flex items-center gap-2.5 mb-2">
-                <img src="/logo-with-bg.png" alt="Logo" className="w-9 h-9 rounded-xl object-contain" />
-                <span className="font-heading font-bold text-xl text-brand-blue">Hindustan Projects</span>
+                <img
+                  src="/logo-with-bg.png"
+                  alt="Logo"
+                  className="w-9 h-9 rounded-xl object-contain"
+                />
+                <span className="font-heading font-bold text-xl text-brand-blue">
+                  Hindustan Projects
+                </span>
               </div>
             </div>
 
@@ -167,7 +193,7 @@ export default function AdminLoginPage() {
                     />
                     <button
                       type="button"
-                      onClick={() => setShowPass(v => !v)}
+                      onClick={() => setShowPass((v) => !v)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                     >
                       {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -182,8 +208,10 @@ export default function AdminLoginPage() {
 
                 {/* API error */}
                 {error && (
-                  <div className="flex items-center gap-2.5 text-sm text-red-700 bg-red-50
-                    border border-red-200 rounded-xl px-4 py-3">
+                  <div
+                    className="flex items-center gap-2.5 text-sm text-red-700 bg-red-50
+                    border border-red-200 rounded-xl px-4 py-3"
+                  >
                     <AlertCircle className="w-4 h-4 shrink-0" />
                     {error}
                   </div>
@@ -195,14 +223,20 @@ export default function AdminLoginPage() {
                   className="w-full text-white font-semibold py-3 rounded-xl text-sm
                     transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed
                     hover:shadow-lg hover:shadow-brand-blue/25 hover:-translate-y-0.5 active:translate-y-0 mt-2"
-                  style={{ background: loading ? '#94a3b8' : 'linear-gradient(135deg, #1A3E8C 0%, #2d5fd6 100%)' }}
+                  style={{
+                    background: loading
+                      ? '#94a3b8'
+                      : 'linear-gradient(135deg, #1A3E8C 0%, #2d5fd6 100%)',
+                  }}
                 >
                   {loading ? (
                     <span className="flex items-center justify-center gap-2">
                       <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                       Signing in…
                     </span>
-                  ) : 'Sign In to Dashboard'}
+                  ) : (
+                    'Sign In to Dashboard'
+                  )}
                 </button>
               </form>
 

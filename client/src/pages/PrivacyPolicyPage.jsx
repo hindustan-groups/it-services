@@ -8,8 +8,8 @@ export default function PrivacyPolicyPage() {
 
   return (
     <>
-      <SEO 
-        title={page?.title || 'Privacy Policy'} 
+      <SEO
+        title={page?.title || 'Privacy Policy'}
         description="Privacy policy and data collection terms for Hindustan Projects."
       />
 
@@ -25,11 +25,18 @@ export default function PrivacyPolicyPage() {
             <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
               {page?.title || 'Privacy Policy'}
             </h1>
-            
+
             {page?.lastUpdated && (
               <p className="flex items-center justify-center gap-2 text-xs text-white/50">
                 <Calendar className="w-3.5 h-3.5" />
-                <span>Last Updated: {new Date(page.lastUpdated).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                <span>
+                  Last Updated:{' '}
+                  {new Date(page.lastUpdated).toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })}
+                </span>
               </p>
             )}
           </Container>
@@ -52,7 +59,7 @@ export default function PrivacyPolicyPage() {
                 <p className="text-xs text-gray-400">Make sure the API server is online.</p>
               </div>
             ) : (
-              <div 
+              <div
                 className="prose prose-slate max-w-none prose-headings:font-heading prose-headings:font-bold prose-headings:text-brand-blue prose-p:leading-relaxed prose-li:leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(page.content) }}
               />

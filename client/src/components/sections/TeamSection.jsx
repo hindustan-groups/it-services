@@ -43,15 +43,11 @@ function TeamCard({ member }) {
           <Avatar name={member.name} />
         )}
 
-        <h3 className="font-heading text-base font-semibold text-brand-blue">
-          {member.name}
-        </h3>
+        <h3 className="font-heading text-base font-semibold text-brand-blue">{member.name}</h3>
         <p className="text-xs text-brand-red font-medium mt-0.5 mb-3">{member.role}</p>
 
         {member.bio && (
-          <p className="text-xs text-text-muted leading-relaxed mb-4 line-clamp-3">
-            {member.bio}
-          </p>
+          <p className="text-xs text-text-muted leading-relaxed mb-4 line-clamp-3">{member.bio}</p>
         )}
 
         {member.linkedinUrl && (
@@ -74,43 +70,47 @@ function TeamCard({ member }) {
 
 /** Fallback placeholder cards when DB is not yet connected */
 const PLACEHOLDER_TEAM = [
-  { 
-    id: '1', 
-    name: 'Mohammad Dilshan', 
-    role: 'Founder & CEO', 
-    bio: 'Tech entrepreneur dedicated to empowering local & global businesses with premium digital solutions.', 
-    photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80&auto=format&fit=crop',
-    linkedinUrl: '#' 
+  {
+    id: '1',
+    name: 'Mohammad Dilshan',
+    role: 'Founder & CEO',
+    bio: 'Tech entrepreneur dedicated to empowering local & global businesses with premium digital solutions.',
+    photoUrl:
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80&auto=format&fit=crop',
+    linkedinUrl: '#',
   },
-  { 
-    id: '2', 
-    name: 'Rohan Verma', 
-    role: 'Lead Software Architect', 
-    bio: '6+ years in full-stack engineering. Expert in React, Node.js, and cloud architectures (AWS/GCP).', 
-    photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&q=80&auto=format&fit=crop',
-    linkedinUrl: '#' 
+  {
+    id: '2',
+    name: 'Rohan Verma',
+    role: 'Lead Software Architect',
+    bio: '6+ years in full-stack engineering. Expert in React, Node.js, and cloud architectures (AWS/GCP).',
+    photoUrl:
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&q=80&auto=format&fit=crop',
+    linkedinUrl: '#',
   },
-  { 
-    id: '3', 
-    name: 'Priya Mehta', 
-    role: 'Head of UI/UX & Design', 
-    bio: 'Crafts intuitive, conversion-focused user interfaces and modern corporate brand guidelines.', 
-    photoUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80&auto=format&fit=crop',
-    linkedinUrl: '#' 
+  {
+    id: '3',
+    name: 'Priya Mehta',
+    role: 'Head of UI/UX & Design',
+    bio: 'Crafts intuitive, conversion-focused user interfaces and modern corporate brand guidelines.',
+    photoUrl:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80&auto=format&fit=crop',
+    linkedinUrl: '#',
   },
-  { 
-    id: '4', 
-    name: 'Karan Singhal', 
-    role: 'Head of Digital Growth & SEO', 
-    bio: 'Specialist in search engine optimization and high-ROI multi-channel paid marketing campaigns.', 
-    photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&q=80&auto=format&fit=crop',
-    linkedinUrl: '#' 
+  {
+    id: '4',
+    name: 'Karan Singhal',
+    role: 'Head of Digital Growth & SEO',
+    bio: 'Specialist in search engine optimization and high-ROI multi-channel paid marketing campaigns.',
+    photoUrl:
+      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&q=80&auto=format&fit=crop',
+    linkedinUrl: '#',
   },
 ]
 
 export default function TeamSection() {
   const { data, isLoading } = useTeam()
-  const members = data?.data?.length ? data.data : (isLoading ? [] : PLACEHOLDER_TEAM)
+  const members = data?.data?.length ? data.data : isLoading ? [] : PLACEHOLDER_TEAM
 
   return (
     <section id="team" className="py-20 bg-white" aria-labelledby="team-heading">

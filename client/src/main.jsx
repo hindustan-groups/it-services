@@ -46,5 +46,5 @@ createRoot(document.getElementById('root')).render(
         </QueryClientProvider>
       </BrowserRouter>
     </HelmetProvider>
-  </StrictMode>,
+  </StrictMode>
 )

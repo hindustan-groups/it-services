@@ -166,7 +166,14 @@ export function autoReplyTemplate({ name }) {
 /**
  * Admin notification email for a new job application.
  */
-export function jobAdminNotificationTemplate({ jobTitle, name, email, phone, resumeUrl, coverLetter }) {
+export function jobAdminNotificationTemplate({
+  jobTitle,
+  name,
+  email,
+  phone,
+  resumeUrl,
+  coverLetter,
+}) {
   const coverLetterDisplay = coverLetter || 'Not provided'
 
   return {

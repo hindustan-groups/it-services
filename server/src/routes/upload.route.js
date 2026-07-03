@@ -39,11 +39,11 @@ router.post(
     return res.status(201).json({
       status: 'ok',
       data: {
-        url: req.file.path,        // secure Cloudinary URL
+        url: req.file.path, // secure Cloudinary URL
         publicId: req.file.filename,
       },
     })
-  },
+  }
 )
 
 export default router

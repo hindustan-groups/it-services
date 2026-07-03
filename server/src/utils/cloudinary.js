@@ -46,8 +46,8 @@ const resumeStorage = new CloudinaryStorage({
   params: async (_req, file) => {
     const ext = file.originalname.split('.').pop().toLowerCase()
     const cleanName = file.originalname
-      .replace(/\.[^/.]+$/, "") // strip extension
-      .replace(/[^a-zA-Z0-9]/g, "-") // sanitize
+      .replace(/\.[^/.]+$/, '') // strip extension
+      .replace(/[^a-zA-Z0-9]/g, '-') // sanitize
     return {
       folder: 'hindustan-projects-resumes',
       resource_type: 'raw',
@@ -60,7 +60,7 @@ const resumeFileFilter = (_req, file, cb) => {
   const allowedTypes = [
     'application/pdf',
     'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   ]
   const ext = file.originalname.split('.').pop().toLowerCase()
   if (allowedTypes.includes(file.mimetype) || ['pdf', 'doc', 'docx'].includes(ext)) {
@@ -73,7 +73,7 @@ const resumeFileFilter = (_req, file, cb) => {
 export const uploadResume = multer({
   storage: resumeStorage,
   fileFilter: resumeFileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5 MB max
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB max
 })
 
 export { cloudinary }

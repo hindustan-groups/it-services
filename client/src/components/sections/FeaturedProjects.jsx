@@ -12,9 +12,41 @@ import { fadeUp, staggerContainer, viewportOnce } from '@/utils/motion'
 import { ProjectModal } from '@/components/sections/PortfolioSection'
 
 const PLACEHOLDER_FEATURED = [
-  { id: '1', title: 'E-Commerce Platform', clientName: 'Retail Client, Bhilwara', category: 'Web', isFeatured: true, technologies: ['React', 'Node.js', 'PostgreSQL'], description: 'A full-stack e-commerce platform with inventory management, payment integration, and admin dashboard.', thumbnailUrl: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&q=80&auto=format&fit=crop' },
-  { id: '2', title: 'Digital Marketing Campaign', clientName: 'Fashion Brand, Jaipur', category: 'Marketing', isFeatured: true, technologies: ['Google Ads', 'Meta Ads', 'SEO'], description: 'Multi-channel digital marketing campaign achieving 3x ROI within 3 months.', thumbnailUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80&auto=format&fit=crop' },
-  { id: '3', title: 'Corporate Brand Identity', clientName: 'Manufacturing Co., Bhilwara', category: 'Branding', isFeatured: true, technologies: ['Figma', 'Illustrator'], description: 'Complete brand identity design including logo, brand guidelines, and marketing collateral.', thumbnailUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&q=80&auto=format&fit=crop' },
+  {
+    id: '1',
+    title: 'E-Commerce Platform',
+    clientName: 'Retail Client, Bhilwara',
+    category: 'Web',
+    isFeatured: true,
+    technologies: ['React', 'Node.js', 'PostgreSQL'],
+    description:
+      'A full-stack e-commerce platform with inventory management, payment integration, and admin dashboard.',
+    thumbnailUrl:
+      'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&q=80&auto=format&fit=crop',
+  },
+  {
+    id: '2',
+    title: 'Digital Marketing Campaign',
+    clientName: 'Fashion Brand, Jaipur',
+    category: 'Marketing',
+    isFeatured: true,
+    technologies: ['Google Ads', 'Meta Ads', 'SEO'],
+    description: 'Multi-channel digital marketing campaign achieving 3x ROI within 3 months.',
+    thumbnailUrl:
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80&auto=format&fit=crop',
+  },
+  {
+    id: '3',
+    title: 'Corporate Brand Identity',
+    clientName: 'Manufacturing Co., Bhilwara',
+    category: 'Branding',
+    isFeatured: true,
+    technologies: ['Figma', 'Illustrator'],
+    description:
+      'Complete brand identity design including logo, brand guidelines, and marketing collateral.',
+    thumbnailUrl:
+      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&q=80&auto=format&fit=crop',
+  },
 ]
 
 export default function FeaturedProjects() {
@@ -23,7 +55,9 @@ export default function FeaturedProjects() {
 
   const projects = data?.data?.length
     ? data.data.slice(0, 3)
-    : isLoading ? [] : PLACEHOLDER_FEATURED
+    : isLoading
+      ? []
+      : PLACEHOLDER_FEATURED
 
   return (
     <section className="py-20 bg-bg-base" aria-labelledby="featured-heading">
@@ -62,18 +96,29 @@ export default function FeaturedProjects() {
                     onClick={() => setSelectedProject(p)}
                   >
                     {p.thumbnailUrl ? (
-                      <img src={p.thumbnailUrl} alt={p.title}
+                      <img
+                        src={p.thumbnailUrl}
+                        alt={p.title}
                         className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy" />
+                        loading="lazy"
+                      />
                     ) : (
-                      <div className="w-full h-44 bg-gradient-to-br from-brand-blue/8 to-brand-blue/18
-                        flex items-center justify-center">
-                        <span className="font-heading text-5xl font-bold text-brand-blue/15">{p.title[0]}</span>
+                      <div
+                        className="w-full h-44 bg-gradient-to-br from-brand-blue/8 to-brand-blue/18
+                        flex items-center justify-center"
+                      >
+                        <span className="font-heading text-5xl font-bold text-brand-blue/15">
+                          {p.title[0]}
+                        </span>
                       </div>
                     )}
                     <div className="p-5">
-                      <Badge variant="blue" className="mb-2">{p.category}</Badge>
-                      <h3 className="font-heading text-base font-semibold text-brand-blue mb-1">{p.title}</h3>
+                      <Badge variant="blue" className="mb-2">
+                        {p.category}
+                      </Badge>
+                      <h3 className="font-heading text-base font-semibold text-brand-blue mb-1">
+                        {p.title}
+                      </h3>
                       <p className="text-xs text-text-muted">{p.clientName}</p>
                     </div>
                   </Card>

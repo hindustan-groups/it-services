@@ -20,7 +20,11 @@ export const getLeads = async (req, res, next) => {
       prisma.contactLead.count({ where }),
     ])
 
-    res.json({ status: 'ok', data: leads, meta: { total, page: Number(page), limit: Number(limit) } })
+    res.json({
+      status: 'ok',
+      data: leads,
+      meta: { total, page: Number(page), limit: Number(limit) },
+    })
   } catch (err) {
     next(err)
   }

@@ -40,7 +40,7 @@ export default function RootLayout() {
 
       {/* Floating WhatsApp Chat Widget */}
       <a
-        href={`https://wa.me/${whatsappNum}?text=${encodeURIComponent(cfg.whatsappMessage || "Hi! I visited your website and want to discuss a project.")}`}
+        href={`https://wa.me/${whatsappNum}?text=${encodeURIComponent(cfg.whatsappMessage || 'Hi! I visited your website and want to discuss a project.')}`}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
@@ -50,12 +50,7 @@ export default function RootLayout() {
         <span className="absolute inset-0 rounded-full bg-[#25D366]/50 animate-ping opacity-75 -z-10" />
 
         {/* WhatsApp Icon */}
-        <svg
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className="w-6.5 h-6.5"
-          aria-hidden="true"
-        >
+        <svg viewBox="0 0 24 24" fill="currentColor" className="w-6.5 h-6.5" aria-hidden="true">
           <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.73-1.45L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.725 1.45 5.556 0 10.076-4.522 10.079-10.082.002-2.693-1.043-5.226-2.946-7.13-1.902-1.903-4.432-2.951-7.123-2.952-5.56 0-10.08 4.521-10.083 10.081-.001 1.62.433 3.202 1.258 4.606L1.137 21.8l4.908-1.287 1.272.77c1.3.788 2.6 1.18 3.9 1.18zM17.18 14.16c-.286-.142-1.69-.834-1.952-.929-.262-.096-.453-.142-.643.142-.19.285-.736.929-.903 1.12-.167.19-.334.213-.62.071-.286-.142-1.21-.446-2.305-1.424-.853-.761-1.43-1.7-1.597-1.984-.167-.285-.018-.439.125-.58.129-.126.286-.334.429-.5.143-.167.19-.286.286-.476.095-.19.047-.357-.024-.5-.071-.142-.643-1.547-.88-2.119-.23-.559-.483-.483-.662-.492-.17-.008-.367-.01-.563-.01-.197 0-.517.073-.787.367-.27.293-1.03 1.006-1.03 2.455 0 1.449 1.054 2.848 1.202 3.048.147.2 2.075 3.168 5.027 4.444.702.304 1.25.486 1.677.621.705.224 1.348.193 1.856.117.567-.084 1.69-.691 1.928-1.359.238-.668.238-1.24.167-1.359-.071-.12-.262-.19-.548-.332z" />
         </svg>
 

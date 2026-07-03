@@ -6,10 +6,31 @@
 import { useState, useEffect } from 'react'
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import {
-  LayoutDashboard, MessageSquare, Briefcase, FolderKanban,
-  Users, LogOut, Menu, X, Settings, Star,
-  HelpCircle, Flag, Handshake, SlidersHorizontal, Bell,
-  ChevronRight, BookOpen, UserCheck, FileText, Plug, Database,
+  LayoutDashboard,
+  MessageSquare,
+  Briefcase,
+  FolderKanban,
+  Users,
+  LogOut,
+  Menu,
+  X,
+  Settings,
+  Star,
+  HelpCircle,
+  Flag,
+  Handshake,
+  SlidersHorizontal,
+  Bell,
+  ChevronRight,
+  BookOpen,
+  UserCheck,
+  FileText,
+  Plug,
+  Database,
+  CheckSquare,
+  StickyNote,
+  Calendar,
+  History,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 
@@ -17,58 +38,71 @@ const NAV_GROUPS = [
   {
     label: 'Overview',
     items: [
-      { to: '/admin/dashboard',     icon: LayoutDashboard,    label: 'Dashboard' },
-      { to: '/admin/leads',         icon: MessageSquare,      label: 'Leads',     badge: 'new' },
-    ]
+      { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+      { to: '/admin/leads', icon: MessageSquare, label: 'Leads', badge: 'new' },
+    ],
   },
   {
     label: 'Content',
     items: [
-      { to: '/admin/services',      icon: Briefcase,          label: 'Services' },
-      { to: '/admin/projects',      icon: FolderKanban,       label: 'Projects' },
-      { to: '/admin/team',          icon: Users,              label: 'Team' },
-      { to: '/admin/careers',       icon: UserCheck,          label: 'Careers' },
-      { to: '/admin/testimonials',  icon: Star,               label: 'Testimonials' },
-      { to: '/admin/faqs',          icon: HelpCircle,         label: 'FAQs' },
-      { to: '/admin/milestones',    icon: Flag,               label: 'Milestones' },
-      { to: '/admin/partners',      icon: Handshake,          label: 'Partners' },
-      { to: '/admin/legal',         icon: FileText,           label: 'Legal Pages' },
-    ]
+      { to: '/admin/services', icon: Briefcase, label: 'Services' },
+      { to: '/admin/projects', icon: FolderKanban, label: 'Projects' },
+      { to: '/admin/team', icon: Users, label: 'Team' },
+      { to: '/admin/careers', icon: UserCheck, label: 'Careers' },
+      { to: '/admin/testimonials', icon: Star, label: 'Testimonials' },
+      { to: '/admin/faqs', icon: HelpCircle, label: 'FAQs' },
+      { to: '/admin/milestones', icon: Flag, label: 'Milestones' },
+      { to: '/admin/partners', icon: Handshake, label: 'Partners' },
+      { to: '/admin/legal', icon: FileText, label: 'Legal Pages' },
+    ],
+  },
+  {
+    label: 'Work Management',
+    items: [
+      { to: '/admin/client-projects', icon: FolderKanban, label: 'Client Projects' },
+      { to: '/admin/tasks', icon: CheckSquare, label: 'Tasks' },
+      { to: '/admin/notes', icon: StickyNote, label: 'Notes' },
+      { to: '/admin/calendar', icon: Calendar, label: 'Calendar' },
+      { to: '/admin/activities', icon: History, label: 'Activity Log' },
+    ],
   },
   {
     label: 'Settings',
     items: [
-      { to: '/admin/site-settings',  icon: SlidersHorizontal,  label: 'Site Settings' },
-      { to: '/admin/integrations',   icon: Plug,               label: 'Integrations', badge: 'key' },
-      { to: '/admin/backup',         icon: Database,           label: 'Data Backup',  badge: 'dl' },
-      { to: '/admin/settings',       icon: Settings,           label: 'Account' },
-    ]
+      { to: '/admin/site-settings', icon: SlidersHorizontal, label: 'Site Settings' },
+      { to: '/admin/integrations', icon: Plug, label: 'Integrations', badge: 'key' },
+      { to: '/admin/backup', icon: Database, label: 'Data Backup', badge: 'dl' },
+      { to: '/admin/settings', icon: Settings, label: 'Account' },
+    ],
   },
   {
     label: 'Support',
-    items: [
-      { to: '/admin/help',          icon: BookOpen,           label: 'Help / Guide' },
-    ]
-  }
+    items: [{ to: '/admin/help', icon: BookOpen, label: 'Help / Guide' }],
+  },
 ]
 
 const PAGE_TITLES = {
-  '/admin/dashboard':    'Dashboard',
-  '/admin/leads':        'Leads',
-  '/admin/services':     'Services',
-  '/admin/projects':     'Projects',
-  '/admin/team':         'Team',
-  '/admin/careers':      'Careers',
+  '/admin/dashboard': 'Dashboard',
+  '/admin/leads': 'Leads',
+  '/admin/services': 'Services',
+  '/admin/projects': 'Projects',
+  '/admin/team': 'Team',
+  '/admin/careers': 'Careers',
   '/admin/testimonials': 'Testimonials',
-  '/admin/faqs':         'FAQs',
-  '/admin/milestones':   'Milestones',
-  '/admin/partners':     'Partners',
-  '/admin/legal':        'Legal Pages',
-  '/admin/site-settings':'Site Settings',
+  '/admin/faqs': 'FAQs',
+  '/admin/milestones': 'Milestones',
+  '/admin/partners': 'Partners',
+  '/admin/legal': 'Legal Pages',
+  '/admin/site-settings': 'Site Settings',
   '/admin/integrations': 'Integrations',
-  '/admin/backup':       'Data Backup',
-  '/admin/settings':     'Account',
-  '/admin/help':         'Help / Guide',
+  '/admin/backup': 'Data Backup',
+  '/admin/settings': 'Account',
+  '/admin/help': 'Help / Guide',
+  '/admin/client-projects': 'Client Projects',
+  '/admin/tasks': 'Tasks',
+  '/admin/notes': 'Notes',
+  '/admin/calendar': 'Calendar',
+  '/admin/activities': 'Activity Log',
 }
 
 export default function AdminLayout() {
@@ -80,8 +114,9 @@ export default function AdminLayout() {
   const currentTitle = PAGE_TITLES[location.pathname] || 'Admin'
 
   useEffect(() => {
-    api.get('/admin/me')
-      .then(r => setAdmin(r.data))
+    api
+      .get('/admin/me')
+      .then((r) => setAdmin(r.data))
       .catch(() => navigate('/admin/login', { replace: true }))
   }, [navigate])
 
@@ -103,7 +138,6 @@ export default function AdminLayout() {
 
   return (
     <div className="h-screen flex bg-gray-50 overflow-hidden">
-
       {/* ── Sidebar ── */}
       <aside
         className={`fixed inset-y-0 left-0 z-40 w-64 flex flex-col h-full
@@ -118,7 +152,9 @@ export default function AdminLayout() {
             <img src="/logo-with-bg.png" alt="Logo" className="w-8 h-8 rounded-lg object-contain" />
             <div>
               <p className="font-heading font-bold text-white text-sm leading-none">Hindustan</p>
-              <p className="text-white/40 text-[10px] font-medium tracking-wider uppercase">Projects Admin</p>
+              <p className="text-white/40 text-[10px] font-medium tracking-wider uppercase">
+                Projects Admin
+              </p>
             </div>
           </div>
           <button
@@ -131,8 +167,12 @@ export default function AdminLayout() {
         </div>
 
         {/* ── Nav links ── */}
-        <nav className="flex-1 py-4 px-3 overflow-y-auto space-y-5 scrollbar-thin" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.15) transparent' }} aria-label="Admin navigation">
-          {NAV_GROUPS.map(group => (
+        <nav
+          className="flex-1 py-4 px-3 overflow-y-auto space-y-5 scrollbar-thin"
+          style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.15) transparent' }}
+          aria-label="Admin navigation"
+        >
+          {NAV_GROUPS.map((group) => (
             <div key={group.label}>
               <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 px-3 mb-1.5">
                 {group.label}
@@ -163,10 +203,14 @@ export default function AdminLayout() {
                           <span className="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
                         )}
                         {badge === 'key' && (
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30 shrink-0 tracking-wide">API</span>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30 shrink-0 tracking-wide">
+                            API
+                          </span>
                         )}
                         {badge === 'dl' && (
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 shrink-0 tracking-wide">↓</span>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 shrink-0 tracking-wide">
+                            ↓
+                          </span>
                         )}
                       </>
                     )}
@@ -211,9 +255,10 @@ export default function AdminLayout() {
       {/* ── Main ── */}
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         {/* Topbar */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center
-          justify-between px-4 lg:px-6 shrink-0 sticky top-0 z-20 shadow-sm">
-
+        <header
+          className="h-16 bg-white border-b border-gray-200 flex items-center
+          justify-between px-4 lg:px-6 shrink-0 sticky top-0 z-20 shadow-sm"
+        >
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -232,8 +277,10 @@ export default function AdminLayout() {
 
           <div className="flex items-center gap-2">
             {/* Bell placeholder */}
-            <button className="relative w-9 h-9 rounded-lg flex items-center justify-center
-              hover:bg-gray-100 text-gray-500 transition-colors">
+            <button
+              className="relative w-9 h-9 rounded-lg flex items-center justify-center
+              hover:bg-gray-100 text-gray-500 transition-colors"
+            >
               <Bell className="w-4.5 h-4.5" />
             </button>
             {/* View site */}
@@ -248,8 +295,10 @@ export default function AdminLayout() {
               View Site →
             </a>
             {/* Avatar */}
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-blue to-[#0f2660]
-              flex items-center justify-center text-white font-bold text-sm border-2 border-white shadow-sm">
+            <div
+              className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-blue to-[#0f2660]
+              flex items-center justify-center text-white font-bold text-sm border-2 border-white shadow-sm"
+            >
               {admin.email[0].toUpperCase()}
             </div>
           </div>

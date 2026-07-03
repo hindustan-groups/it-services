@@ -3,7 +3,18 @@ import { useParams, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { ArrowLeft, MapPin, Briefcase, Clock, Calendar, Upload, AlertCircle, FileText, CheckCircle, Sparkles } from 'lucide-react'
+import {
+  ArrowLeft,
+  MapPin,
+  Briefcase,
+  Clock,
+  Calendar,
+  Upload,
+  AlertCircle,
+  FileText,
+  CheckCircle,
+  Sparkles,
+} from 'lucide-react'
 import { Container, Button, SEO } from '@/components/ui'
 import { useJobDetail, useApplyJob } from '@/hooks/useCareers'
 
@@ -82,7 +93,7 @@ export default function JobDetailPage() {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     ]
     const ext = selectedFile.name.split('.').pop().toLowerCase()
-    
+
     if (!allowedTypes.includes(selectedFile.type) && !['pdf', 'doc', 'docx'].includes(ext)) {
       setFileError('Only PDF and Word documents (.doc, .docx) are allowed.')
       setFile(null)
@@ -103,7 +114,7 @@ export default function JobDetailPage() {
 
     // Double-check lockout
     const lastSubmit = localStorage.getItem(`last_submit_careers_${job.slug}`)
-    if (lastSubmit && (Date.now() - parseInt(lastSubmit, 10)) < 24 * 60 * 60 * 1000) {
+    if (lastSubmit && Date.now() - parseInt(lastSubmit, 10) < 24 * 60 * 60 * 1000) {
       setApiError('You have already applied for this role within the last 24 hours.')
       return
     }
@@ -148,10 +159,13 @@ export default function JobDetailPage() {
           <div className="max-w-md mx-auto space-y-5 bg-white border border-gray-200 rounded-2xl p-8 shadow-md">
             <h2 className="font-heading text-xl font-bold text-brand-blue">Job Posting Expired</h2>
             <p className="text-gray-500 text-xs sm:text-sm">
-              The careers posting you are looking for has expired or is no longer accepting responses.
+              The careers posting you are looking for has expired or is no longer accepting
+              responses.
             </p>
             <Link to="/careers" className="inline-block mt-2">
-              <Button variant="danger" size="sm">Back to Careers</Button>
+              <Button variant="danger" size="sm">
+                Back to Careers
+              </Button>
             </Link>
           </div>
         </Container>
@@ -163,19 +177,17 @@ export default function JobDetailPage() {
 
   return (
     <>
-      <SEO 
-        title={`${job.title} | Careers`} 
-        description={job.description}
-      />
+      <SEO title={`${job.title} | Careers`} description={job.description} />
 
       <div className="bg-gray-50/50 pt-20 pb-10 sm:pt-24 sm:pb-12 lg:pt-16 lg:pb-16 min-h-screen text-slate-700 relative overflow-hidden">
         <Container className="relative">
           {/* Back link */}
-          <Link 
-            to="/careers" 
+          <Link
+            to="/careers"
             className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-brand-blue mb-8 transition-colors duration-150 group"
           >
-            <ArrowLeft className="w-4 h-4 text-brand-red group-hover:-translate-x-1 transition-transform" /> Back to Careers
+            <ArrowLeft className="w-4 h-4 text-brand-red group-hover:-translate-x-1 transition-transform" />{' '}
+            Back to Careers
           </Link>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -183,7 +195,9 @@ export default function JobDetailPage() {
             <div className="lg:col-span-2 space-y-8 bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 shadow-sm">
               <div className="space-y-4 border-b border-gray-100 pb-6">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded border ${JOB_TYPE_COLORS[job.jobType]}`}>
+                  <span
+                    className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded border ${JOB_TYPE_COLORS[job.jobType]}`}
+                  >
                     {JOB_TYPE_LABELS[job.jobType] || job.jobType}
                   </span>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-gray-600 bg-gray-150 border border-gray-200 px-3 py-1 rounded">
@@ -193,7 +207,7 @@ export default function JobDetailPage() {
                 <h1 className="font-heading text-2xl sm:text-4xl font-bold text-brand-blue tracking-tight">
                   {job.title}
                 </h1>
-                
+
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4">
                   <div className="flex items-center gap-2.5 text-xs sm:text-sm text-gray-600">
                     <MapPin className="w-4 h-4 text-brand-red shrink-0" />
@@ -205,7 +219,14 @@ export default function JobDetailPage() {
                   </div>
                   <div className="flex items-center gap-2.5 text-xs sm:text-sm text-gray-600 col-span-2 sm:col-span-1">
                     <Calendar className="w-4 h-4 text-brand-red shrink-0" />
-                    <span>Posted: {new Date(job.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                    <span>
+                      Posted:{' '}
+                      {new Date(job.createdAt).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -223,11 +244,15 @@ export default function JobDetailPage() {
               {/* Responsibilities */}
               {job.responsibilities?.length > 0 && (
                 <div className="space-y-4 pt-2">
-                  <h2 className="font-heading text-lg font-bold text-brand-blue">Key Responsibilities</h2>
+                  <h2 className="font-heading text-lg font-bold text-brand-blue">
+                    Key Responsibilities
+                  </h2>
                   <ul className="space-y-3">
                     {job.responsibilities.map((resp, i) => (
                       <li key={i} className="flex gap-3 text-gray-650 text-sm leading-relaxed">
-                        <span className="text-brand-red font-bold shrink-0 text-lg leading-none">•</span>
+                        <span className="text-brand-red font-bold shrink-0 text-lg leading-none">
+                          •
+                        </span>
                         <span>{resp}</span>
                       </li>
                     ))}
@@ -238,11 +263,15 @@ export default function JobDetailPage() {
               {/* Requirements */}
               {job.requirements?.length > 0 && (
                 <div className="space-y-4 pt-2">
-                  <h2 className="font-heading text-lg font-bold text-brand-blue">What We Are Looking For</h2>
+                  <h2 className="font-heading text-lg font-bold text-brand-blue">
+                    What We Are Looking For
+                  </h2>
                   <ul className="space-y-3">
                     {job.requirements.map((req, i) => (
                       <li key={i} className="flex gap-3 text-gray-650 text-sm leading-relaxed">
-                        <span className="text-brand-red font-bold shrink-0 text-sm leading-normal">✓</span>
+                        <span className="text-brand-red font-bold shrink-0 text-sm leading-normal">
+                          ✓
+                        </span>
                         <span>{req}</span>
                       </li>
                     ))}
@@ -255,21 +284,24 @@ export default function JobDetailPage() {
             <div className="lg:col-span-1">
               <div className="sticky top-24 bg-white border border-gray-200 rounded-3xl p-6 shadow-xl relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-red to-brand-blue" />
-                
+
                 {applyMutation.isSuccess ? (
                   <div className="text-center py-10 space-y-5">
                     <div className="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto text-emerald-500">
                       <CheckCircle className="w-8 h-8" />
                     </div>
                     <div className="space-y-2">
-                      <h3 className="font-heading text-xl font-bold text-brand-blue">Application Sent!</h3>
+                      <h3 className="font-heading text-xl font-bold text-brand-blue">
+                        Application Sent!
+                      </h3>
                       <p className="text-gray-500 text-xs sm:text-sm leading-relaxed px-2">
-                        Thank you for applying. We have sent a confirmation email to your inbox. Our HR team will review your resume within 7 business days.
+                        Thank you for applying. We have sent a confirmation email to your inbox. Our
+                        HR team will review your resume within 7 business days.
                       </p>
                     </div>
-                    <Button 
-                      variant="primary" 
-                      size="sm" 
+                    <Button
+                      variant="primary"
+                      size="sm"
                       onClick={() => applyMutation.reset()}
                       className="w-full mt-4 cursor-pointer active:scale-95"
                     >
@@ -282,9 +314,12 @@ export default function JobDetailPage() {
                       <AlertCircle className="w-8 h-8 animate-pulse" />
                     </div>
                     <div className="space-y-2">
-                      <h3 className="font-heading text-lg font-bold text-brand-blue">Submission Locked</h3>
+                      <h3 className="font-heading text-lg font-bold text-brand-blue">
+                        Submission Locked
+                      </h3>
                       <p className="text-gray-500 text-xs leading-relaxed px-2">
-                        You have already applied for this position in the last 24 hours. To prevent duplicates and spam, please wait before submitting another resume.
+                        You have already applied for this position in the last 24 hours. To prevent
+                        duplicates and spam, please wait before submitting another resume.
                       </p>
                     </div>
                   </div>
@@ -354,9 +389,13 @@ export default function JobDetailPage() {
                       <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500">
                         Upload Resume (PDF, DOC, DOCX - Max 5MB)
                       </label>
-                      <div className={`relative border border-dashed rounded-lg bg-gray-50/50 p-4 transition-all text-center ${
-                        file ? 'border-emerald-500/50 bg-emerald-500/[0.02]' : 'border-gray-200 hover:border-brand-blue/40'
-                      }`}>
+                      <div
+                        className={`relative border border-dashed rounded-lg bg-gray-50/50 p-4 transition-all text-center ${
+                          file
+                            ? 'border-emerald-500/50 bg-emerald-500/[0.02]'
+                            : 'border-gray-200 hover:border-brand-blue/40'
+                        }`}
+                      >
                         <input
                           type="file"
                           accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -364,7 +403,9 @@ export default function JobDetailPage() {
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                         />
                         <div className="space-y-1.5">
-                          <Upload className={`w-5 h-5 mx-auto ${file ? 'text-emerald-500 animate-bounce' : 'text-gray-400'}`} />
+                          <Upload
+                            className={`w-5 h-5 mx-auto ${file ? 'text-emerald-500 animate-bounce' : 'text-gray-400'}`}
+                          />
                           {file ? (
                             <div className="flex items-center justify-center gap-1.5 text-xs text-emerald-600 font-bold max-w-full truncate px-2">
                               <FileText className="w-3.5 h-3.5 shrink-0" />

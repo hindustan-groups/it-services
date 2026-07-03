@@ -18,9 +18,21 @@ const JOB_TYPE_COLORS = {
 }
 
 const VALUES = [
-  { icon: Zap, title: 'Impact First', desc: 'We build systems that shape businesses and solve actual operational problems.' },
-  { icon: Award, title: 'Growth Mindset', desc: 'Daily learning resources, direct mentorship, and room to grow your tech capabilities.' },
-  { icon: Compass, title: 'Work Flexibility', desc: 'Hybrid/remote work modes designed to support creativity and work-life harmony.' }
+  {
+    icon: Zap,
+    title: 'Impact First',
+    desc: 'We build systems that shape businesses and solve actual operational problems.',
+  },
+  {
+    icon: Award,
+    title: 'Growth Mindset',
+    desc: 'Daily learning resources, direct mentorship, and room to grow your tech capabilities.',
+  },
+  {
+    icon: Compass,
+    title: 'Work Flexibility',
+    desc: 'Hybrid/remote work modes designed to support creativity and work-life harmony.',
+  },
 ]
 
 export default function CareersPage() {
@@ -31,8 +43,8 @@ export default function CareersPage() {
 
   return (
     <>
-      <SEO 
-        title="Careers | Join Hindustan Projects" 
+      <SEO
+        title="Careers | Join Hindustan Projects"
         description="Build premium tech products, craft high-impact marketing strategies, and grow your career with Hindustan Projects. Explore open positions."
       />
 
@@ -54,7 +66,8 @@ export default function CareersPage() {
             </span>
           </h1>
           <p className="text-white/60 text-base sm:text-lg leading-relaxed max-w-xl mx-auto">
-            Hindustan Projects is a fast-growing IT team in Bhilwara. We build premium software, custom ERPs, and run high-ROI digital campaigns.
+            Hindustan Projects is a fast-growing IT team in Bhilwara. We build premium software,
+            custom ERPs, and run high-ROI digital campaigns.
           </p>
         </Container>
       </section>
@@ -66,11 +79,16 @@ export default function CareersPage() {
             {VALUES.map((val, idx) => {
               const Icon = val.icon
               return (
-                <div key={idx} className="bg-white border border-gray-100 hover:border-gray-200 rounded-2xl p-6 hover:shadow-md transition-all duration-300">
+                <div
+                  key={idx}
+                  className="bg-white border border-gray-100 hover:border-gray-200 rounded-2xl p-6 hover:shadow-md transition-all duration-300"
+                >
                   <div className="w-10 h-10 rounded-xl bg-brand-blue/5 border border-brand-blue/10 flex items-center justify-center text-brand-blue mb-4">
                     <Icon className="w-5 h-5" />
                   </div>
-                  <h3 className="text-base font-bold text-brand-blue mb-2 font-heading">{val.title}</h3>
+                  <h3 className="text-base font-bold text-brand-blue mb-2 font-heading">
+                    {val.title}
+                  </h3>
                   <p className="text-xs text-gray-500 leading-relaxed">{val.desc}</p>
                 </div>
               )
@@ -98,9 +116,12 @@ export default function CareersPage() {
                 <Briefcase className="w-7 h-7" />
               </div>
               <div className="space-y-3">
-                <h3 className="font-heading text-xl font-bold text-brand-blue">No active job openings right now</h3>
+                <h3 className="font-heading text-xl font-bold text-brand-blue">
+                  No active job openings right now
+                </h3>
                 <p className="text-gray-500 text-sm max-w-md mx-auto leading-relaxed">
-                  We don't have any specific open roles at this moment, but we are always looking for exceptional talent to join our development, design, and marketing teams.
+                  We don't have any specific open roles at this moment, but we are always looking
+                  for exceptional talent to join our development, design, and marketing teams.
                 </p>
               </div>
               <div className="pt-6 border-t border-gray-100">
@@ -108,7 +129,11 @@ export default function CareersPage() {
                   Submit a general application instead
                 </p>
                 <Link to="/careers/general-application">
-                  <Button variant="danger" size="md" className="mx-auto cursor-pointer shadow-sm active:scale-[0.98]">
+                  <Button
+                    variant="danger"
+                    size="md"
+                    className="mx-auto cursor-pointer shadow-sm active:scale-[0.98]"
+                  >
                     Submit General Resume <ArrowRight className="w-4 h-4 ml-1.5" />
                   </Button>
                 </Link>
@@ -122,7 +147,9 @@ export default function CareersPage() {
                   <h2 className="font-heading text-2xl font-bold text-brand-blue">
                     Open Positions
                   </h2>
-                  <p className="text-xs text-gray-500 mt-1">Join our high-performance team in Bhilwara or work remotely.</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Join our high-performance team in Bhilwara or work remotely.
+                  </p>
                 </div>
                 <span className="text-xs font-bold text-brand-red bg-brand-red/10 border border-brand-red/20 px-3 py-1 rounded-full w-fit">
                   {specificJobs.length} {specificJobs.length === 1 ? 'Job' : 'Jobs'} Available
@@ -140,7 +167,9 @@ export default function CareersPage() {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pl-2">
                       <div className="space-y-3">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded border ${JOB_TYPE_COLORS[job.jobType]}`}>
+                          <span
+                            className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded border ${JOB_TYPE_COLORS[job.jobType]}`}
+                          >
                             {JOB_TYPE_LABELS[job.jobType]}
                           </span>
                           <span className="text-[10px] font-bold uppercase tracking-wider text-gray-600 bg-gray-100 border border-gray-200 px-2.5 py-0.5 rounded">
@@ -155,7 +184,8 @@ export default function CareersPage() {
                             <MapPin className="w-3.5 h-3.5 text-brand-red-light" /> {job.location}
                           </span>
                           <span className="flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-brand-red-light" /> {job.experienceRequired}
+                            <Clock className="w-3.5 h-3.5 text-brand-red-light" />{' '}
+                            {job.experienceRequired}
                           </span>
                         </div>
                       </div>
@@ -173,11 +203,17 @@ export default function CareersPage() {
                   Don't see the right role?
                 </h4>
                 <p className="text-xs sm:text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
-                  We are always on the lookout for talented software engineers, creative UI/UX designers, and metrics-driven digital marketing associates. Submit a general resume.
+                  We are always on the lookout for talented software engineers, creative UI/UX
+                  designers, and metrics-driven digital marketing associates. Submit a general
+                  resume.
                 </p>
                 <div className="pt-2">
                   <Link to="/careers/general-application" className="inline-block">
-                    <Button variant="danger" size="sm" className="shadow-sm active:scale-95 cursor-pointer">
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      className="shadow-sm active:scale-95 cursor-pointer"
+                    >
                       Submit General Application <ArrowRight className="w-4 h-4 ml-1.5" />
                     </Button>
                   </Link>

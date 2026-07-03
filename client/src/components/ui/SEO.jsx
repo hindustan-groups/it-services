@@ -8,7 +8,8 @@ import { Helmet } from 'react-helmet-async'
 export const SITE = {
   name: 'Hindustan Projects',
   url: 'https://hindustanprojects.com',
-  description: 'Hindustan Projects is a leading IT services company in Bhilwara, Rajasthan offering custom web development, digital marketing, IT consulting, mobile app development, and SEO services.',
+  description:
+    'Hindustan Projects is a leading IT services company in Bhilwara, Rajasthan offering custom web development, digital marketing, IT consulting, mobile app development, and SEO services.',
   phone: '+91 99999 99999',
   email: 'info@hindustanprojects.com',
   address: {
@@ -23,7 +24,8 @@ export const SITE = {
   ogImage: 'https://hindustanprojects.com/og-image.png',
   twitterHandle: '@hindustanprojects',
   founded: '2019',
-  keywords: 'IT services Bhilwara, web development Rajasthan, digital marketing Bhilwara, IT company Rajasthan, custom software development, SEO services India',
+  keywords:
+    'IT services Bhilwara, web development Rajasthan, digital marketing Bhilwara, IT company Rajasthan, custom software development, SEO services India',
 }
 
 // ── JSON-LD Schemas ────────────────────────────────────────────
@@ -91,7 +93,14 @@ export function localBusinessSchema() {
     },
     hasMap: `https://www.google.com/maps?q=${SITE.geo.lat},${SITE.geo.lng}`,
     servedCuisine: null,
-    knowsAbout: ['Web Development', 'Digital Marketing', 'IT Consulting', 'Mobile App Development', 'SEO', 'Branding'],
+    knowsAbout: [
+      'Web Development',
+      'Digital Marketing',
+      'IT Consulting',
+      'Mobile App Development',
+      'SEO',
+      'Branding',
+    ],
     areaServed: [
       { '@type': 'City', name: 'Bhilwara' },
       { '@type': 'State', name: 'Rajasthan' },
@@ -148,7 +157,7 @@ export function faqSchema(faqs) {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faqs.map(f => ({
+    mainEntity: faqs.map((f) => ({
       '@type': 'Question',
       name: f.question,
       acceptedAnswer: {
@@ -193,10 +202,7 @@ export default function SEO({
   const image = ogImage || SITE.ogImage
 
   // Default schemas on every page
-  const defaultSchemas = [
-    organizationSchema(),
-    websiteSchema(),
-  ]
+  const defaultSchemas = [organizationSchema(), websiteSchema()]
 
   // Add LocalBusiness on home and contact pages
   if (path === '/' || path === '/contact') {
@@ -218,10 +224,14 @@ export default function SEO({
       <meta name="description" content={desc} />
       <meta name="keywords" content={keywords || SITE.keywords} />
       <link rel="canonical" href={canonical} />
-      {noIndex
-        ? <meta name="robots" content="noindex,nofollow" />
-        : <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
-      }
+      {noIndex ? (
+        <meta name="robots" content="noindex,nofollow" />
+      ) : (
+        <meta
+          name="robots"
+          content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+        />
+      )}
 
       {/* Open Graph */}
       <meta property="og:title" content={fullTitle} />

@@ -6,7 +6,12 @@ import { useState, useRef } from 'react'
 import { Upload, X, Image, Loader2 } from 'lucide-react'
 import { api } from '@/utils/api'
 
-export default function ImageUploader({ value, onChange, label = 'Image', accept = '.jpg,.jpeg,.png,.webp' }) {
+export default function ImageUploader({
+  value,
+  onChange,
+  label = 'Image',
+  accept = '.jpg,.jpeg,.png,.webp',
+}) {
   const [dragging, setDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
@@ -64,8 +69,11 @@ export default function ImageUploader({ value, onChange, label = 'Image', accept
       {/* Preview */}
       {value && (
         <div className="relative inline-block">
-          <img src={value} alt="Preview"
-            className="w-32 h-32 object-cover rounded-lg border border-gray-200 shadow-sm" />
+          <img
+            src={value}
+            alt="Preview"
+            className="w-32 h-32 object-cover rounded-lg border border-gray-200 shadow-sm"
+          />
           <button
             type="button"
             onClick={() => onChange('')}
@@ -80,7 +88,10 @@ export default function ImageUploader({ value, onChange, label = 'Image', accept
 
       {/* Drop zone */}
       <div
-        onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
+        onDragOver={(e) => {
+          e.preventDefault()
+          setDragging(true)
+        }}
         onDragLeave={() => setDragging(false)}
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
@@ -97,7 +108,11 @@ export default function ImageUploader({ value, onChange, label = 'Image', accept
         ) : (
           <>
             <div className="w-10 h-10 rounded-full bg-brand-blue/8 flex items-center justify-center">
-              {dragging ? <Upload className="w-5 h-5 text-brand-blue" /> : <Image className="w-5 h-5 text-brand-blue" />}
+              {dragging ? (
+                <Upload className="w-5 h-5 text-brand-blue" />
+              ) : (
+                <Image className="w-5 h-5 text-brand-blue" />
+              )}
             </div>
             <p className="text-xs text-gray-500 text-center">
               <span className="font-medium text-brand-blue">Click to upload</span> or drag & drop
@@ -105,7 +120,13 @@ export default function ImageUploader({ value, onChange, label = 'Image', accept
             <p className="text-[10px] text-gray-400">JPG, PNG, WebP · Max 5MB</p>
           </>
         )}
-        <input ref={inputRef} type="file" accept={accept} className="hidden" onChange={handleFile} />
+        <input
+          ref={inputRef}
+          type="file"
+          accept={accept}
+          className="hidden"
+          onChange={handleFile}
+        />
       </div>
 
       {/* URL input fallback */}

@@ -1,8 +1,8 @@
 import prisma from '../config/db.js'
 
 // Cache duration constants
-const CACHE_SHORT = 'public, max-age=300, stale-while-revalidate=60'   // 5 min
-const CACHE_LONG  = 'public, max-age=3600, stale-while-revalidate=300' // 1 hour
+const CACHE_SHORT = 'public, max-age=300, stale-while-revalidate=60' // 5 min
+const CACHE_LONG = 'public, max-age=3600, stale-while-revalidate=300' // 1 hour
 
 /**
  * GET /api/services

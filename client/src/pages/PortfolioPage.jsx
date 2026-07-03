@@ -15,9 +15,9 @@ export default function PortfolioPage() {
 
   const stats = [
     { value: `${cfg.stat_projects || '50'}+`, label: 'Projects Delivered', icon: Rocket },
-    { value: `${cfg.stat_clients || '40'}+`, label: 'Happy Clients',      icon: Award  },
-    { value: '100%', label: 'On-Time Delivery',  icon: Clock  },
-    { value: '3×',   label: 'Avg. ROI for Clients', icon: TrendingUp },
+    { value: `${cfg.stat_clients || '40'}+`, label: 'Happy Clients', icon: Award },
+    { value: '100%', label: 'On-Time Delivery', icon: Clock },
+    { value: '3×', label: 'Avg. ROI for Clients', icon: TrendingUp },
   ]
 
   return (
@@ -38,7 +38,6 @@ export default function PortfolioPage() {
 
         <Container className="relative h-full flex flex-col justify-end">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
-
             {/* Left - text content */}
             <div className="pb-16 lg:pb-24">
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-red/30 bg-brand-red/10 text-brand-red text-xs font-semibold uppercase tracking-widest mb-6">
@@ -52,27 +51,31 @@ export default function PortfolioPage() {
                 </span>
               </h1>
               <p className="text-white/60 text-base sm:text-lg leading-relaxed mb-8">
-                Real projects. Real impact. Explore how we've helped {cfg.stat_clients || '40'}+ businesses
-                across Rajasthan and India grow through technology, branding, and digital marketing.
+                Real projects. Real impact. Explore how we've helped {cfg.stat_clients || '40'}+
+                businesses across Rajasthan and India grow through technology, branding, and digital
+                marketing.
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
                 <Button variant="primary" size="lg" as={Link} to="/contact">
                   Start Your Project
                 </Button>
-                <Button variant="ghost" size="lg" as={Link} to="/services"
-                  className="!text-white !border-white/20 hover:!bg-white/10">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  as={Link}
+                  to="/services"
+                  className="!text-white !border-white/20 hover:!bg-white/10"
+                >
                   Our Services →
                 </Button>
               </div>
               {/* Trust badges */}
               <div className="flex flex-wrap gap-4">
-                {[
-                  'Web & Apps',
-                  'Digital Marketing',
-                  'Branding',
-                  'Software',
-                ].map((tag) => (
-                  <span key={tag} className="flex items-center gap-1.5 text-xs font-semibold text-white/50">
+                {['Web & Apps', 'Digital Marketing', 'Branding', 'Software'].map((tag) => (
+                  <span
+                    key={tag}
+                    className="flex items-center gap-1.5 text-xs font-semibold text-white/50"
+                  >
                     <CheckCircle2 className="w-3.5 h-3.5 text-green-400" />
                     {tag}
                   </span>
@@ -99,7 +102,9 @@ export default function PortfolioPage() {
                 {/* Floating Badge 1: 5+ Years Experience */}
                 <div className="absolute z-20 top-12 -right-6 bg-white/95 backdrop-blur-md rounded-xl px-4 py-2.5 shadow-xl border border-black/5 transition-transform duration-300 hover:scale-105">
                   <div className="flex items-center gap-2">
-                    <span className="text-brand-red text-lg font-bold">{cfg.stat_experience || '5'}+</span>
+                    <span className="text-brand-red text-lg font-bold">
+                      {cfg.stat_experience || '5'}+
+                    </span>
                     <div>
                       <p className="font-heading text-xs font-bold text-brand-blue">Years of</p>
                       <p className="text-[10px] text-text-muted">Excellence</p>
@@ -109,12 +114,13 @@ export default function PortfolioPage() {
 
                 {/* Floating Badge 2: 50+ Projects Delivered */}
                 <div className="absolute z-20 bottom-12 -left-6 bg-brand-red rounded-xl px-4 py-2.5 shadow-xl transition-transform duration-300 hover:scale-105 border border-white/10">
-                  <p className="font-heading text-xs font-bold text-white">{cfg.stat_projects || '50'}+ Projects</p>
+                  <p className="font-heading text-xs font-bold text-white">
+                    {cfg.stat_projects || '50'}+ Projects
+                  </p>
                   <p className="text-[10px] text-white/75">Delivered Successfully</p>
                 </div>
               </div>
             </div>
-
           </div>
         </Container>
       </section>
@@ -124,7 +130,10 @@ export default function PortfolioPage() {
         <Container>
           <div className="grid grid-cols-2 lg:grid-cols-4">
             {stats.map((stat) => (
-              <div key={stat.label} className="flex items-center gap-3 px-4 sm:px-6 py-5 sm:py-6 group hover:bg-brand-blue/3 transition-colors duration-200 border-b border-r border-gray-100 [&:nth-child(2)]:border-r-0 lg:[&:nth-child(2)]:border-r lg:[&:nth-child(4)]:border-r-0">
+              <div
+                key={stat.label}
+                className="flex items-center gap-3 px-4 sm:px-6 py-5 sm:py-6 group hover:bg-brand-blue/3 transition-colors duration-200 border-b border-r border-gray-100 [&:nth-child(2)]:border-r-0 lg:[&:nth-child(2)]:border-r lg:[&:nth-child(4)]:border-r-0"
+              >
                 <div className="w-11 h-11 rounded-xl bg-brand-blue/8 flex items-center justify-center shrink-0 group-hover:bg-brand-blue/14 transition-colors">
                   <stat.icon className="w-5 h-5 text-brand-blue" strokeWidth={1.8} />
                 </div>

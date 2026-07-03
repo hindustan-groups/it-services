@@ -37,7 +37,6 @@ export default function WhyUsSection() {
     <section className="py-20 bg-white overflow-hidden" aria-labelledby="whyus-heading">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-16 items-center">
-
           {/* ── Left: image stack ── */}
           <motion.div
             className="relative"
@@ -56,8 +55,10 @@ export default function WhyUsSection() {
             />
 
             {/* Small overlay image — bottom right */}
-            <div className="absolute -bottom-6 -right-6 w-44 h-36 rounded-xl overflow-hidden
-              border-4 border-white shadow-[0_8px_24px_0_rgba(26,62,140,0.18)] hidden sm:block">
+            <div
+              className="absolute -bottom-6 -right-6 w-44 h-36 rounded-xl overflow-hidden
+              border-4 border-white shadow-[0_8px_24px_0_rgba(26,62,140,0.18)] hidden sm:block"
+            >
               <img
                 src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=300&q=80&auto=format&fit=crop"
                 alt="Team strategy session"
@@ -67,10 +68,16 @@ export default function WhyUsSection() {
             </div>
 
             {/* Floating experience badge */}
-            <div className="absolute -top-5 -left-5 bg-brand-blue text-white rounded-xl
-              px-5 py-4 shadow-lg hidden sm:block">
+            <div
+              className="absolute -top-5 -left-5 bg-brand-blue text-white rounded-xl
+              px-5 py-4 shadow-lg hidden sm:block"
+            >
               <p className="font-heading text-3xl font-bold leading-none">5+</p>
-              <p className="text-xs text-white/75 mt-1 font-medium">Years<br/>Experience</p>
+              <p className="text-xs text-white/75 mt-1 font-medium">
+                Years
+                <br />
+                Experience
+              </p>
             </div>
 
             {/* Decorative dot grid */}
@@ -99,8 +106,7 @@ export default function WhyUsSection() {
                 id="whyus-heading"
                 className="font-heading text-3xl sm:text-4xl font-bold text-brand-blue mt-3 mb-4"
               >
-                Your Growth Is Our{' '}
-                <span className="text-brand-red">Commitment</span>
+                Your Growth Is Our <span className="text-brand-red">Commitment</span>
               </h2>
               <p className="text-text-muted text-sm leading-relaxed mb-8 max-w-md">
                 We are not just a vendor — we are a long-term technology partner. Here is why
@@ -113,13 +119,11 @@ export default function WhyUsSection() {
               {REASONS.map((r) => {
                 const Icon = r.icon
                 return (
-                  <motion.div
-                    key={r.title}
-                    variants={fadeUp}
-                    className="flex items-start gap-4"
-                  >
-                    <div className="w-11 h-11 rounded-lg bg-brand-blue/8 flex items-center
-                      justify-center shrink-0 mt-0.5">
+                  <motion.div key={r.title} variants={fadeUp} className="flex items-start gap-4">
+                    <div
+                      className="w-11 h-11 rounded-lg bg-brand-blue/8 flex items-center
+                      justify-center shrink-0 mt-0.5"
+                    >
                       <Icon className="w-5 h-5 text-brand-blue" strokeWidth={1.75} />
                     </div>
                     <div>
@@ -144,7 +148,6 @@ export default function WhyUsSection() {
               </Link>
             </motion.div>
           </motion.div>
-
         </div>
       </Container>
     </section>
