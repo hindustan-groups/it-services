@@ -153,6 +153,9 @@ export const adminLogin = async (req, res, next) => {
       }).catch((err) => {
         console.error('[audit/mailer] Login notification failed:', err.message)
       })
+    } catch (err) {
+      console.error('[audit] Activity log failed:', err.message)
+    }
 
     // Check if 2FA is enabled
     if (admin.twoFactorEnabled) {

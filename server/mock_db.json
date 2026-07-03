@@ -402,7 +402,7 @@
     "role": "SUPER_ADMIN",
     "loginAttempts": 0,
     "lockoutUntil": null,
-    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFkbWluLW1vY2stMSIsImlhdCI6MTc4MzA5MjQ2MywiZXhwIjoxNzgzNjk3MjYzfQ.NIeB6w80KoEtv4Eu3y0X5ZL8tqsTC-5YwpG3kVnf558",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFkbWluLW1vY2stMSIsImlhdCI6MTc4MzA5MzM5NiwiZXhwIjoxNzgzNjk4MTk2fQ.vsPTAXXDMjctZQ5XlfAiK6yT4E7EJyzoeoyq2-Afra8",
     "twoFactorSecret": null,
     "twoFactorEnabled": false
   },
@@ -444,7 +444,7 @@
         "Prisma"
       ],
       "createdAt": "2026-07-03T14:25:11.486Z",
-      "updatedAt": "2026-07-03T14:25:11.486Z"
+      "updatedAt": "2026-07-03T15:44:29.726Z"
     },
     {
       "id": "wt-2",
@@ -460,7 +460,7 @@
         "Express"
       ],
       "createdAt": "2026-07-03T14:25:11.486Z",
-      "updatedAt": "2026-07-03T14:25:11.486Z"
+      "updatedAt": "2026-07-03T15:44:56.214Z"
     }
   ],
   "mockQuickNotes": [
@@ -510,6 +510,87 @@
       "entity": "Admin",
       "details": "Successful credentials check from IP ::1",
       "createdAt": "2026-07-03T15:27:41.013Z"
+    },
+    {
+      "id": "act-1783093396839",
+      "adminId": "admin-mock-1",
+      "adminEmail": "admin@hindustanprojects.com",
+      "action": "LOGIN_ATTEMPT",
+      "entity": "Admin",
+      "details": "Successful credentials check from IP ::1",
+      "createdAt": "2026-07-03T15:43:16.839Z"
+    },
+    {
+      "id": "act-1783093456939",
+      "adminId": "admin-mock-1",
+      "adminEmail": "admin@hindustanprojects.com",
+      "action": "UPDATE",
+      "entity": "WorkTask",
+      "details": "Updated task 'Build Backend Controllers & Routes' (Status: BLOCKED)",
+      "createdAt": "2026-07-03T15:44:16.939Z"
+    },
+    {
+      "id": "act-1783093458479",
+      "adminId": "admin-mock-1",
+      "adminEmail": "admin@hindustanprojects.com",
+      "action": "UPDATE",
+      "entity": "WorkTask",
+      "details": "Updated task 'Build Backend Controllers & Routes' (Status: IN_PROGRESS)",
+      "createdAt": "2026-07-03T15:44:18.479Z"
+    },
+    {
+      "id": "act-1783093461216",
+      "adminId": "admin-mock-1",
+      "adminEmail": "admin@hindustanprojects.com",
+      "action": "UPDATE",
+      "entity": "WorkTask",
+      "details": "Updated task 'Setup Database Schema' (Status: DONE)",
+      "createdAt": "2026-07-03T15:44:21.216Z"
+    },
+    {
+      "id": "act-1783093469729",
+      "adminId": "admin-mock-1",
+      "adminEmail": "admin@hindustanprojects.com",
+      "action": "UPDATE",
+      "entity": "WorkTask",
+      "details": "Updated task 'Setup Database Schema' (Status: DONE)",
+      "createdAt": "2026-07-03T15:44:29.729Z"
+    },
+    {
+      "id": "act-1783093489473",
+      "adminId": "admin-mock-1",
+      "adminEmail": "admin@hindustanprojects.com",
+      "action": "UPDATE",
+      "entity": "WorkTask",
+      "details": "Updated task 'Build Backend Controllers & Routes' (Status: TODO)",
+      "createdAt": "2026-07-03T15:44:49.473Z"
+    },
+    {
+      "id": "act-1783093490923",
+      "adminId": "admin-mock-1",
+      "adminEmail": "admin@hindustanprojects.com",
+      "action": "UPDATE",
+      "entity": "WorkTask",
+      "details": "Updated task 'Build Backend Controllers & Routes' (Status: IN_PROGRESS)",
+      "createdAt": "2026-07-03T15:44:50.924Z"
+    },
+    {
+      "id": "act-1783093493401",
+      "adminId": "admin-mock-1",
+      "adminEmail": "admin@hindustanprojects.com",
+      "action": "UPDATE",
+      "entity": "WorkTask",
+      "details": "Updated task 'Build Backend Controllers & Routes' (Status: TODO)",
+      "createdAt": "2026-07-03T15:44:53.401Z"
+    },
+    {
+      "id": "act-1783093496216",
+      "adminId": "admin-mock-1",
+      "adminEmail": "admin@hindustanprojects.com",
+      "action": "UPDATE",
+      "entity": "WorkTask",
+      "details": "Updated task 'Build Backend Controllers & Routes' (Status: IN_PROGRESS)",
+      "createdAt": "2026-07-03T15:44:56.216Z"
     }
   ]
 }
