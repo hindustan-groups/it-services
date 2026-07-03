@@ -216,7 +216,7 @@ export const submitApplication = async (req, res, next) => {
       console.error('[WhatsApp] Job application notification trigger failed:', err.message)
     )
 
-    // ── Send Email Notifications ─────────────────────────────────
+    // ── Send Email Notifications (non-blocking) ───────────────────
     // 1. Email to Admin
     const adminEmail = env.ADMIN_EMAIL || 'info@hindustanprojects.com'
     const adminMail = jobAdminNotificationTemplate({
@@ -227,7 +227,7 @@ export const submitApplication = async (req, res, next) => {
       resumeUrl,
       coverLetter,
     })
-    await sendEmail({ to: adminEmail, ...adminMail }).catch((err) => {
+    sendEmail({ to: adminEmail, ...adminMail }).catch((err) => {
       console.error('[mailer] Job application admin email failed:', err.message)
     })
 
@@ -236,7 +236,7 @@ export const submitApplication = async (req, res, next) => {
       name: fullName,
       jobTitle: job.title,
     })
-    await sendEmail({ to: email, ...applicantMail }).catch((err) => {
+    sendEmail({ to: email, ...applicantMail }).catch((err) => {
       console.error('[mailer] Job application applicant confirmation failed:', err.message)
     })
 

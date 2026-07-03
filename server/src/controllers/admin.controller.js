@@ -68,50 +68,47 @@ export const adminLogin = async (req, res, next) => {
 
         // Send lockout notification email (at exactly 5 attempts to avoid spamming on subsequent attempts)
         if (attempts === 5) {
-          try {
-            await sendEmail({
-              to: admin.email,
-              subject: 'Hindustan Projects Admin Account Locked',
-              html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
-                  <h2 style="color: #E31E24;">Security Alert: Account Locked</h2>
-                  <p>Your admin account (<strong>${admin.email}</strong>) has been locked for 15 minutes due to 5 consecutive failed login attempts.</p>
-                  <p><strong>IP Address:</strong> ${ip}</p>
-                  <p><strong>Time:</strong> ${new Date().toISOString()}</p>
-                  <p>If this was not you, please change your password immediately.</p>
-                </div>
-              `,
-              text: `Security Alert: Admin Account Locked\n\nYour account has been locked for 15 minutes due to 5 consecutive failed login attempts.\nIP Address: ${ip}\nTime: ${new Date().toISOString()}`,
-            })
-          } catch (err) {
+          sendEmail({
+            to: admin.email,
+            subject: 'Hindustan Projects Admin Account Locked',
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                <h2 style="color: #E31E24;">Security Alert: Account Locked</h2>
+                <p>Your admin account (<strong>${admin.email}</strong>) has been locked for 15 minutes due to 5 consecutive failed login attempts.</p>
+                <p><strong>IP Address:</strong> ${ip}</p>
+                <p><strong>Time:</strong> ${new Date().toISOString()}</p>
+                <p>If this was not you, please change your password immediately.</p>
+              </div>
+            `,
+            text: `Security Alert: Admin Account Locked\n\nYour account has been locked for 15 minutes due to 5 consecutive failed login attempts.\nIP Address: ${ip}\nTime: ${new Date().toISOString()}`,
+          }).catch((err) => {
             console.error('[mailer] Lockout email failed:', err.message)
-          }
+          })
         }
       }
 
       // Send brute-force alert email to admin on 10+ consecutive failed attempts
       if (attempts >= 10) {
-        try {
-          await sendEmail({
-            to: admin.email,
-            subject: 'URGENT: Brute-Force Alert on Admin Login',
-            html: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 2px solid #E31E24; border-radius: 8px;">
-                <h2 style="color: #E31E24;">Urgent Security Alert: Brute Force Detected</h2>
-                <p>The IP address <strong>${ip}</strong> has failed admin login 10+ times on account <strong>${admin.email}</strong>.</p>
-                <p><strong>Consecutive failed attempts:</strong> ${attempts}</p>
-                <p><strong>Time:</strong> ${new Date().toISOString()}</p>
-                <p>Please check backend console logs and consider blocking this IP address at your hosting-level firewall.</p>
-              </div>
-            `,
-            text: `Urgent Security Alert: Brute Force Detected\n\nThe IP address ${ip} has failed admin login 10+ times on account ${admin.email}.\nConsecutive attempts: ${attempts}\nTime: ${new Date().toISOString()}`,
-          })
-          console.warn(
-            `[SECURITY_ALERT] BRUTE_FORCE_ALERT_SENT | Email: ${email} | IP: ${ip} | Total attempts: ${attempts}`
-          )
-        } catch (err) {
+        sendEmail({
+          to: admin.email,
+          subject: 'URGENT: Brute-Force Alert on Admin Login',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 2px solid #E31E24; border-radius: 8px;">
+              <h2 style="color: #E31E24;">Urgent Security Alert: Brute Force Detected</h2>
+              <p>The IP address <strong>${ip}</strong> has failed admin login 10+ times on account <strong>${admin.email}</strong>.</p>
+              <p><strong>Consecutive failed attempts:</strong> ${attempts}</p>
+              <p><strong>Time:</strong> ${new Date().toISOString()}</p>
+              <p>Please check backend console logs and consider blocking this IP address at your hosting-level firewall.</p>
+            </div>
+          `,
+          text: `Urgent Security Alert: Brute Force Detected\n\nThe IP address ${ip} has failed admin login 10+ times on account ${admin.email}.\nConsecutive attempts: ${attempts}\nTime: ${new Date().toISOString()}`,
+        }).catch((err) => {
           console.error('[mailer] Brute-force email alert failed:', err.message)
-        }
+        })
+
+        console.warn(
+          `[SECURITY_ALERT] BRUTE_FORCE_ALERT_SENT | Email: ${email} | IP: ${ip} | Total attempts: ${attempts}`
+        )
       }
 
       await prisma.admin.update({
@@ -140,7 +137,7 @@ export const adminLogin = async (req, res, next) => {
         }
       })
 
-      await sendEmail({
+      sendEmail({
         to: admin.email,
         subject: 'New Admin Login Detected - Hindustan Projects',
         html: `
@@ -153,10 +150,9 @@ export const adminLogin = async (req, res, next) => {
           </div>
         `,
         text: `Security Notice: Successful Login\n\nA new login was recorded for admin: ${admin.email}\nIP Address: ${ip}\nTime: ${new Date().toISOString()}`
+      }).catch((err) => {
+        console.error('[audit/mailer] Login notification failed:', err.message)
       })
-    } catch (err) {
-      console.error('[audit/mailer] Login notification failed:', err.message)
-    }
 
     // Check if 2FA is enabled
     if (admin.twoFactorEnabled) {

@@ -400,9 +400,9 @@
     "email": "admin@hindustanprojects.com",
     "passwordHash": "$2b$10$fZ2B7atugVJqvWhkBxEXs.f.PwxNQhWT.WA/GOvx8K3tkQY6O5RCm",
     "role": "SUPER_ADMIN",
-    "loginAttempts": 1,
+    "loginAttempts": 0,
     "lockoutUntil": null,
-    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFkbWluLW1vY2stMSIsImlhdCI6MTc4MzA5MjI5MCwiZXhwIjoxNzgzNjk3MDkwfQ.OAiSc0SpR-VvhR35QJL_SNlJrHdnBycN56DR1JI7lRI",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFkbWluLW1vY2stMSIsImlhdCI6MTc4MzA5MjQ2MywiZXhwIjoxNzgzNjk3MjYzfQ.NIeB6w80KoEtv4Eu3y0X5ZL8tqsTC-5YwpG3kVnf558",
     "twoFactorSecret": null,
     "twoFactorEnabled": false
   },
@@ -492,6 +492,24 @@
       "entity": "Admin",
       "details": "Successful credentials check from IP ::1",
       "createdAt": "2026-07-03T15:24:47.598Z"
+    },
+    {
+      "id": "act-1783092432691",
+      "adminId": "admin-mock-1",
+      "adminEmail": "admin@hindustanprojects.com",
+      "action": "LOGIN_ATTEMPT",
+      "entity": "Admin",
+      "details": "Successful credentials check from IP ::1",
+      "createdAt": "2026-07-03T15:27:12.691Z"
+    },
+    {
+      "id": "act-1783092461013",
+      "adminId": "admin-mock-1",
+      "adminEmail": "admin@hindustanprojects.com",
+      "action": "LOGIN_ATTEMPT",
+      "entity": "Admin",
+      "details": "Successful credentials check from IP ::1",
+      "createdAt": "2026-07-03T15:27:41.013Z"
     }
   ]
 }
