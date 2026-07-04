@@ -214,11 +214,10 @@ export default function AdminLayout() {
   ].sort((a, b) => b.time - a.time)
 
   useEffect(() => {
-    const secretPath = localStorage.getItem('admin_secret_path') || 'invalid'
     api
       .get('/admin/me')
       .then((r) => setAdmin(r.data))
-      .catch(() => navigate(`/admin-${secretPath}`, { replace: true }))
+      .catch(() => navigate('/not-found', { replace: true }))
   }, [navigate])
 
   const handleLogout = async () => {

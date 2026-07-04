@@ -69,14 +69,6 @@ export default function App() {
       <Routes>
         {/* ── Admin ── */}
         <Route
-          path="/:adminSecret"
-          element={
-            <Suspense fallback={<AdminFallback />}>
-              <AdminLoginPage />
-            </Suspense>
-          }
-        />
-        <Route
           path="/admin"
           element={
             <Suspense fallback={<AdminFallback />}>
@@ -269,6 +261,15 @@ export default function App() {
             }
           />
         </Route>
+
+        <Route
+          path="/:adminSecret"
+          element={
+            <Suspense fallback={<AdminFallback />}>
+              <AdminLoginPage />
+            </Suspense>
+          }
+        />
 
         {/* ── Public site ── */}
         <Route element={<RootLayout />}>
