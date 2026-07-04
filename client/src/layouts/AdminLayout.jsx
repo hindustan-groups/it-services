@@ -3,7 +3,7 @@
  * Checks auth on mount — redirects to /admin/login if no session.
  * Theme: Brand-blue sidebar + white content (no dark mode)
  */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -116,6 +116,44 @@ export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
   const [avatarOpen, setAvatarOpen] = useState(false)
+
+  const notifRef = useRef(null)
+  const avatarRef = useRef(null)
+
+  // Auto-close dropdowns and sidebar on route change
+  useEffect(() => {
+    setNotifOpen(false)
+    setAvatarOpen(false)
+    setSidebarOpen(false)
+  }, [location.pathname])
+
+  // Close dropdowns on scroll anywhere in the admin area
+  useEffect(() => {
+    const handleScroll = () => {
+      setNotifOpen(false)
+      setAvatarOpen(false)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true, capture: true })
+    return () => window.removeEventListener('scroll', handleScroll, { capture: true })
+  }, [])
+
+  // Close dropdowns on clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notifOpen && notifRef.current && !notifRef.current.contains(event.target)) {
+        setNotifOpen(false)
+      }
+      if (avatarOpen && avatarRef.current && !avatarRef.current.contains(event.target)) {
+        setAvatarOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('touchstart', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [notifOpen, avatarOpen])
 
   const currentTitle = PAGE_TITLES[location.pathname] || 'Admin'
 
@@ -341,7 +379,7 @@ export default function AdminLayout() {
 
           <div className="flex items-center gap-2">
              {/* Bell Notifications */}
-            <div className="relative">
+            <div ref={notifRef} className="relative">
               <button
                 onClick={() => setNotifOpen(!notifOpen)}
                 className={`relative w-9 h-9 rounded-lg flex items-center justify-center
@@ -417,7 +455,7 @@ export default function AdminLayout() {
               View Site →
             </a>
             {/* Avatar Dropdown */}
-            <div className="relative">
+            <div ref={avatarRef} className="relative">
               <button
                 onClick={() => setAvatarOpen(!avatarOpen)}
                 className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-blue to-[#0f2660]
