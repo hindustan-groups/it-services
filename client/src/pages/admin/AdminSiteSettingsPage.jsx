@@ -16,6 +16,7 @@ import {
 import { api } from '@/utils/api'
 import { SEO } from '@/components/ui'
 import { useSiteSettings } from '@/hooks/useContent'
+import ImageUploader from '@/components/ui/ImageUploader'
 
 const LinkedinIcon = ({ className }) => (
   <svg
@@ -138,10 +139,9 @@ const FIELD_GROUPS = [
       },
       {
         key: 'hero_image_url',
-        label: 'Hero Section Avatar Image URL (Leave blank to use default corporate portrait)',
-        placeholder: 'e.g. https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500',
+        label: 'Hero Section Avatar Image (Leave blank to use default corporate portrait)',
+        isImage: true,
         Icon: Globe,
-        isTextarea: true,
       },
     ],
   },
@@ -150,24 +150,21 @@ const FIELD_GROUPS = [
     fields: [
       {
         key: 'showcase_web_image',
-        label: 'Desktop Monitor Mockup Image URL (Leave blank to use default interactive live UI)',
-        placeholder: 'e.g. https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800',
+        label: 'Desktop Monitor Mockup Image (Leave blank to use default interactive live UI)',
+        isImage: true,
         Icon: Globe,
-        isTextarea: true,
       },
       {
         key: 'showcase_saas_image',
-        label: 'Laptop MacBook Mockup Image URL (Leave blank to use default interactive live UI)',
-        placeholder: 'e.g. https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800',
+        label: 'Laptop MacBook Mockup Image (Leave blank to use default interactive live UI)',
+        isImage: true,
         Icon: Globe,
-        isTextarea: true,
       },
       {
         key: 'showcase_mobile_image',
-        label: 'iPhone Mobile Mockup Image URL (Leave blank to use default interactive live UI)',
-        placeholder: 'e.g. https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=500',
+        label: 'iPhone Mobile Mockup Image (Leave blank to use default interactive live UI)',
+        isImage: true,
         Icon: Globe,
-        isTextarea: true,
       },
     ],
   },
@@ -196,6 +193,7 @@ export default function AdminSiteSettingsPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     watch,
     formState: { isSubmitting },
   } = useForm({
@@ -262,25 +260,40 @@ export default function AdminSiteSettingsPage() {
                   <div className="p-5 space-y-4.5">
                     {group.fields.map((f) => (
                       <div key={f.key}>
-                        <label className="text-xs font-semibold text-gray-600 block mb-1.5">
-                          {f.label}
-                        </label>
-                        <div className="relative">
-                          <f.Icon className="absolute left-3 top-3 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
-                          {f.isTextarea ? (
-                            <textarea
-                              {...register(f.key)}
-                              placeholder={f.placeholder}
-                              className={textareaCls}
+                        {f.isImage ? (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-gray-600 block">
+                              {f.label}
+                            </label>
+                            <ImageUploader
+                              value={watched[f.key]}
+                              onChange={(url) => setValue(f.key, url, { shouldDirty: true })}
+                              label=""
                             />
-                          ) : (
-                            <input
-                              {...register(f.key)}
-                              placeholder={f.placeholder}
-                              className={inputCls}
-                            />
-                          )}
-                        </div>
+                          </div>
+                        ) : (
+                          <>
+                            <label className="text-xs font-semibold text-gray-600 block mb-1.5">
+                              {f.label}
+                            </label>
+                            <div className="relative">
+                              <f.Icon className="absolute left-3 top-3 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                              {f.isTextarea ? (
+                                <textarea
+                                  {...register(f.key)}
+                                  placeholder={f.placeholder}
+                                  className={textareaCls}
+                                />
+                              ) : (
+                                <input
+                                  {...register(f.key)}
+                                  placeholder={f.placeholder}
+                                  className={inputCls}
+                                />
+                              )}
+                            </div>
+                          </>
+                        )}
                       </div>
                     ))}
                   </div>
