@@ -51,20 +51,20 @@ export default function WelcomePopup() {
             className="bg-white rounded-3xl overflow-hidden shadow-2xl relative w-full max-w-lg z-10 border border-slate-100 flex flex-col"
           >
             {/* Top Decorative Gradient Cover */}
-            <div className="h-32 bg-gradient-to-r from-brand-blue via-blue-800 to-indigo-950 p-6 flex items-center relative overflow-hidden shrink-0">
+            <div className="h-32 bg-gradient-to-r from-[#1A3E8C] via-[#102a66] to-[#0a1840] p-6 flex items-center relative overflow-hidden shrink-0">
               {/* Background Shapes */}
               <div className="absolute w-48 h-48 rounded-full bg-white/5 -top-12 -right-6 blur-lg pointer-events-none" />
               <div className="absolute w-32 h-32 rounded-full bg-blue-400/10 -bottom-8 -left-8 blur-md pointer-events-none" />
 
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+              <div className="flex items-center gap-3 relative z-10">
+                <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shrink-0">
                   <Building2 className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-heading font-bold text-white leading-tight flex items-center gap-1.5">
+                  <h3 className="text-xl font-heading font-bold text-white leading-tight flex items-center gap-1.5 tracking-tight">
                     Hindustan Projects <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
                   </h3>
-                  <p className="text-xs text-blue-200">Building Quality, Exceeding Expectations</p>
+                  <p className="text-xs text-blue-200 font-medium">Building Quality, Exceeding Expectations</p>
                 </div>
               </div>
 
