@@ -165,6 +165,10 @@ export function adminNotificationTemplate({ name, email, phone, message, service
  * Auto-reply email — sent to the user confirming their submission.
  */
 export function autoReplyTemplate({ name }) {
+  const phone = process.env.SITE_PHONE || '+91 99999 99999'
+  const email = process.env.EMAIL_FROM
+    ? process.env.EMAIL_FROM.replace(/.*<(.+)>/, '$1')
+    : process.env.EMAIL_USER || 'info@hindustanprojects.com'
   return {
     subject: 'Thank you for contacting Hindustan Projects',
     html: `
@@ -186,8 +190,8 @@ export function autoReplyTemplate({ name }) {
         </p>
 
         <div style="margin: 20px 0; padding: 16px; background: #f0f4ff; border-radius: 6px;">
-          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">📞 <strong>Phone:</strong> +91 XXXXX XXXXX</p>
-          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">📧 <strong>Email:</strong> info@hindustanprojects.com</p>
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">📞 <strong>Phone:</strong> ${phone}</p>
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">📧 <strong>Email:</strong> ${email}</p>
           <p style="margin: 0; font-size: 14px; color: #1A1A1A;">📍 <strong>Location:</strong> Bhilwara, Rajasthan, India</p>
         </div>
 

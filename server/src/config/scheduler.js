@@ -39,7 +39,8 @@ export function initScheduler() {
       if (overdueLeads.length > 0) {
         const admins = await prisma.admin.findMany({ select: { email: true } })
         const recipients = admins.map((a) => a.email).join(', ') || env.EMAIL_USER || 'admin@hindustanprojects.com'
-        const adminUrl = `${env.CLIENT_URL}/admin-hp9z7k5w8v3q2m4x` // Admin secret routing path
+        const secretPath = process.env.ADMIN_SECRET_PATH || 'hp9z7k5w8v3q2m4x'
+        const adminUrl = `${env.CLIENT_URL}/admin-${secretPath}`
 
         const mailOptions = leadFollowUpReminderTemplate({ leads: overdueLeads, adminUrl })
         await sendEmail({
@@ -72,7 +73,8 @@ export function initScheduler() {
       if (staleLeads.length > 0) {
         const admins = await prisma.admin.findMany({ select: { email: true } })
         const recipients = admins.map((a) => a.email).join(', ') || env.EMAIL_USER || 'admin@hindustanprojects.com'
-        const adminUrl = `${env.CLIENT_URL}/admin-hp9z7k5w8v3q2m4x`
+        const secretPath = process.env.ADMIN_SECRET_PATH || 'hp9z7k5w8v3q2m4x'
+        const adminUrl = `${env.CLIENT_URL}/admin-${secretPath}`
 
         const mailOptions = staleLeadFollowUpTemplate({ leads: staleLeads, adminUrl })
         await sendEmail({

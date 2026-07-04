@@ -533,7 +533,7 @@ export default function ContactPage() {
                       aria-label="Contact form"
                       className="space-y-5"
                     >
-                      {/* Honeypot */}
+                      {/* Honeypot — hidden from real users, bots fill it */}
                       <input
                         type="text"
                         tabIndex={-1}
@@ -642,17 +642,6 @@ export default function ContactPage() {
                           <p className="text-sm font-semibold text-brand-red">{apiError}</p>
                         </div>
                       )}
-
-                      {/* Honeypot field */}
-                      <div style={{ display: 'none' }} aria-hidden="true">
-                        <input
-                          type="text"
-                          tabIndex="-1"
-                          autoComplete="off"
-                          placeholder="Do not fill this"
-                          {...register('_hp')}
-                        />
-                      </div>
 
                       {/* Submit Button */}
                       <div className="pt-2">
