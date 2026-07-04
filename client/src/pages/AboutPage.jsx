@@ -108,6 +108,14 @@ const FALLBACK_TEAM = [
   },
 ]
 
+function LinkedInIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5" aria-hidden="true">
+      <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.5h4V24h-4V8.5zM8.5 8.5h3.84v2.12h.05c.53-1 1.84-2.12 3.79-2.12 4.05 0 4.8 2.67 4.8 6.13V24h-4v-8.5c0-2.03-.04-4.63-2.82-4.63-2.83 0-3.26 2.2-3.26 4.48V24h-4V8.5z" />
+    </svg>
+  )
+}
+
 export default function AboutPage() {
   const { data: teamData, isLoading: teamLoading } = useTeam()
   const { data: milestonesData, isLoading: milestonesLoading } = useMilestones()
@@ -427,7 +435,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Team ─────────────────────────────────────────────────── */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-white border-t border-gray-100">
+      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white via-slate-50/50 to-white border-t border-gray-100">
         <Container>
           <div className="text-center mb-10 lg:mb-14">
             <span className="text-xs font-bold tracking-widest uppercase text-brand-red mb-3 block">
@@ -444,7 +452,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {teamLoading
               ? Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="h-52 bg-gray-100 rounded-2xl animate-pulse" />
+                  <div key={i} className="h-64 bg-gray-100 rounded-2xl animate-pulse" />
                 ))
               : team.map((member) => {
                   const initials = member.name
@@ -456,40 +464,80 @@ export default function AboutPage() {
                   return (
                     <div
                       key={member.id}
-                      className="group bg-white rounded-2xl border border-gray-100 p-6 text-center
-                        hover:border-transparent hover:shadow-[0_12px_40px_rgba(26,62,140,0.10)]
+                      className="group relative overflow-hidden bg-white rounded-2xl border border-slate-100 p-6 text-center
+                        hover:border-brand-blue/20 hover:shadow-[0_12px_30px_rgba(26,62,140,0.12)]
                         hover:-translate-y-1.5 transition-all duration-300"
                     >
+                      {/* Subtle background glow inside the card top */}
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-gradient-to-b from-brand-blue/5 to-transparent blur-2xl rounded-full pointer-events-none" />
+                      
+                      {/* Glow point behind photo */}
+                      <div className="absolute top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-gradient-to-tr from-brand-blue/10 to-brand-red/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
                       {member.photoUrl ? (
-                        <img
-                          src={member.photoUrl}
-                          alt={member.name}
-                          className="w-20 h-20 rounded-full object-cover mx-auto mb-4 ring-2 ring-brand-blue/10"
-                          loading="lazy"
-                        />
+                        <div className="relative mb-5 mx-auto w-24 h-24 flex items-center justify-center z-10">
+                          {/* Soft backdrop blur glow */}
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-brand-blue via-transparent to-brand-red blur-md opacity-20 group-hover:opacity-55 group-hover:scale-115 transition-all duration-500" />
+                          
+                          {/* Gradient Ring Wrapper */}
+                          <div className="relative p-[3px] rounded-full bg-gradient-to-tr from-brand-blue/20 via-slate-200 to-brand-red/20 group-hover:from-brand-blue group-hover:via-brand-blue-light group-hover:to-brand-red transition-all duration-500 shadow-sm">
+                            {/* White spacer ring */}
+                            <div className="p-[2px] rounded-full bg-white">
+                              <img
+                                src={member.photoUrl}
+                                alt={member.name}
+                                className="w-22 h-22 rounded-full object-cover shadow-inner group-hover:scale-105 transition-transform duration-500"
+                                loading="lazy"
+                              />
+                            </div>
+                          </div>
+                        </div>
                       ) : (
-                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-blue to-blue-400 flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-white shadow-md group-hover:scale-105 transition-transform duration-300">
-                          {initials}
+                        <div className="relative mb-5 mx-auto w-24 h-24 flex items-center justify-center z-10">
+                          {/* Soft backdrop blur glow */}
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-brand-blue via-transparent to-brand-red blur-md opacity-20 group-hover:opacity-55 group-hover:scale-115 transition-all duration-500" />
+                          
+                          {/* Gradient Ring Wrapper */}
+                          <div className="relative w-full h-full p-[3px] rounded-full bg-gradient-to-tr from-brand-blue/20 via-slate-200 to-brand-red/20 group-hover:from-brand-blue group-hover:via-brand-blue-light group-hover:to-brand-red transition-all duration-500 shadow-sm flex items-center justify-center">
+                            {/* White spacer ring */}
+                            <div className="w-full h-full p-[2px] rounded-full bg-white flex items-center justify-center">
+                              <div className="w-full h-full rounded-full bg-brand-blue/5 flex items-center justify-center border border-slate-100 shadow-inner group-hover:scale-105 transition-transform duration-500">
+                                <span className="font-heading text-lg font-extrabold bg-gradient-to-tr from-brand-blue to-brand-blue-light bg-clip-text text-transparent">
+                                  {initials}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       )}
-                      <h3 className="font-heading text-base font-bold text-brand-blue mb-0.5">
-                        {member.name}
-                      </h3>
-                      <p className="text-xs font-semibold text-brand-red mb-3">{member.role}</p>
-                      {member.bio && (
-                        <p className="text-xs text-text-muted leading-relaxed">{member.bio}</p>
-                      )}
-                      {member.linkedinUrl && (
-                        <a
-                          href={member.linkedinUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs text-brand-blue/60
-                            hover:text-brand-blue mt-3 transition-colors"
-                        >
-                          LinkedIn →
-                        </a>
-                      )}
+                      
+                      <div className="relative z-10">
+                        <h3 className="font-heading text-base font-bold text-brand-blue group-hover:text-brand-blue-light transition-colors duration-300">
+                          {member.name}
+                        </h3>
+                        <p className="text-xs text-brand-red font-semibold uppercase tracking-wider mt-1 mb-3">
+                          {member.role}
+                        </p>
+                        {member.bio && (
+                          <p className="text-xs text-text-muted leading-relaxed mb-5 line-clamp-3 group-hover:text-gray-700 transition-colors duration-300 px-1">
+                            {member.bio}
+                          </p>
+                        )}
+                        {member.linkedinUrl && (
+                          <div className="flex justify-center">
+                            <a
+                              href={member.linkedinUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={`${member.name} on LinkedIn`}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-text-muted bg-slate-50 hover:bg-brand-blue/5 hover:text-brand-blue border border-slate-100 hover:border-brand-blue/20 transition-all duration-300"
+                            >
+                              <LinkedInIcon />
+                              <span>LinkedIn</span>
+                            </a>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )
                 })}

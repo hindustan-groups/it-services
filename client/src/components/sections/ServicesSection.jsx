@@ -11,33 +11,46 @@ import { ServiceCardSkeleton } from '@/components/ui/Skeleton'
 import { useServices } from '@/hooks/useServices'
 import { getServiceIcon } from '@/utils/serviceIcons'
 
-function ServiceCard({ service }) {
+function ServiceCard({ service, index }) {
+  const getStickyClass = (idx) => {
+    switch (idx) {
+      case 0:
+        return 'sticky sm:relative top-[80px] sm:top-auto z-10 sm:z-auto shadow-[0_8px_30px_rgba(26,62,140,0.06)] scale-[0.93] sm:scale-100 origin-top transition-all duration-300'
+      case 1:
+        return 'sticky sm:relative top-[100px] sm:top-auto z-20 sm:z-auto shadow-[0_12px_36px_rgba(26,62,140,0.09)] scale-[0.96] sm:scale-100 origin-top transition-all duration-300'
+      case 2:
+        return 'sticky sm:relative top-[120px] sm:top-auto z-30 sm:z-auto shadow-[0_16px_40px_rgba(26,62,140,0.12)] scale-[1] sm:scale-100 origin-top transition-all duration-300'
+      default:
+        return 'hidden sm:flex'
+    }
+  }
+
   return (
     <Card
       hoverable
       as={Link}
       to={`/services/${service.slug}`}
-      className="p-6 flex flex-col group text-left no-underline"
+      className={`p-6 flex flex-col group text-left no-underline rounded-2xl border border-slate-100 bg-white hover:border-brand-blue/20 hover:shadow-[0_12px_30px_rgba(26,62,140,0.12)] transition-all duration-300 ${getStickyClass(index)}`}
     >
       {/* Icon */}
       <div
         className="w-12 h-12 rounded-lg bg-brand-blue/8 flex items-center justify-center mb-5
-        group-hover:bg-brand-blue/12 transition-colors duration-200"
+        group-hover:bg-brand-blue/12 group-hover:scale-110 transition-all duration-200"
       >
-        {createElement(getServiceIcon(service.icon), { className: 'w-6 h-6 text-brand-blue', strokeWidth: 1.75 })}
+        {createElement(getServiceIcon(service.icon), { className: 'w-6 h-6 text-brand-blue group-hover:text-brand-blue-light transition-colors', strokeWidth: 1.75 })}
       </div>
 
       {/* Title */}
-      <h3 className="font-heading text-lg font-semibold text-brand-blue mb-2">{service.title}</h3>
+      <h3 className="font-heading text-lg font-bold text-brand-blue group-hover:text-brand-blue-light transition-colors duration-200 mb-2">{service.title}</h3>
 
       {/* Short description */}
-      <p className="text-sm text-text-muted leading-relaxed flex-1 mb-5">
+      <p className="text-sm text-text-muted leading-relaxed flex-1 mb-5 group-hover:text-gray-700 transition-colors">
         {service.shortDescription}
       </p>
 
       {/* Learn More indicator */}
       <span
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-red
+        className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-red
           group-hover:gap-2.5 transition-all duration-200"
       >
         Learn More
@@ -125,7 +138,7 @@ export default function ServicesSection() {
   const services = data?.data?.length ? data.data : isLoading ? [] : PLACEHOLDER_SERVICES
 
   return (
-    <section id="services" className="py-20 bg-white" aria-labelledby="services-heading">
+    <section id="services" className="py-20 bg-gradient-to-b from-white via-slate-50/50 to-white" aria-labelledby="services-heading">
       <Container>
         <SectionHeading
           id="services-heading"
@@ -137,10 +150,16 @@ export default function ServicesSection() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {isLoading && services.length === 0
-            ? Array.from({ length: 6 }).map((_, i) => <ServiceCardSkeleton key={i} />)
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className={i >= 3 ? 'hidden sm:block' : 'block'}>
+                  <ServiceCardSkeleton />
+                </div>
+              ))
             : services
                 .slice(0, 6)
-                .map((service) => <ServiceCard key={service.id} service={service} />)}
+                .map((service, index) => (
+                  <ServiceCard key={service.id} service={service} index={index} />
+                ))}
         </div>
 
         {/* CTA below grid */}
