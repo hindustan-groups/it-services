@@ -34,12 +34,24 @@ export const getLeads = async (req, res, next) => {
 export const updateLeadStatus = async (req, res, next) => {
   try {
     const { id } = req.params
-    const { status } = req.body
-    const valid = ['NEW', 'CONTACTED', 'CLOSED']
-    if (!valid.includes(status)) {
-      return res.status(400).json({ status: 'error', message: 'Invalid status.' })
+    const { status, notes, estimatedBudget } = req.body
+
+    const data = {}
+    if (status !== undefined) {
+      const valid = ['NEW', 'CONTACTED', 'CLOSED']
+      if (!valid.includes(status)) {
+        return res.status(400).json({ status: 'error', message: 'Invalid status.' })
+      }
+      data.status = status
     }
-    const lead = await prisma.contactLead.update({ where: { id }, data: { status } })
+    if (notes !== undefined) {
+      data.notes = notes
+    }
+    if (estimatedBudget !== undefined) {
+      data.estimatedBudget = estimatedBudget
+    }
+
+    const lead = await prisma.contactLead.update({ where: { id }, data })
     res.json({ status: 'ok', data: lead })
   } catch (err) {
     next(err)

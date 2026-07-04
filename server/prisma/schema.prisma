@@ -175,6 +175,8 @@ model ContactLead {
   message           String
   serviceInterested String?
   status            LeadStatus @default(NEW)
+  notes             String?    @default("")
+  estimatedBudget   String?    @default("")
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 

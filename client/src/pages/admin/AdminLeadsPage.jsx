@@ -73,11 +73,11 @@ export default function AdminLeadsPage() {
   })
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, status }) => api.patch(`/admin/leads/${id}`, { status }),
-    onSuccess: () => {
+    mutationFn: ({ id, ...payload }) => api.patch(`/admin/leads/${id}`, payload),
+    onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ['admin-leads'] })
-      if (selectedLead) {
-        setSelectedLead((prev) => (prev ? { ...prev, status } : null))
+      if (selectedLead && res?.data) {
+        setSelectedLead(res.data)
       }
     },
   })
@@ -260,13 +260,20 @@ export default function AdminLeadsPage() {
                           )}
                         </td>
                         <td className="px-5 py-4">
-                          {lead.serviceInterested ? (
-                            <span className="px-2 py-1 rounded-lg bg-brand-blue/8 text-brand-blue text-xs font-medium border border-brand-blue/15">
-                              {lead.serviceInterested}
-                            </span>
-                          ) : (
-                            <span className="text-gray-300">—</span>
-                          )}
+                          <div className="space-y-1">
+                            {lead.serviceInterested ? (
+                              <span className="px-2 py-1 rounded-lg bg-brand-blue/8 text-brand-blue text-xs font-medium border border-brand-blue/15">
+                                {lead.serviceInterested}
+                              </span>
+                            ) : (
+                              <span className="text-gray-300">—</span>
+                            )}
+                            {lead.estimatedBudget && (
+                              <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-250/60 rounded px-1.5 py-0.5 w-fit">
+                                Est: {lead.estimatedBudget}
+                              </div>
+                            )}
+                          </div>
                         </td>
                         <td className="px-5 py-4 text-gray-500 max-w-xs">
                           <p className="truncate text-xs leading-relaxed">{lead.message}</p>
@@ -425,31 +432,75 @@ export default function AdminLeadsPage() {
                       <span className="text-gray-400">—</span>
                     )}
                   </div>
-                  <div>
-                    <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">
-                      Status
-                    </span>
-                    <select
-                      value={selectedLead.status}
-                      onChange={(e) =>
-                        updateMutation.mutate({ id: selectedLead.id, status: e.target.value })
-                      }
-                      className="text-xs font-semibold px-2.5 py-1 rounded-full border border-gray-200 bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
-                    >
-                      <option value="NEW">New</option>
-                      <option value="CONTACTED">Contacted</option>
-                      <option value="CLOSED">Closed</option>
-                    </select>
-                  </div>
                 </div>
-
+ 
                 {/* Message Body */}
                 <div className="space-y-1.5">
                   <span className="text-[10px] uppercase font-bold text-gray-400 block">
                     Message Body
                   </span>
-                  <div className="bg-white border border-gray-100 p-4 rounded-xl text-gray-700 leading-relaxed text-xs whitespace-pre-wrap max-h-48 overflow-y-auto">
+                  <div className="bg-white border border-gray-100 p-4 rounded-xl text-gray-700 leading-relaxed text-xs whitespace-pre-wrap max-h-42 overflow-y-auto">
                     {selectedLead.message}
+                  </div>
+                </div>
+
+                {/* CRM Sales Pipeline & Internal Notes */}
+                <div className="border-t border-gray-100 pt-4 space-y-4">
+                  <span className="text-xs font-bold text-brand-blue uppercase tracking-wider block">
+                    CRM Sales Pipeline
+                  </span>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-gray-400 block mb-1">
+                        Deal Status
+                      </label>
+                      <select
+                        value={selectedLead.status}
+                        onChange={(e) =>
+                          updateMutation.mutate({ id: selectedLead.id, status: e.target.value })
+                        }
+                        className="w-full text-xs font-semibold px-3 py-2 border border-gray-200 rounded-lg bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
+                      >
+                        <option value="NEW">New</option>
+                        <option value="CONTACTED">Contacted</option>
+                        <option value="CLOSED">Closed / Deal Done</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-gray-400 block mb-1">
+                        Est. Budget / Deal Value
+                      </label>
+                      <input
+                        type="text"
+                        defaultValue={selectedLead.estimatedBudget || ''}
+                        onBlur={(e) =>
+                          updateMutation.mutate({ id: selectedLead.id, estimatedBudget: e.target.value })
+                        }
+                        placeholder="e.g. ₹50,000"
+                        className="w-full text-xs font-semibold px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] uppercase font-bold text-gray-400 block mb-1 flex items-center justify-between">
+                      <span>Internal CRM Notes (Follow-up history)</span>
+                      {updateMutation.isPending && (
+                        <span className="text-[9px] text-brand-blue animate-pulse lowercase font-medium">saving...</span>
+                      )}
+                    </label>
+                    <textarea
+                      rows={3}
+                      defaultValue={selectedLead.notes || ''}
+                      onBlur={(e) =>
+                        updateMutation.mutate({ id: selectedLead.id, notes: e.target.value })
+                      }
+                      placeholder="Discussed budget, requested custom branding, follow-up call on next Monday..."
+                      className="w-full text-xs text-gray-700 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-blue/20 resize-none leading-relaxed"
+                    />
+                    <span className="text-[9px] text-gray-400 block">Changes are saved automatically when you click outside (onBlur).</span>
                   </div>
                 </div>
               </div>
