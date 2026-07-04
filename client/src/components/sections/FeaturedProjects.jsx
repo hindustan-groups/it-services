@@ -60,7 +60,7 @@ export default function FeaturedProjects() {
       : PLACEHOLDER_FEATURED
 
   return (
-    <section className="py-20 bg-bg-base" aria-labelledby="featured-heading">
+    <section className="py-20 bg-gradient-to-b from-white via-slate-50/50 to-white" aria-labelledby="featured-heading">
       <Container>
         <motion.div
           initial="hidden"
@@ -88,42 +88,61 @@ export default function FeaturedProjects() {
             ? Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="h-64 bg-gray-100 rounded-lg animate-pulse" />
               ))
-            : projects.map((p) => (
-                <motion.div key={p.id} variants={fadeUp}>
-                  <Card
-                    hoverable
-                    className="overflow-hidden group cursor-pointer"
-                    onClick={() => setSelectedProject(p)}
-                  >
-                    {p.thumbnailUrl ? (
-                      <img
-                        src={p.thumbnailUrl}
-                        alt={p.title}
-                        className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div
-                        className="w-full h-44 bg-gradient-to-br from-brand-blue/8 to-brand-blue/18
-                        flex items-center justify-center"
-                      >
-                        <span className="font-heading text-5xl font-bold text-brand-blue/15">
-                          {p.title[0]}
-                        </span>
+            : projects.map((p, index) => {
+                const getStickyClass = (idx) => {
+                  switch (idx) {
+                    case 0:
+                      return 'sticky sm:relative top-[80px] sm:top-auto z-10 sm:z-auto shadow-[0_8px_30px_rgba(26,62,140,0.06)] scale-[0.93] sm:scale-100 origin-top transition-all duration-300'
+                    case 1:
+                      return 'sticky sm:relative top-[100px] sm:top-auto z-20 sm:z-auto shadow-[0_12px_36px_rgba(26,62,140,0.09)] scale-[0.96] sm:scale-100 origin-top transition-all duration-300'
+                    case 2:
+                      return 'sticky sm:relative top-[120px] sm:top-auto z-30 sm:z-auto shadow-[0_16px_40px_rgba(26,62,140,0.12)] scale-[1] sm:scale-100 origin-top transition-all duration-300'
+                    default:
+                      return ''
+                  }
+                }
+                return (
+                  <motion.div key={p.id} variants={fadeUp} className={getStickyClass(index)}>
+                    <Card
+                      hoverable
+                      className="overflow-hidden group cursor-pointer border border-slate-100 bg-white rounded-2xl hover:border-brand-blue/20 hover:shadow-[0_12px_30px_rgba(26,62,140,0.12)] transition-all duration-300"
+                      onClick={() => setSelectedProject(p)}
+                    >
+                      {p.thumbnailUrl ? (
+                        <div className="overflow-hidden relative h-44">
+                          {/* Image hover glow overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-brand-blue/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
+                          <img
+                            src={p.thumbnailUrl}
+                            alt={p.title}
+                            className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+                            loading="lazy"
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          className="w-full h-44 bg-gradient-to-br from-brand-blue/8 to-brand-blue/18
+                          flex items-center justify-center relative overflow-hidden"
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-t from-brand-blue/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
+                          <span className="font-heading text-5xl font-bold text-brand-blue/15 group-hover:scale-110 transition-transform duration-500">
+                            {p.title[0]}
+                          </span>
+                        </div>
+                      )}
+                      <div className="p-5 relative z-10">
+                        <Badge variant="blue" className="mb-2.5">
+                          {p.category}
+                        </Badge>
+                        <h3 className="font-heading text-base font-bold text-brand-blue group-hover:text-brand-blue-light transition-colors duration-200 mb-1">
+                          {p.title}
+                        </h3>
+                        <p className="text-xs text-text-muted">{p.clientName}</p>
                       </div>
-                    )}
-                    <div className="p-5">
-                      <Badge variant="blue" className="mb-2">
-                        {p.category}
-                      </Badge>
-                      <h3 className="font-heading text-base font-semibold text-brand-blue mb-1">
-                        {p.title}
-                      </h3>
-                      <p className="text-xs text-text-muted">{p.clientName}</p>
-                    </div>
-                  </Card>
-                </motion.div>
-              ))}
+                    </Card>
+                  </motion.div>
+                )
+              })}
         </motion.div>
 
         <div className="text-center mt-10">
