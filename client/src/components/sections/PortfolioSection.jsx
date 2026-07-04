@@ -111,6 +111,7 @@ const PLACEHOLDER_PROJECTS = [
 ]
 
 /* ── Project Detail Modal ───────────────────────────────────────── */
+/* ── Project Detail Modal ───────────────────────────────────────── */
 export function ProjectModal({ project, onClose }) {
   const gradColor = CATEGORY_COLORS[project.category] || 'from-brand-blue to-blue-400'
   return createPortal(
@@ -126,7 +127,7 @@ export function ProjectModal({ project, onClose }) {
 
         {/* Modal Content Box */}
         <motion.div
-          className="my-auto inline-block w-full max-w-2xl text-left align-middle bg-white rounded-3xl shadow-[0_25px_60px_rgba(0,0,0,0.25)] overflow-hidden z-10 border border-slate-100"
+          className="my-auto inline-block w-full max-w-3xl text-left align-middle bg-white rounded-3xl shadow-[0_25px_60px_rgba(0,0,0,0.25)] overflow-hidden z-10 border border-slate-100"
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -138,7 +139,7 @@ export function ProjectModal({ project, onClose }) {
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-white/90 border border-slate-100 text-slate-500 hover:bg-white hover:text-brand-red hover:rotate-90 hover:scale-105 transition-all duration-300 shadow-sm cursor-pointer"
+            className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-slate-900/60 backdrop-blur-md border border-white/20 text-white hover:bg-brand-red hover:border-transparent hover:rotate-90 hover:scale-105 transition-all duration-300 shadow-lg cursor-pointer"
             aria-label="Close"
           >
             <X className="w-4 h-4" />
@@ -146,14 +147,14 @@ export function ProjectModal({ project, onClose }) {
 
           {/* Banner Image */}
           {project.thumbnailUrl ? (
-            <div className="relative h-64 overflow-hidden">
+            <div className="relative h-60 sm:h-72 md:h-80 overflow-hidden group/image">
               <img
                 src={project.thumbnailUrl}
                 alt={project.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover group-hover/image:scale-105 transition-transform duration-700 ease-out"
               />
               {/* Top and Bottom soft shadows for depth */}
-              <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/75" />
 
               {/* Floating Badges */}
               <div className="absolute bottom-5 left-5 flex gap-2">
@@ -197,15 +198,15 @@ export function ProjectModal({ project, onClose }) {
 
             {/* Performance/Result Achievements */}
             {project.result && (
-              <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 mb-6">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/20">
+              <div className="flex items-center gap-3.5 p-4.5 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50/55 border border-emerald-100 mb-6 shadow-sm shadow-emerald-500/[0.02]">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/20">
                   <ArrowRight className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider leading-none mb-1">
+                  <p className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-widest leading-none mb-1">
                     Outcome / Impact
                   </p>
-                  <p className="text-sm font-bold text-emerald-900 leading-snug">
+                  <p className="text-sm font-bold text-emerald-950 leading-snug">
                     {project.result}
                   </p>
                 </div>
@@ -223,9 +224,9 @@ export function ProjectModal({ project, onClose }) {
               </div>
 
               {/* Sidebar specs card */}
-              <div className="bg-brand-blue/3 rounded-2xl p-5 border border-brand-blue/8 space-y-4">
+              <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100 space-y-4">
                 <div>
-                  <span className="block text-[9px] font-bold text-brand-blue/40 uppercase tracking-wider mb-1">
+                  <span className="block text-[9px] font-bold text-text-muted uppercase tracking-wider mb-1">
                     Client Profile
                   </span>
                   <span className="text-xs font-bold text-brand-blue leading-tight block">
@@ -233,7 +234,7 @@ export function ProjectModal({ project, onClose }) {
                   </span>
                 </div>
                 <div>
-                  <span className="block text-[9px] font-bold text-brand-blue/40 uppercase tracking-wider mb-1">
+                  <span className="block text-[9px] font-bold text-text-muted uppercase tracking-wider mb-1">
                     Project Category
                   </span>
                   <span className="text-xs font-bold text-brand-blue block">
@@ -242,10 +243,10 @@ export function ProjectModal({ project, onClose }) {
                 </div>
                 {project.technologies?.length > 0 && (
                   <div>
-                    <span className="block text-[9px] font-bold text-brand-blue/40 uppercase tracking-wider mb-2">
+                    <span className="block text-[9px] font-bold text-text-muted uppercase tracking-wider mb-2">
                       Technologies
                     </span>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1.5">
                       {project.technologies.map((t) => (
                         <span
                           key={t}
@@ -263,7 +264,7 @@ export function ProjectModal({ project, onClose }) {
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-1.5 w-full bg-brand-blue hover:bg-[#0f2660] text-white text-[11px] font-bold py-2 px-3 rounded-xl shadow-sm hover:shadow transition-all"
+                      className="flex items-center justify-center gap-1.5 w-full bg-brand-blue hover:bg-brand-blue-dark text-white text-xs font-bold py-2.5 px-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                       Visit Live Site
