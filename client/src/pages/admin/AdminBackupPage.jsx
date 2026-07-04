@@ -62,6 +62,7 @@ export default function AdminBackupPage() {
   const [downloading, setDownloading] = useState(false)
   const [lastDownload, setLastDownload] = useState(null)
   const [dlError, setDlError] = useState(null)
+  const [format, setFormat] = useState('json')
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['backup-tables'],
@@ -105,7 +106,7 @@ export default function AdminBackupPage() {
       const tableParam = [...selected].join(',')
       // Use fetch directly to handle file download
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL || '/api'}/admin/backup?tables=${tableParam}`,
+        `${import.meta.env.VITE_API_URL || '/api'}/admin/backup?tables=${tableParam}&format=${format}`,
         {
           method: 'GET',
           credentials: 'include',
@@ -119,7 +120,9 @@ export default function AdminBackupPage() {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `hindustan-projects-backup-${new Date().toISOString().slice(0, 10)}.json`
+      const fileExtensions = { json: 'json', sql: 'sql', html: 'html' }
+      const ext = fileExtensions[format] || 'json'
+      a.download = `hindustan-projects-backup-${new Date().toISOString().slice(0, 10)}.${ext}`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
@@ -247,6 +250,33 @@ export default function AdminBackupPage() {
               </div>
             )}
           </div>
+ 
+          {/* Format Selector */}
+          <div className="space-y-2 border-t border-gray-150 pt-4">
+            <label className="text-xs font-semibold text-gray-700 block">Export Format</label>
+            <div className="grid grid-cols-3 gap-2.5">
+              {[
+                { id: 'json', label: 'JSON Data', desc: 'Standard restore format' },
+                { id: 'sql', label: 'SQL Script', desc: 'PostgreSQL restore dump' },
+                { id: 'html', label: 'HTML Report', desc: 'Offline interactive reader' },
+              ].map((f) => (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setFormat(f.id)}
+                  className={`px-3 py-2.5 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-0.5
+                    ${
+                      format === f.id
+                        ? 'border-brand-blue bg-brand-blue/5 text-brand-blue font-bold shadow-sm'
+                        : 'border-gray-250 bg-white hover:border-gray-350 text-gray-700'
+                    }`}
+                >
+                  <span className="text-xs">{f.label}</span>
+                  <span className="text-[9px] text-gray-400 font-normal mt-0.5">{f.desc}</span>
+                </button>
+              ))}
+            </div>
+          </div>
 
           {dlError && (
             <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
@@ -277,7 +307,7 @@ export default function AdminBackupPage() {
           <p className="text-center text-xs text-gray-400">
             File:{' '}
             <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-[11px]">
-              hindustan-projects-backup-{new Date().toISOString().slice(0, 10)}.json
+              hindustan-projects-backup-{new Date().toISOString().slice(0, 10)}.{format}
             </code>
           </p>
         </div>
