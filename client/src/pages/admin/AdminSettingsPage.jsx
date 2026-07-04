@@ -597,7 +597,7 @@ function TwoFactorForm({ admin, setAdmin }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-red-650 hover:bg-red-750 text-white font-semibold py-2.5 rounded-xl text-xs transition-colors disabled:opacity-60 cursor-pointer"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-xl text-xs transition-colors disabled:opacity-60 cursor-pointer"
                 >
                   {loading ? 'Disabling...' : 'Confirm Disable'}
                 </button>
@@ -617,7 +617,7 @@ function TwoFactorForm({ admin, setAdmin }) {
           ) : (
             <button
               onClick={() => setShowDisableForm(true)}
-              className="w-full bg-red-50 hover:bg-red-100 text-red-650 font-semibold py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+              className="w-full bg-red-50 hover:bg-red-100 text-red-600 font-semibold py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
             >
               Disable 2FA
             </button>
@@ -628,7 +628,7 @@ function TwoFactorForm({ admin, setAdmin }) {
           <div className="flex items-start gap-3 bg-gray-50 border border-gray-200 rounded-xl p-4">
             <Info className="w-5 h-5 text-gray-500 shrink-0 mt-0.5" />
             <div>
-              <h3 className="text-sm font-semibold text-gray-750 font-heading">2FA is Disabled</h3>
+              <h3 className="text-sm font-semibold text-gray-700 font-heading">2FA is Disabled</h3>
               <p className="text-xs text-gray-500 leading-relaxed mt-1">
                 Enabling 2FA adds an extra layer of protection. You will need a 6-digit code from Google Authenticator to log in.
               </p>
