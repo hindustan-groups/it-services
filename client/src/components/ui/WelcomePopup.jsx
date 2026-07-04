@@ -61,10 +61,10 @@ export default function WelcomePopup() {
                   <Building2 className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-heading font-bold text-white leading-tight flex items-center gap-1.5 tracking-tight">
+                  <div className="text-xl font-heading font-bold text-white leading-tight flex items-center gap-1.5 tracking-tight">
                     Hindustan Projects
                     <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
-                  </h3>
+                  </div>
                   <p className="text-xs text-blue-200 font-medium">Building Quality, Exceeding Expectations</p>
                 </div>
               </div>
