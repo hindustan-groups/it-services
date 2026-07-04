@@ -25,9 +25,12 @@ import {
   Cpu
 } from 'lucide-react'
 import { Container } from '@/components/ui'
+import { useSiteSettings } from '@/hooks/useContent'
 
 export default function ShowcaseSection() {
   const [activeTab, setActiveTab] = useState('web') // web | saas | mobile
+  const { data: settingsData } = useSiteSettings()
+  const cfg = settingsData?.data || {}
 
   const showcaseData = {
     web: {
@@ -216,83 +219,93 @@ export default function ShowcaseSection() {
                         </div>
                       </div>
 
-                      {/* Browser Content (Super Level Dark Premium Portal) */}
-                      <div className="flex-1 bg-[#0b1329] text-white p-5 flex flex-col justify-between overflow-hidden relative font-sans">
-                        {/* Header */}
-                        <header className="flex justify-between items-center pb-3 border-b border-white/5 shrink-0">
-                          <span className="font-heading font-black text-[10px] text-brand-red-light tracking-widest uppercase">HP PORTAL</span>
-                          <div className="flex gap-3 text-[8px] font-bold text-gray-400">
-                            <span className="text-white">Overview</span>
-                            <span>Integrations</span>
-                            <span>Users</span>
-                          </div>
-                        </header>
+                      {/* Browser Content (Super Level Dark Premium Portal or Custom Image) */}
+                      {cfg.showcase_web_image ? (
+                        <div className="flex-1 overflow-hidden relative bg-[#0b1329]">
+                          <img
+                            src={cfg.showcase_web_image}
+                            alt="Custom Web Mockup"
+                            className="w-full h-full object-cover block"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex-1 bg-[#0b1329] text-white p-5 flex flex-col justify-between overflow-hidden relative font-sans">
+                          {/* Header */}
+                          <header className="flex justify-between items-center pb-3 border-b border-white/5 shrink-0">
+                            <span className="font-heading font-black text-[10px] text-brand-red-light tracking-widest uppercase">HP PORTAL</span>
+                            <div className="flex gap-3 text-[8px] font-bold text-gray-400">
+                              <span className="text-white">Overview</span>
+                              <span>Integrations</span>
+                              <span>Users</span>
+                            </div>
+                          </header>
 
-                        {/* Main Layout split */}
-                        <div className="flex-1 flex gap-4 items-center py-3 overflow-hidden">
-                          {/* Left Panel */}
-                          <div className="flex-1 space-y-2.5">
-                            <div className="flex items-center gap-1.5">
-                              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
-                              <span className="text-[7px] font-bold text-emerald-400 uppercase tracking-widest">Active Server</span>
+                          {/* Main Layout split */}
+                          <div className="flex-1 flex gap-4 items-center py-3 overflow-hidden">
+                            {/* Left Panel */}
+                            <div className="flex-1 space-y-2.5">
+                              <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                                <span className="text-[7px] font-bold text-emerald-400 uppercase tracking-widest">Active Server</span>
+                              </div>
+                              <h4 className="font-heading font-extrabold text-sm text-white leading-tight">
+                                Database Sync & Operations Panel
+                              </h4>
+                              <p className="text-[9px] text-gray-400 leading-relaxed">
+                                Real-time pipeline data and encrypted token management dashboard.
+                              </p>
+                              <div className="flex gap-1.5">
+                                <span className="bg-brand-red text-white px-2.5 py-1 rounded text-[7px] font-bold">Refresh Server</span>
+                                <span className="border border-white/10 bg-white/5 text-gray-300 px-2.5 py-1 rounded text-[7px] font-bold">View Logs</span>
+                              </div>
                             </div>
-                            <h4 className="font-heading font-extrabold text-sm text-white leading-tight">
-                              Database Sync & Operations Panel
-                            </h4>
-                            <p className="text-[9px] text-gray-400 leading-relaxed">
-                              Real-time pipeline data and encrypted token management dashboard.
-                            </p>
-                            <div className="flex gap-1.5">
-                              <span className="bg-brand-red text-white px-2.5 py-1 rounded text-[7px] font-bold">Refresh Server</span>
-                              <span className="border border-white/10 bg-white/5 text-gray-300 px-2.5 py-1 rounded text-[7px] font-bold">View Logs</span>
-                            </div>
-                          </div>
 
-                          {/* Right Panel (High-end Conversion SVG wave Chart) */}
-                          <div className="flex-1 bg-slate-900/60 border border-white/5 shadow-inner rounded-xl p-3 space-y-2 max-w-[200px]">
-                            <div className="flex justify-between items-center">
-                              <span className="text-[8px] font-bold text-gray-300">Conversion Increase</span>
-                              <span className="text-[7px] font-bold text-emerald-400 bg-emerald-500/10 px-1 py-0.5 rounded">+340%</span>
-                            </div>
-                            {/* Premium SVG Curve Graph */}
-                            <div className="h-16 w-full pt-1 relative">
-                              <svg className="w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none">
-                                <defs>
-                                  <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="#00F2FE" stopOpacity="0.3" />
-                                    <stop offset="100%" stopColor="#00F2FE" stopOpacity="0" />
-                                  </linearGradient>
-                                </defs>
-                                {/* Glow under line */}
-                                <path d="M 0 40 Q 20 30 40 22 T 80 8 L 100 5 L 100 40 Z" fill="url(#chartGlow)" />
-                                {/* Main line */}
-                                <path
-                                  d="M 0 35 Q 20 30 40 22 T 80 8 L 100 5"
-                                  fill="none"
-                                  stroke="url(#lineGradient)"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                />
-                                <defs>
-                                  <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-                                    <stop offset="0%" stopColor="#0072FF" />
-                                    <stop offset="50%" stopColor="#00F2FE" />
-                                    <stop offset="100%" stopColor="#4FACFE" />
-                                  </linearGradient>
-                                </defs>
-                              </svg>
-                              {/* Pulsing Dot */}
-                              <span className="absolute top-[8px] right-[4px] w-2 h-2 bg-cyan-400 rounded-full animate-ping" />
-                              <span className="absolute top-[10px] right-[6px] w-1 h-1 bg-cyan-300 rounded-full" />
-                            </div>
-                            {/* Stats */}
-                            <div className="flex justify-between text-[8px] text-gray-500 border-t border-white/5 pt-1.5">
-                              <span>Load Time: 120ms</span>
-                              <span>Uptime: 100.0%</span>
+                            {/* Right Panel (High-end Conversion SVG wave Chart) */}
+                            <div className="flex-1 bg-slate-900/60 border border-white/5 shadow-inner rounded-xl p-3 space-y-2 max-w-[200px]">
+                              <div className="flex justify-between items-center">
+                                <span className="text-[8px] font-bold text-gray-300">Conversion Increase</span>
+                                <span className="text-[7px] font-bold text-emerald-400 bg-emerald-500/10 px-1 py-0.5 rounded">+340%</span>
+                              </div>
+                              {/* Premium SVG Curve Graph */}
+                              <div className="h-16 w-full pt-1 relative">
+                                <svg className="w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none">
+                                  <defs>
+                                    <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
+                                      <stop offset="0%" stopColor="#00F2FE" stopOpacity="0.3" />
+                                      <stop offset="100%" stopColor="#00F2FE" stopOpacity="0" />
+                                    </linearGradient>
+                                  </defs>
+                                  {/* Glow under line */}
+                                  <path d="M 0 40 Q 20 30 40 22 T 80 8 L 100 5 L 100 40 Z" fill="url(#chartGlow)" />
+                                  {/* Main line */}
+                                  <path
+                                    d="M 0 35 Q 20 30 40 22 T 80 8 L 100 5"
+                                    fill="none"
+                                    stroke="url(#lineGradient)"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                  />
+                                  <defs>
+                                    <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
+                                      <stop offset="0%" stopColor="#0072FF" />
+                                      <stop offset="50%" stopColor="#00F2FE" />
+                                      <stop offset="100%" stopColor="#4FACFE" />
+                                    </linearGradient>
+                                  </defs>
+                                </svg>
+                                {/* Pulsing Dot */}
+                                <span className="absolute top-[8px] right-[4px] w-2 h-2 bg-cyan-400 rounded-full animate-ping" />
+                                <span className="absolute top-[10px] right-[6px] w-1 h-1 bg-cyan-300 rounded-full" />
+                              </div>
+                              {/* Stats */}
+                              <div className="flex justify-between text-[8px] text-gray-500 border-t border-white/5 pt-1.5">
+                                <span>Load Time: 120ms</span>
+                                <span>Uptime: 100.0%</span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
+                      )}
                     </div>
 
                     {/* Monitor Stand Base */}
@@ -312,84 +325,94 @@ export default function ShowcaseSection() {
                         <div className="w-1.5 h-1.5 rounded-full bg-slate-900 border border-slate-800" />
                       </div>
 
-                      {/* SaaS UI (Premium Dark Mode Dashboard with Neon Accents) */}
-                      <div className="flex-1 bg-[#090d16] text-slate-300 flex overflow-hidden font-sans">
-                        {/* Sidebar */}
-                        <aside className="w-36 bg-[#04060b] text-slate-500 p-3.5 space-y-4 flex flex-col border-r border-white/5 shrink-0">
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-4 h-4 rounded-full bg-brand-red flex items-center justify-center text-white font-extrabold text-[8px]">H</div>
-                            <span className="text-[8px] font-black text-white tracking-widest uppercase">HIPRO CMS</span>
-                          </div>
-                          <nav className="space-y-1.5 text-[8px] font-bold flex-1">
-                            <div className="flex items-center gap-2 text-white bg-white/5 rounded-lg px-2 py-1">
-                              <Grid className="w-3 h-3 text-brand-red-light" />
-                              <span>Analytics</span>
+                      {/* SaaS UI (Premium Dark Mode Dashboard or Custom Image) */}
+                      {cfg.showcase_saas_image ? (
+                        <div className="flex-1 overflow-hidden relative bg-[#090d16]">
+                          <img
+                            src={cfg.showcase_saas_image}
+                            alt="Custom SaaS Mockup"
+                            className="w-full h-full object-cover block"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex-1 bg-[#090d16] text-slate-300 flex overflow-hidden font-sans">
+                          {/* Sidebar */}
+                          <aside className="w-36 bg-[#04060b] text-slate-500 p-3.5 space-y-4 flex flex-col border-r border-white/5 shrink-0">
+                            <div className="flex items-center gap-1.5">
+                              <div className="w-4 h-4 rounded-full bg-brand-red flex items-center justify-center text-white font-extrabold text-[8px]">H</div>
+                              <span className="text-[8px] font-black text-white tracking-widest uppercase">HIPRO CMS</span>
                             </div>
-                            <div className="flex items-center gap-2 px-2 py-1 hover:bg-white/5 hover:text-white rounded-lg transition-colors">
-                              <FolderKanban className="w-3 h-3" />
-                              <span>Workspaces</span>
+                            <nav className="space-y-1.5 text-[8px] font-bold flex-1">
+                              <div className="flex items-center gap-2 text-white bg-white/5 rounded-lg px-2 py-1">
+                                <Grid className="w-3 h-3 text-brand-red-light" />
+                                <span>Analytics</span>
+                              </div>
+                              <div className="flex items-center gap-2 px-2 py-1 hover:bg-white/5 hover:text-white rounded-lg transition-colors">
+                                <FolderKanban className="w-3 h-3" />
+                                <span>Workspaces</span>
+                              </div>
+                              <div className="flex items-center gap-2 px-2 py-1 hover:bg-white/5 hover:text-white rounded-lg transition-colors">
+                                <Cpu className="w-3 h-3" />
+                                <span>API Gateways</span>
+                              </div>
+                            </nav>
+                            <div className="text-[7px] text-slate-600">
+                              <p>SECURE SESSION</p>
                             </div>
-                            <div className="flex items-center gap-2 px-2 py-1 hover:bg-white/5 hover:text-white rounded-lg transition-colors">
-                              <Cpu className="w-3 h-3" />
-                              <span>API Gateways</span>
-                            </div>
-                          </nav>
-                          <div className="text-[7px] text-slate-600">
-                            <p>SECURE SESSION</p>
-                          </div>
-                        </aside>
+                          </aside>
 
-                        {/* Dashboard Main Panel */}
-                        <main className="flex-1 p-4.5 flex flex-col justify-between overflow-hidden">
-                          {/* Header */}
-                          <div className="flex justify-between items-center pb-2.5 border-b border-white/5 shrink-0">
-                            <span className="text-[9px] font-extrabold text-white uppercase tracking-wider">Metrics Console</span>
-                            <div className="flex items-center gap-2 text-[8px]">
-                              <Bell className="w-3 h-3 text-slate-400" />
-                              <span className="bg-emerald-500/10 text-emerald-400 px-1 rounded font-bold">LIVE SYNC</span>
-                            </div>
-                          </div>
-
-                          {/* Quick Stats Grid */}
-                          <div className="grid grid-cols-2 gap-3 py-2 shrink-0">
-                            <div className="bg-slate-950/80 border border-white/5 rounded-lg p-2.5 shadow-sm space-y-1">
-                              <span className="text-[7px] font-bold uppercase tracking-wider text-slate-500">API Requests (24h)</span>
-                              <div className="flex items-baseline justify-between">
-                                <span className="text-xs font-extrabold text-white">412,890</span>
-                                <span className="text-[7px] text-emerald-400 font-bold bg-emerald-500/10 px-1 rounded">+24%</span>
+                          {/* Dashboard Main Panel */}
+                          <main className="flex-1 p-4.5 flex flex-col justify-between overflow-hidden">
+                            {/* Header */}
+                            <div className="flex justify-between items-center pb-2.5 border-b border-white/5 shrink-0">
+                              <span className="text-[9px] font-extrabold text-white uppercase tracking-wider">Metrics Console</span>
+                              <div className="flex items-center gap-2 text-[8px]">
+                                <Bell className="w-3 h-3 text-slate-400" />
+                                <span className="bg-emerald-500/10 text-emerald-400 px-1 rounded font-bold">LIVE SYNC</span>
                               </div>
                             </div>
-                            <div className="bg-slate-950/80 border border-white/5 rounded-lg p-2.5 shadow-sm space-y-1">
-                              <span className="text-[7px] font-bold uppercase tracking-wider text-slate-500">Server Latency</span>
-                              <div className="flex items-baseline justify-between">
-                                <span className="text-xs font-extrabold text-cyan-400">14.2ms</span>
-                                <span className="text-[7px] text-emerald-400 font-bold bg-emerald-500/10 px-1 rounded">Optimal</span>
-                              </div>
-                            </div>
-                          </div>
 
-                          {/* Complex System Logs Table */}
-                          <div className="flex-1 bg-slate-950/50 border border-white/5 rounded-lg p-3 shadow-inner flex flex-col justify-between overflow-hidden">
-                            <div className="flex justify-between items-center pb-2 shrink-0">
-                              <span className="text-[8px] font-bold text-gray-400">System Activity Logs</span>
-                              <RefreshCw className="w-2.5 h-2.5 text-slate-500 animate-spin" style={{ animationDuration: '4s' }} />
-                            </div>
-                            <div className="flex-1 flex flex-col justify-center space-y-2 py-1">
-                              {[
-                                { service: 'Cloud Storage API', status: 'ONLINE', load: '32%', color: 'text-emerald-400 bg-emerald-500/10' },
-                                { service: 'Auth Token Gateway', status: 'ONLINE', load: '12%', color: 'text-emerald-400 bg-emerald-500/10' },
-                                { service: 'Billing Queue webhook', status: 'DEGRADED', load: '88%', color: 'text-brand-red bg-brand-red/10' }
-                              ].map((item, index) => (
-                                <div key={index} className="flex justify-between items-center text-[8px]">
-                                  <span className="font-bold text-white w-24 truncate">{item.service}</span>
-                                  <span className={`px-1.5 py-0.5 rounded font-black text-[7px] ${item.color}`}>{item.status}</span>
-                                  <span className="font-mono text-slate-400">{item.load}</span>
+                            {/* Quick Stats Grid */}
+                            <div className="grid grid-cols-2 gap-3 py-2 shrink-0">
+                              <div className="bg-slate-950/80 border border-white/5 rounded-lg p-2.5 shadow-sm space-y-1">
+                                <span className="text-[7px] font-bold uppercase tracking-wider text-slate-500">API Requests (24h)</span>
+                                <div className="flex items-baseline justify-between">
+                                  <span className="text-xs font-extrabold text-white">412,890</span>
+                                  <span className="text-[7px] text-emerald-400 font-bold bg-emerald-500/10 px-1 rounded">+24%</span>
                                 </div>
-                              ))}
+                              </div>
+                              <div className="bg-slate-950/80 border border-white/5 rounded-lg p-2.5 shadow-sm space-y-1">
+                                <span className="text-[7px] font-bold uppercase tracking-wider text-slate-500">Server Latency</span>
+                                <div className="flex items-baseline justify-between">
+                                  <span className="text-xs font-extrabold text-cyan-400">14.2ms</span>
+                                  <span className="text-[7px] text-emerald-400 font-bold bg-emerald-500/10 px-1 rounded">Optimal</span>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </main>
-                      </div>
+
+                            {/* Complex System Logs Table */}
+                            <div className="flex-1 bg-slate-950/50 border border-white/5 rounded-lg p-3 shadow-inner flex flex-col justify-between overflow-hidden">
+                              <div className="flex justify-between items-center pb-2 shrink-0">
+                                <span className="text-[8px] font-bold text-gray-400">System Activity Logs</span>
+                                <RefreshCw className="w-2.5 h-2.5 text-slate-500 animate-spin" style={{ animationDuration: '4s' }} />
+                              </div>
+                              <div className="flex-1 flex flex-col justify-center space-y-2 py-1">
+                                {[
+                                  { service: 'Cloud Storage API', status: 'ONLINE', load: '32%', color: 'text-emerald-400 bg-emerald-500/10' },
+                                  { service: 'Auth Token Gateway', status: 'ONLINE', load: '12%', color: 'text-emerald-400 bg-emerald-500/10' },
+                                  { service: 'Billing Queue webhook', status: 'DEGRADED', load: '88%', color: 'text-brand-red bg-brand-red/10' }
+                                ].map((item, index) => (
+                                  <div key={index} className="flex justify-between items-center text-[8px]">
+                                    <span className="font-bold text-white w-24 truncate">{item.service}</span>
+                                    <span className={`px-1.5 py-0.5 rounded font-black text-[7px] ${item.color}`}>{item.status}</span>
+                                    <span className="font-mono text-slate-400">{item.load}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </main>
+                        </div>
+                      )}
                     </div>
 
                     {/* Laptop Bottom Bezel Keyboard */}
@@ -407,76 +430,86 @@ export default function ShowcaseSection() {
                       {/* Dynamic Island Notch */}
                       <div className="absolute top-2 left-1/2 -translate-x-1/2 w-16 h-4 bg-slate-950 rounded-full z-30 flex items-center justify-end px-2" />
 
-                      {/* Phone App Content (Premium Wallet / E-Commerce App) */}
-                      <div className="flex-1 bg-[#070b13] text-slate-300 flex flex-col justify-between overflow-hidden relative pt-6 font-sans">
-                        {/* Header */}
-                        <header className="px-3.5 py-2 border-b border-white/5 flex items-center justify-between shrink-0">
-                          <Menu className="w-3.5 h-3.5 text-slate-400" />
-                          <span className="font-heading font-black text-[9px] text-white tracking-widest uppercase">HP PAY</span>
-                          <div className="relative">
-                            <ShoppingCart className="w-3.5 h-3.5 text-slate-400" />
-                            <span className="absolute -top-1 -right-1.5 bg-brand-red text-white w-2.5 h-2.5 rounded-full text-[5px] font-bold flex items-center justify-center">1</span>
-                          </div>
-                        </header>
-
-                        {/* Scroll Area */}
-                        <div className="flex-1 overflow-y-auto px-3.5 py-3 space-y-4">
-                          {/* Premium Gradient Wallet Card */}
-                          <div className="bg-gradient-to-tr from-brand-blue to-cyan-500 text-white rounded-xl p-3 shadow-md space-y-2 relative overflow-hidden">
-                            <div className="absolute right-[-10px] bottom-[-10px] w-14 h-14 rounded-full bg-white/10" />
-                            <div className="flex justify-between items-center">
-                              <span className="text-[6px] font-bold uppercase tracking-widest text-white/80">Corporate Wallet</span>
-                              <span className="text-[7px] font-bold bg-white/10 px-1 py-0.5 rounded">VISA</span>
-                            </div>
-                            <div className="space-y-0.5">
-                              <p className="text-[7px] text-white/70">Wallet Balance</p>
-                              <p className="font-heading text-sm font-extrabold tracking-wide">₹45,280.00</p>
-                            </div>
-                          </div>
-
-                          {/* Quick Actions Row */}
-                          <div className="grid grid-cols-3 gap-2 text-center text-[7px] font-bold text-slate-400">
-                            <div className="bg-slate-900 border border-white/5 rounded-lg py-1.5">Send</div>
-                            <div className="bg-slate-900 border border-white/5 rounded-lg py-1.5">Request</div>
-                            <div className="bg-slate-900 border border-white/5 rounded-lg py-1.5">History</div>
-                          </div>
-
-                          {/* Transaction Logs */}
-                          <div className="space-y-2">
-                            <p className="text-[8px] font-bold text-white uppercase tracking-wider">Recent Transactions</p>
-                            <div className="space-y-1.5">
-                              {[
-                                { name: 'Cloud Domain Hosting', type: 'Database Service', amount: '-₹4,999.00', plus: false },
-                                { name: 'Lead Referral Payout', type: 'Referral Program', amount: '+₹12,500.00', plus: true }
-                              ].map((t, idx) => (
-                                <div key={idx} className="bg-slate-900/50 border border-white/5 rounded-lg p-2 flex justify-between items-center text-[8px]">
-                                  <div>
-                                    <p className="font-bold text-white leading-snug">{t.name}</p>
-                                    <p className="text-[6px] text-gray-500 leading-none">{t.type}</p>
-                                  </div>
-                                  <span className={`font-mono font-bold ${t.plus ? 'text-emerald-400' : 'text-slate-300'}`}>{t.amount}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
+                      {/* Phone App Content (Premium Wallet / E-Commerce App or Custom Image) */}
+                      {cfg.showcase_mobile_image ? (
+                        <div className="flex-1 overflow-hidden relative bg-[#070b13]">
+                          <img
+                            src={cfg.showcase_mobile_image}
+                            alt="Custom Mobile Mockup"
+                            className="w-full h-full object-cover block"
+                          />
                         </div>
+                      ) : (
+                        <div className="flex-1 bg-[#070b13] text-slate-300 flex flex-col justify-between overflow-hidden relative pt-6 font-sans">
+                          {/* Header */}
+                          <header className="px-3.5 py-2 border-b border-white/5 flex items-center justify-between shrink-0">
+                            <Menu className="w-3.5 h-3.5 text-slate-400" />
+                            <span className="font-heading font-black text-[9px] text-white tracking-widest uppercase">HP PAY</span>
+                            <div className="relative">
+                              <ShoppingCart className="w-3.5 h-3.5 text-slate-400" />
+                              <span className="absolute -top-1 -right-1.5 bg-brand-red text-white w-2.5 h-2.5 rounded-full text-[5px] font-bold flex items-center justify-center">1</span>
+                            </div>
+                          </header>
 
-                        {/* Bottom Glassmorphic Navigation */}
-                        <footer className="px-3 py-1.5 border-t border-white/5 flex items-center justify-between text-slate-500 text-[6px] font-bold bg-[#03060a] shrink-0">
-                          <div className="flex flex-col items-center gap-0.5 text-brand-blue">
-                            <Grid className="w-3.5 h-3.5" />
-                            <span>Wallet</span>
+                          {/* Scroll Area */}
+                          <div className="flex-1 overflow-y-auto px-3.5 py-3 space-y-4">
+                            {/* Premium Gradient Wallet Card */}
+                            <div className="bg-gradient-to-tr from-brand-blue to-cyan-500 text-white rounded-xl p-3 shadow-md space-y-2 relative overflow-hidden">
+                              <div className="absolute right-[-10px] bottom-[-10px] w-14 h-14 rounded-full bg-white/10" />
+                              <div className="flex justify-between items-center">
+                                <span className="text-[6px] font-bold uppercase tracking-widest text-white/80">Corporate Wallet</span>
+                                <span className="text-[7px] font-bold bg-white/10 px-1 py-0.5 rounded">VISA</span>
+                              </div>
+                              <div className="space-y-0.5">
+                                <p className="text-[7px] text-white/70">Wallet Balance</p>
+                                <p className="font-heading text-sm font-extrabold tracking-wide">₹45,280.00</p>
+                              </div>
+                            </div>
+
+                            {/* Quick Actions Row */}
+                            <div className="grid grid-cols-3 gap-2 text-center text-[7px] font-bold text-slate-400">
+                              <div className="bg-slate-900 border border-white/5 rounded-lg py-1.5">Send</div>
+                              <div className="bg-slate-900 border border-white/5 rounded-lg py-1.5">Request</div>
+                              <div className="bg-slate-900 border border-white/5 rounded-lg py-1.5">History</div>
+                            </div>
+
+                            {/* Transaction Logs */}
+                            <div className="space-y-2">
+                              <p className="text-[8px] font-bold text-white uppercase tracking-wider">Recent Transactions</p>
+                              <div className="space-y-1.5">
+                                {[
+                                  { name: 'Cloud Domain Hosting', type: 'Database Service', amount: '-₹4,999.00', plus: false },
+                                  { name: 'Lead Referral Payout', type: 'Referral Program', amount: '+₹12,500.00', plus: true }
+                                ].map((t, idx) => (
+                                  <div key={idx} className="bg-slate-900/50 border border-white/5 rounded-lg p-2 flex justify-between items-center text-[8px]">
+                                    <div>
+                                      <p className="font-bold text-white leading-snug">{t.name}</p>
+                                      <p className="text-[6px] text-gray-500 leading-none">{t.type}</p>
+                                    </div>
+                                    <span className={`font-mono font-bold ${t.plus ? 'text-emerald-400' : 'text-slate-300'}`}>{t.amount}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex flex-col items-center gap-0.5">
-                            <Heart className="w-3.5 h-3.5" />
-                            <span>Saved</span>
-                          </div>
-                          <div className="flex flex-col items-center gap-0.5">
-                            <Users className="w-3.5 h-3.5" />
-                            <span>Account</span>
-                          </div>
-                        </footer>
-                      </div>
+
+                          {/* Bottom Glassmorphic Navigation */}
+                          <footer className="px-3 py-1.5 border-t border-white/5 flex items-center justify-between text-slate-500 text-[6px] font-bold bg-[#03060a] shrink-0">
+                            <div className="flex flex-col items-center gap-0.5 text-brand-blue">
+                              <Grid className="w-3.5 h-3.5" />
+                              <span>Wallet</span>
+                            </div>
+                            <div className="flex flex-col items-center gap-0.5">
+                              <Heart className="w-3.5 h-3.5" />
+                              <span>Saved</span>
+                            </div>
+                            <div className="flex flex-col items-center gap-0.5">
+                              <Users className="w-3.5 h-3.5" />
+                              <span>Account</span>
+                            </div>
+                          </footer>
+                        </div>
+                      )}
 
                       {/* Phone Screen Notch Bottom Bar */}
                       <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-20 h-0.5 bg-slate-950 rounded-full z-30" />

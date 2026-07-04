@@ -217,7 +217,7 @@ export default function HeroSection() {
                 {/* Person image - rendered as a premium arch portal, 100% sharp and clear */}
                 <div className="relative z-10 overflow-hidden rounded-t-full border-t border-x border-white/20 shadow-2xl">
                   <img
-                    src={professionalHero}
+                    src={cfg.hero_image_url || professionalHero}
                     alt="Hindustan Projects Corporate Professional"
                     className="w-full h-auto max-h-[320px] sm:max-h-[460px] lg:max-h-[485px] object-cover block"
                     style={{ display: 'block', marginBottom: '-1px' }}

@@ -127,13 +127,46 @@ const FIELD_GROUPS = [
     ],
   },
   {
-    label: 'Website Branding',
+    label: 'Website Branding & Images',
     fields: [
       {
         key: 'tagline',
         label: 'Hero Tagline',
         placeholder: 'Building Digital Solutions...',
         Icon: Type,
+        isTextarea: true,
+      },
+      {
+        key: 'hero_image_url',
+        label: 'Hero Section Avatar Image URL (Leave blank to use default corporate portrait)',
+        placeholder: 'e.g. https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500',
+        Icon: Globe,
+        isTextarea: true,
+      },
+    ],
+  },
+  {
+    label: '3D Device Showcase Custom Previews (Optional)',
+    fields: [
+      {
+        key: 'showcase_web_image',
+        label: 'Desktop Monitor Mockup Image URL (Leave blank to use default interactive live UI)',
+        placeholder: 'e.g. https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800',
+        Icon: Globe,
+        isTextarea: true,
+      },
+      {
+        key: 'showcase_saas_image',
+        label: 'Laptop MacBook Mockup Image URL (Leave blank to use default interactive live UI)',
+        placeholder: 'e.g. https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800',
+        Icon: Globe,
+        isTextarea: true,
+      },
+      {
+        key: 'showcase_mobile_image',
+        label: 'iPhone Mobile Mockup Image URL (Leave blank to use default interactive live UI)',
+        placeholder: 'e.g. https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=500',
+        Icon: Globe,
         isTextarea: true,
       },
     ],
