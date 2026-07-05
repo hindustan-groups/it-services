@@ -30,6 +30,9 @@ const INTEGRATION_ENV_MAP = {
   sys_twilio_auth_token: 'TWILIO_AUTH_TOKEN',
   sys_twilio_whatsapp_from: 'TWILIO_WHATSAPP_FROM',
   sys_admin_whatsapp_to: 'ADMIN_WHATSAPP_TO',
+  sys_sentry_dsn: 'SENTRY_DSN',
+  sys_ga_measurement_id: 'GA_MEASUREMENT_ID',
+  sys_resend_api_key: 'RESEND_API_KEY',
 }
 
 /**
