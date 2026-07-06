@@ -150,8 +150,14 @@ const FIELD_GROUPS = [
         Icon: Globe,
       },
       {
-        key: 'about_hero_image',
-        label: 'About Page Hero Mockup Image (Leave blank to use default interactive live UI)',
+        key: 'about_hero_laptop_image',
+        label: 'About Page Hero Laptop Mockup (Desktop View Screen)',
+        isImage: true,
+        Icon: Globe,
+      },
+      {
+        key: 'about_hero_phone_image',
+        label: 'About Page Hero Phone Mockup (Mobile View Screen)',
         isImage: true,
         Icon: Globe,
       },

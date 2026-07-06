@@ -206,89 +206,66 @@ export default function AboutPage() {
               {/* Decorative glows */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-brand-blue/10 to-brand-red/10 rounded-full blur-3xl pointer-events-none" />
 
-              {/* 1. Laptop Base Frame */}
+              {/* 1. Laptop Base Frame (Desktop View) */}
               <div className="relative w-[85%] aspect-[16/10] bg-slate-900 border-[6px] border-slate-950 rounded-xl shadow-2xl overflow-hidden ring-1 ring-white/10 select-none">
-                {cfg.about_hero_image ? (
+                {cfg.about_hero_laptop_image ? (
                   <img
-                    src={cfg.about_hero_image}
-                    alt="Hindustan Projects Corporate Portal"
+                    src={cfg.about_hero_laptop_image}
+                    alt="Hindustan Projects Homepage"
                     className="w-full h-full object-cover block"
                   />
                 ) : (
-                  /* Simulated Corporate Dashboard Portal */
-                  <div className="w-full h-full bg-[#070b13] flex flex-col text-slate-300 font-sans select-none overflow-hidden">
-                    {/* Header */}
-                    <div className="h-[12%] bg-slate-950/80 px-3 border-b border-white/5 flex items-center justify-between shrink-0">
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-brand-red" />
-                        <span className="text-[10px] font-black text-white tracking-wider">HINDUSTAN SERVICES</span>
+                  /* Simulated Corporate Website Homepage (Light Theme) */
+                  <div className="w-full h-full bg-[#f8fafc] flex flex-col text-gray-800 font-sans select-none overflow-hidden">
+                    {/* Browser Address Bar Header */}
+                    <div className="h-[12%] bg-white border-b border-gray-200 px-3 flex items-center gap-2 shrink-0">
+                      <div className="flex gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-yellow-400" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[8px] bg-brand-blue/20 text-brand-blue border border-brand-blue/30 px-1.5 py-0.5 rounded font-bold">V2.4</span>
-                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <div className="flex-1 bg-gray-100 rounded-md py-0.5 px-2.5 flex items-center justify-center gap-1.5 text-[7px] text-gray-400 max-w-[160px] mx-auto border border-gray-200/50">
+                        <span className="text-emerald-500">🔒</span>
+                        <span className="truncate tracking-wide font-medium">hindustanprojects.com/it</span>
                       </div>
                     </div>
 
-                    {/* Dashboard Workspace */}
-                    <div className="flex-1 flex overflow-hidden">
-                      {/* Sidebar */}
-                      <aside className="w-[28%] bg-slate-950/30 border-r border-white/5 p-2 flex flex-col justify-between shrink-0">
-                        <div className="space-y-1.5">
-                          <div className="text-[6px] text-slate-500 uppercase tracking-widest font-bold px-1 mb-1">Navigation</div>
-                          <div className="bg-white/5 text-white px-2 py-1 rounded text-[8px] font-medium flex items-center gap-1.5">
-                            <Cpu className="w-2.5 h-2.5 text-brand-red" />
-                            <span>System Console</span>
-                          </div>
-                          <div className="text-slate-400 hover:text-white px-2 py-1 rounded text-[8px] flex items-center gap-1.5 transition-colors cursor-pointer">
-                            <Monitor className="w-2.5 h-2.5 text-brand-blue" />
-                            <span>Web Portals</span>
-                          </div>
-                          <div className="text-slate-400 hover:text-white px-2 py-1 rounded text-[8px] flex items-center gap-1.5 transition-colors cursor-pointer">
-                            <Smartphone className="w-2.5 h-2.5 text-brand-red" />
-                            <span>Mobile Apps</span>
-                          </div>
+                    {/* Website Content Viewport */}
+                    <div className="flex-1 overflow-hidden flex flex-col bg-white">
+                      {/* Nav bar */}
+                      <nav className="px-3.5 py-1.5 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white">
+                        <div className="flex items-center gap-1">
+                          <span className="w-2.5 h-2.5 rounded bg-brand-blue" />
+                          <span className="font-heading font-black text-[7px] text-brand-blue tracking-wider">HINDUSTAN</span>
                         </div>
-                        <div className="p-1 border border-white/5 bg-slate-950/80 rounded flex items-center gap-1.5 text-[7px] text-slate-500 shrink-0">
-                          <MapPin className="w-2.5 h-2.5 text-brand-red shrink-0" />
-                          <span className="truncate">Bhilwara, RJ</span>
+                        <div className="flex gap-2.5 text-[6px] text-gray-500 font-bold">
+                          <span>Services</span>
+                          <span>About</span>
+                          <span className="text-brand-blue">Portfolio</span>
+                          <span>Contact</span>
                         </div>
-                      </aside>
+                      </nav>
 
-                      {/* Main */}
-                      <main className="flex-1 p-3 flex flex-col justify-between overflow-hidden">
-                        {/* Summary grid */}
-                        <div className="grid grid-cols-2 gap-2.5 shrink-0">
-                          <div className="bg-slate-950/80 border border-white/5 rounded-lg p-2 shadow-sm space-y-0.5">
-                            <span className="text-[6px] font-bold uppercase tracking-wider text-slate-500">Live Projects</span>
-                            <div className="flex justify-between items-baseline">
-                              <span className="text-xs font-black text-white">{cfg.stat_projects || '50'}+</span>
-                              <span className="text-[6px] text-brand-blue font-bold">Pan-India</span>
-                            </div>
-                          </div>
-                          <div className="bg-slate-950/80 border border-white/5 rounded-lg p-2 shadow-sm space-y-0.5">
-                            <span className="text-[6px] font-bold uppercase tracking-wider text-slate-500">Client Rating</span>
-                            <div className="flex justify-between items-baseline">
-                              <span className="text-xs font-black text-brand-red">5.0 / 5.0</span>
-                              <span className="text-[6px] text-emerald-400 font-bold bg-emerald-500/10 px-0.5 rounded">Top Rated</span>
-                            </div>
-                          </div>
+                      {/* Homepage Hero Section */}
+                      <div className="flex-1 bg-gradient-to-tr from-blue-50/50 via-indigo-50/20 to-white p-3 flex flex-col justify-center items-center text-center space-y-1.5">
+                        <span className="text-[5px] font-black tracking-widest text-brand-red bg-brand-red/10 border border-brand-red/20 px-2 py-0.5 rounded-full uppercase">
+                          IT Services Department
+                        </span>
+                        <h2 className="text-[11px] font-black text-gray-900 leading-tight max-w-[170px]">
+                          Building Digital Solutions That Drive Growth
+                        </h2>
+                        <p className="text-[6px] text-gray-400 max-w-[150px]">
+                          We build next-generation platforms and custom applications for enterprises.
+                        </p>
+                        <div className="flex gap-1.5 pt-0.5">
+                          <span className="bg-brand-blue text-white rounded py-0.5 px-2 text-[5px] font-bold shadow-sm">
+                            Explore Services
+                          </span>
+                          <span className="bg-white border border-gray-200 text-gray-600 rounded py-0.5 px-2 text-[5px] font-bold">
+                            Contact Us
+                          </span>
                         </div>
-
-                        {/* Visual graph representation */}
-                        <div className="flex-1 bg-slate-950/50 border border-white/5 rounded-lg p-2 shadow-inner flex flex-col justify-between mt-2.5 overflow-hidden">
-                          <div className="flex justify-between items-center pb-1 border-b border-white/5 shrink-0">
-                            <span className="text-[7px] font-bold text-gray-400">Development Nodes</span>
-                            <span className="text-[6px] text-emerald-400 font-mono animate-pulse">● STABLE</span>
-                          </div>
-                          <div className="flex-1 flex items-end gap-1 px-1.5 py-1 justify-between shrink-0 min-h-[40px]">
-                            {[35, 60, 45, 90, 50, 75, 60, 85, 40, 95, 55, 70].map((h, i) => (
-                              <div key={i} className="flex-1 bg-brand-blue/35 hover:bg-brand-red rounded-t transition-colors relative group cursor-pointer" style={{ height: `${h}%` }}>
-                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 bg-slate-950 border border-white/15 px-1 py-0.5 rounded text-[5px] text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap mb-1 z-10 font-bold">Node {i+1}</div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </main>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -299,46 +276,55 @@ export default function AboutPage() {
                 <div className="w-[12%] h-[40%] bg-slate-900 rounded-b" />
               </div>
 
-              {/* 2. Overlapping iPhone Device Frame (Absolute Offset) */}
+              {/* 2. Overlapping iPhone Device Frame (Mobile View) */}
               <div className="absolute bottom-[4%] right-[4%] w-[28%] aspect-[9/18.5] bg-slate-900 border-[4.5px] border-slate-950 rounded-[24px] shadow-2xl overflow-hidden ring-1 ring-white/10 z-10 select-none">
                 {/* Notch */}
                 <div className="absolute top-1 left-1/2 -translate-x-1/2 w-[35%] h-[5%] bg-slate-950 rounded-full z-20" />
 
-                {/* iPhone Content */}
-                <div className="w-full h-full bg-[#050911] text-slate-300 flex flex-col justify-between overflow-hidden relative pt-4 font-sans select-none">
-                  {/* Local App Header */}
-                  <header className="px-2 py-1.5 border-b border-white/5 flex items-center justify-between shrink-0">
-                    <span className="font-heading font-black text-[7px] text-white tracking-widest uppercase">HP PORTAL</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  </header>
+                {cfg.about_hero_phone_image ? (
+                  <img
+                    src={cfg.about_hero_phone_image}
+                    alt="Hindustan Projects Mobile View"
+                    className="w-full h-full object-cover block"
+                  />
+                ) : (
+                  /* Simulated Mobile Homepage (Light Theme) */
+                  <div className="w-full h-full bg-white text-gray-800 flex flex-col justify-between overflow-hidden relative pt-4 font-sans select-none">
+                    {/* Mobile browser address bar */}
+                    <div className="px-2 py-0.5 bg-gray-50 border-b border-gray-100 text-[5px] text-gray-400 flex items-center justify-center shrink-0">
+                      <span>🔒 hindustanprojects.com</span>
+                    </div>
 
-                  {/* App Dashboard */}
-                  <div className="flex-1 p-2 flex flex-col justify-between overflow-hidden">
-                    <div className="space-y-1.5">
-                      <div className="bg-slate-950/80 border border-white/5 rounded-md p-1.5 space-y-0.5">
-                        <div className="text-[5px] text-slate-500 uppercase tracking-wider">App Development</div>
-                        <div className="text-[8px] font-bold text-white leading-tight">Android & iOS App</div>
-                        {/* Mini progress bar */}
-                        <div className="w-full h-1 bg-slate-800 rounded-full mt-1 overflow-hidden">
-                          <div className="h-full bg-brand-red w-[75%] rounded-full" />
-                        </div>
+                    {/* Mobile Nav */}
+                    <header className="px-2.5 py-1.5 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white">
+                      <div className="flex items-center gap-0.5">
+                        <span className="w-1.5 h-1.5 rounded bg-brand-blue" />
+                        <span className="font-heading font-black text-[6px] text-brand-blue tracking-wide">HP</span>
                       </div>
-                      
-                      <div className="bg-slate-950/80 border border-white/5 rounded-md p-1.5 space-y-0.5">
-                        <div className="text-[5px] text-slate-500 uppercase tracking-wider">Status</div>
-                        <div className="text-[7px] font-bold text-emerald-400 flex items-center gap-1">
-                          <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse inline-block" />
-                          Live Tracking Active
-                        </div>
+                      <Menu className="w-2.5 h-2.5 text-gray-500" />
+                    </header>
+
+                    {/* Mobile Hero Content */}
+                    <div className="flex-1 p-2 bg-gradient-to-b from-blue-50/30 to-white flex flex-col justify-center items-center text-center space-y-1.5">
+                      <h2 className="text-[7.5px] font-black text-gray-900 leading-tight">
+                        Digital Solutions That Drive Growth
+                      </h2>
+                      <p className="text-[5px] text-gray-400 leading-normal max-w-[80px]">
+                        We build custom systems and portals.
+                      </p>
+                      <div className="bg-brand-blue text-white rounded-full py-0.5 px-2 text-[5.5px] font-bold shadow-sm inline-block cursor-pointer">
+                        Get Started
                       </div>
                     </div>
 
-                    {/* Bottom action mockup */}
-                    <div className="bg-gradient-to-r from-brand-blue to-blue-600 rounded-md py-1 px-1.5 text-center text-white text-[7px] font-bold cursor-pointer hover:brightness-110 shrink-0">
-                      Track Delivery
+                    {/* Bottom Navigation Mock bar */}
+                    <div className="h-4 bg-gray-50 border-t border-gray-100 px-2 flex justify-between items-center text-[5px] text-gray-400 shrink-0">
+                      <span>Home</span>
+                      <span className="text-brand-blue font-bold">Services</span>
+                      <span>Contact</span>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
