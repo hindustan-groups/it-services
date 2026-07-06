@@ -1,31 +1,22 @@
 /**
- * cloudinary.js — Cloudinary config + multer-storage-cloudinary setup
- * All credentials from env vars only — never hardcoded.
- * Uses cloudinary v1 (compatible with multer-storage-cloudinary@4)
+ * cloudinary.js — Cloudinary config + multer memory storage + direct SDK upload
+ * Uses cloudinary v1 SDK with in-memory multer (no multer-storage-cloudinary dependency)
  */
-import cloudinary from 'cloudinary'
-import { CloudinaryStorage } from 'multer-storage-cloudinary'
+import cloudinaryPkg from 'cloudinary'
 import multer from 'multer'
 import { env } from '../config/env.js'
 
-const cloudinaryV2 = cloudinary.v2
+const cloudinary = cloudinaryPkg.v2
 
 // Configure Cloudinary SDK
-cloudinaryV2.config({
+cloudinary.config({
   cloud_name: env.CLOUDINARY_CLOUD_NAME,
   api_key: env.CLOUDINARY_API_KEY,
   api_secret: env.CLOUDINARY_API_SECRET,
 })
 
-// Multer-Cloudinary storage — uploads directly to Cloudinary
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinaryV2,
-  params: {
-    folder: 'hindustan-projects',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
-    transformation: [{ width: 1200, quality: 'auto', fetch_format: 'auto' }],
-  },
-})
+// Use memory storage — file goes to buffer, we upload manually
+const memoryStorage = multer.memoryStorage()
 
 // File filter — only images
 const fileFilter = (_req, file, cb) => {
@@ -38,27 +29,12 @@ const fileFilter = (_req, file, cb) => {
 }
 
 export const upload = multer({
-  storage,
+  storage: memoryStorage,
   fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB max
 })
 
-// Resume upload storage configuration (allowing PDF and Word docs)
-const resumeStorage = new CloudinaryStorage({
-  cloudinary: cloudinaryV2,
-  params: async (_req, file) => {
-    const ext = file.originalname.split('.').pop().toLowerCase()
-    const cleanName = file.originalname
-      .replace(/\.[^/.]+$/, '')
-      .replace(/[^a-zA-Z0-9]/g, '-')
-    return {
-      folder: 'hindustan-projects-resumes',
-      resource_type: 'raw',
-      public_id: `${Date.now()}-${cleanName}.${ext}`,
-    }
-  },
-})
-
+// Resume file filter
 const resumeFileFilter = (_req, file, cb) => {
   const allowedTypes = [
     'application/pdf',
@@ -74,9 +50,32 @@ const resumeFileFilter = (_req, file, cb) => {
 }
 
 export const uploadResume = multer({
-  storage: resumeStorage,
+  storage: memoryStorage,
   fileFilter: resumeFileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB max
+  limits: { fileSize: 5 * 1024 * 1024 },
 })
 
-export { cloudinaryV2 as cloudinary }
+/**
+ * Upload buffer to Cloudinary directly
+ * Used in upload.route.js after multer processes the file into memory
+ */
+export const uploadToCloudinary = (buffer, folder = 'hindustan-projects', resourceType = 'image') => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        resource_type: resourceType,
+        transformation: resourceType === 'image'
+          ? [{ width: 1200, quality: 'auto', fetch_format: 'auto' }]
+          : undefined,
+      },
+      (error, result) => {
+        if (error) return reject(error)
+        resolve(result)
+      }
+    )
+    stream.end(buffer)
+  })
+}
+
+export { cloudinary }

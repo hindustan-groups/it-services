@@ -190,11 +190,17 @@ export const submitApplication = async (req, res, next) => {
       })
     }
 
-    // Multer-Cloudinary sets file.path to the uploaded URL. Fallback to placeholder if mock.
-    const resumeUrl =
-      req.file.path ||
-      req.file.secure_url ||
-      'https://res.cloudinary.com/demo/image/upload/v1580000000/sample_resume.pdf'
+    // Upload resume buffer to Cloudinary directly
+    const { uploadToCloudinary } = await import('../utils/cloudinary.js')
+    let resumeUrl = 'https://res.cloudinary.com/demo/image/upload/v1580000000/sample_resume.pdf'
+    if (req.file?.buffer) {
+      try {
+        const result = await uploadToCloudinary(req.file.buffer, 'hindustan-projects-resumes', 'raw')
+        resumeUrl = result.secure_url
+      } catch (e) {
+        console.error('[upload] Resume upload to Cloudinary failed:', e.message)
+      }
+    }
 
     const application = await prisma.jobApplication.create({
       data: {
