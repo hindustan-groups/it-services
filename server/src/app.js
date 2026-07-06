@@ -50,7 +50,12 @@ app.use(enforceHttps)
 // Enable console request logging
 app.use(requestLogger)
 
-// ── 0. Request Timeout (10 seconds) ───────────────────────────
+// ── 0. Health check — BEFORE CORS so monitoring tools can ping it ─
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() })
+})
+
+// ── 1. Request Timeout (10 seconds) ───────────────────────────
 app.use(requestTimeout)
 
 // ── 1. Security headers (helmet) ──────────────────────────────
