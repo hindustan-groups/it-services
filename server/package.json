@@ -14,7 +14,7 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:push": "prisma db push",
-    "build": "npm install --legacy-peer-deps && npx prisma generate"
+    "build": "npm install --legacy-peer-deps && ./node_modules/.bin/prisma generate"
   },
   "keywords": [],
   "author": "Hindustan Projects",
