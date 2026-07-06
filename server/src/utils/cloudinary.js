@@ -1,14 +1,17 @@
 /**
  * cloudinary.js — Cloudinary config + multer-storage-cloudinary setup
  * All credentials from env vars only — never hardcoded.
+ * Uses cloudinary v1 (compatible with multer-storage-cloudinary@4)
  */
-import { v2 as cloudinary } from 'cloudinary'
+import cloudinary from 'cloudinary'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
 import multer from 'multer'
 import { env } from '../config/env.js'
 
+const cloudinaryV2 = cloudinary.v2
+
 // Configure Cloudinary SDK
-cloudinary.config({
+cloudinaryV2.config({
   cloud_name: env.CLOUDINARY_CLOUD_NAME,
   api_key: env.CLOUDINARY_API_KEY,
   api_secret: env.CLOUDINARY_API_SECRET,
@@ -16,7 +19,7 @@ cloudinary.config({
 
 // Multer-Cloudinary storage — uploads directly to Cloudinary
 const storage = new CloudinaryStorage({
-  cloudinary,
+  cloudinary: cloudinaryV2,
   params: {
     folder: 'hindustan-projects',
     allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
@@ -42,12 +45,12 @@ export const upload = multer({
 
 // Resume upload storage configuration (allowing PDF and Word docs)
 const resumeStorage = new CloudinaryStorage({
-  cloudinary,
+  cloudinary: cloudinaryV2,
   params: async (_req, file) => {
     const ext = file.originalname.split('.').pop().toLowerCase()
     const cleanName = file.originalname
-      .replace(/\.[^/.]+$/, '') // strip extension
-      .replace(/[^a-zA-Z0-9]/g, '-') // sanitize
+      .replace(/\.[^/.]+$/, '')
+      .replace(/[^a-zA-Z0-9]/g, '-')
     return {
       folder: 'hindustan-projects-resumes',
       resource_type: 'raw',
@@ -76,4 +79,4 @@ export const uploadResume = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB max
 })
 
-export { cloudinary }
+export { cloudinaryV2 as cloudinary }
