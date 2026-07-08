@@ -20,51 +20,80 @@ function AdminFallback() {
   )
 }
 
+// Helper function to retry dynamic imports when a chunk load fails
+function lazyWithRetry(componentImport) {
+  return lazy(() =>
+    componentImport().catch((error) => {
+      const isChunkError =
+        error.name === 'TypeError' ||
+        /failed to fetch/i.test(error.message) ||
+        /dynamically imported module/i.test(error.message) ||
+        /error loading/i.test(error.message) ||
+        /chunk/i.test(error.message);
+
+      if (isChunkError) {
+        const hasReloaded = window.sessionStorage.getItem('chunk-load-failed-retry');
+        if (!hasReloaded) {
+          window.sessionStorage.setItem('chunk-load-failed-retry', 'true');
+          window.location.reload();
+          // Return a pending promise to keep Suspense in loading state during reload
+          return new Promise(() => {});
+        }
+      }
+      throw error;
+    }).then((module) => {
+      // Clear retry flag on successful load
+      window.sessionStorage.removeItem('chunk-load-failed-retry');
+      return module;
+    })
+  );
+}
+
 // ── Public pages — lazy loaded for code splitting ──────────────
 // HomePage is eager-loaded (above the fold, always needed)
 import HomePage from '@/pages/HomePage'
 
-const ServicesPage = lazy(() => import('@/pages/ServicesPage'))
-const ServiceDetailPage = lazy(() => import('@/pages/ServiceDetailPage'))
-const AboutPage = lazy(() => import('@/pages/AboutPage'))
-const PortfolioPage = lazy(() => import('@/pages/PortfolioPage'))
-const BlogPage = lazy(() => import('@/pages/BlogPage'))
-const BlogPostPage = lazy(() => import('@/pages/BlogPostPage'))
-const ContactPage = lazy(() => import('@/pages/ContactPage'))
-const CareersPage = lazy(() => import('@/pages/CareersPage'))
-const JobDetailPage = lazy(() => import('@/pages/JobDetailPage'))
-const PrivacyPolicyPage = lazy(() => import('@/pages/PrivacyPolicyPage'))
-const TermsOfServicePage = lazy(() => import('@/pages/TermsOfServicePage'))
-const RefundPolicyPage = lazy(() => import('@/pages/RefundPolicyPage'))
-const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
+const ServicesPage = lazyWithRetry(() => import('@/pages/ServicesPage'))
+const ServiceDetailPage = lazyWithRetry(() => import('@/pages/ServiceDetailPage'))
+const AboutPage = lazyWithRetry(() => import('@/pages/AboutPage'))
+const PortfolioPage = lazyWithRetry(() => import('@/pages/PortfolioPage'))
+const BlogPage = lazyWithRetry(() => import('@/pages/BlogPage'))
+const BlogPostPage = lazyWithRetry(() => import('@/pages/BlogPostPage'))
+const ContactPage = lazyWithRetry(() => import('@/pages/ContactPage'))
+const CareersPage = lazyWithRetry(() => import('@/pages/CareersPage'))
+const JobDetailPage = lazyWithRetry(() => import('@/pages/JobDetailPage'))
+const PrivacyPolicyPage = lazyWithRetry(() => import('@/pages/PrivacyPolicyPage'))
+const TermsOfServicePage = lazyWithRetry(() => import('@/pages/TermsOfServicePage'))
+const RefundPolicyPage = lazyWithRetry(() => import('@/pages/RefundPolicyPage'))
+const NotFoundPage = lazyWithRetry(() => import('@/pages/NotFoundPage'))
 
 // ── Admin pages — lazy loaded ──────────────────────────────────
-const AdminLayout = lazy(() => import('@/layouts/AdminLayout'))
-const AdminLoginPage = lazy(() => import('@/pages/admin/AdminLoginPage'))
-const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'))
-const AdminLeadsPage = lazy(() => import('@/pages/admin/AdminLeadsPage'))
-const AdminServicesPage = lazy(() => import('@/pages/admin/AdminServicesPage'))
-const AdminProjectsPage = lazy(() => import('@/pages/admin/AdminProjectsPage'))
-const AdminTeamPage = lazy(() => import('@/pages/admin/AdminTeamPage'))
-const AdminSettingsPage = lazy(() => import('@/pages/admin/AdminSettingsPage'))
-const AdminTestimonialsPage = lazy(() => import('@/pages/admin/AdminTestimonialsPage'))
-const AdminFaqPage = lazy(() => import('@/pages/admin/AdminFaqPage'))
-const AdminSiteSettingsPage = lazy(() => import('@/pages/admin/AdminSiteSettingsPage'))
-const AdminMilestonesPage = lazy(() => import('@/pages/admin/AdminMilestonesPage'))
-const AdminPartnersPage = lazy(() => import('@/pages/admin/AdminPartnersPage'))
-const AdminHelpPage = lazy(() => import('@/pages/admin/AdminHelpPage'))
-const AdminCareersPage = lazy(() => import('@/pages/admin/AdminCareersPage'))
-const AdminLegalPage = lazy(() => import('@/pages/admin/AdminLegalPage'))
-const AdminIntegrationPage = lazy(() => import('@/pages/admin/AdminIntegrationPage'))
-const AdminBackupPage = lazy(() => import('@/pages/admin/AdminBackupPage'))
-const AdminClientProjectsPage = lazy(() => import('@/pages/admin/AdminClientProjectsPage'))
-const AdminTasksPage = lazy(() => import('@/pages/admin/AdminTasksPage'))
-const AdminNotesPage = lazy(() => import('@/pages/admin/AdminNotesPage'))
-const AdminCalendarPage = lazy(() => import('@/pages/admin/AdminCalendarPage'))
-const AdminActivitiesPage = lazy(() => import('@/pages/admin/AdminActivitiesPage'))
-const AdminMonitoringPage = lazy(() => import('@/pages/admin/AdminMonitoringPage'))
-const AdminBlogPage = lazy(() => import('@/pages/admin/AdminBlogPage'))
-const AdminBlogCommentsPage = lazy(() => import('@/pages/admin/AdminBlogCommentsPage'))
+const AdminLayout = lazyWithRetry(() => import('@/layouts/AdminLayout'))
+const AdminLoginPage = lazyWithRetry(() => import('@/pages/admin/AdminLoginPage'))
+const AdminDashboardPage = lazyWithRetry(() => import('@/pages/admin/AdminDashboardPage'))
+const AdminLeadsPage = lazyWithRetry(() => import('@/pages/admin/AdminLeadsPage'))
+const AdminServicesPage = lazyWithRetry(() => import('@/pages/admin/AdminServicesPage'))
+const AdminProjectsPage = lazyWithRetry(() => import('@/pages/admin/AdminProjectsPage'))
+const AdminTeamPage = lazyWithRetry(() => import('@/pages/admin/AdminTeamPage'))
+const AdminSettingsPage = lazyWithRetry(() => import('@/pages/admin/AdminSettingsPage'))
+const AdminTestimonialsPage = lazyWithRetry(() => import('@/pages/admin/AdminTestimonialsPage'))
+const AdminFaqPage = lazyWithRetry(() => import('@/pages/admin/AdminFaqPage'))
+const AdminSiteSettingsPage = lazyWithRetry(() => import('@/pages/admin/AdminSiteSettingsPage'))
+const AdminMilestonesPage = lazyWithRetry(() => import('@/pages/admin/AdminMilestonesPage'))
+const AdminPartnersPage = lazyWithRetry(() => import('@/pages/admin/AdminPartnersPage'))
+const AdminHelpPage = lazyWithRetry(() => import('@/pages/admin/AdminHelpPage'))
+const AdminCareersPage = lazyWithRetry(() => import('@/pages/admin/AdminCareersPage'))
+const AdminLegalPage = lazyWithRetry(() => import('@/pages/admin/AdminLegalPage'))
+const AdminIntegrationPage = lazyWithRetry(() => import('@/pages/admin/AdminIntegrationPage'))
+const AdminBackupPage = lazyWithRetry(() => import('@/pages/admin/AdminBackupPage'))
+const AdminClientProjectsPage = lazyWithRetry(() => import('@/pages/admin/AdminClientProjectsPage'))
+const AdminTasksPage = lazyWithRetry(() => import('@/pages/admin/AdminTasksPage'))
+const AdminNotesPage = lazyWithRetry(() => import('@/pages/admin/AdminNotesPage'))
+const AdminCalendarPage = lazyWithRetry(() => import('@/pages/admin/AdminCalendarPage'))
+const AdminActivitiesPage = lazyWithRetry(() => import('@/pages/admin/AdminActivitiesPage'))
+const AdminMonitoringPage = lazyWithRetry(() => import('@/pages/admin/AdminMonitoringPage'))
+const AdminBlogPage = lazyWithRetry(() => import('@/pages/admin/AdminBlogPage'))
+const AdminBlogCommentsPage = lazyWithRetry(() => import('@/pages/admin/AdminBlogCommentsPage'))
 
 export default function App() {
   return (
