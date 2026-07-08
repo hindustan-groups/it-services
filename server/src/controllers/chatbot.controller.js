@@ -71,7 +71,7 @@ export const askQuestion = async (req, res, next) => {
     // ── STEP 3: Fallback keyword rules ────────────────────────────
     if (!isAnswered) {
       // Refined keywords (exact phrases, no generic short words like 'kab', 'open', 'call', 'app', 'days')
-      const hours    = ['business hours', 'working hours', 'office hours', 'open time', 'closing time', 'timings', 'timing', 'schedule', 'working days', 'weekend', 'kitne baje', 'kab khulta', 'kab band']
+      const hours    = ['business hours', 'working hours', 'office hours', 'open time', 'closing time', 'timings', 'timing', 'timeing', 'timeings', 'schedule', 'working days', 'weekend', 'kitne baje', 'kab khulta', 'kab band']
       const pricing  = ['price', 'pricing', 'cost', 'charges', 'fees', 'rate', 'budget', 'package', 'kitna', 'how much', 'quote', 'estimate', 'charge']
       const services = ['what services', 'service offer', 'our services', 'web development', 'app development', 'digital marketing', 'seo', 'software development', 'erp system', 'designing', 'kya karte', 'kya kaam', 'what do you do', 'do you offer']
       const contact  = ['contact', 'phone number', 'email', 'call you', 'whatsapp', 'reach you', 'address', 'location', 'office address', 'where are you', 'kahan', 'phone no', 'mobile number']
