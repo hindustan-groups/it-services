@@ -5,6 +5,9 @@
       "dest": "https://api.hindustanprojects.in/api/$1"
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
