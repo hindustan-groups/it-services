@@ -212,7 +212,7 @@ export default function AboutPage() {
                   <img
                     src={cfg.about_hero_laptop_image}
                     alt="Hindustan Projects Homepage"
-                    className="w-full h-full object-cover block"
+                    className="w-full h-full object-contain bg-[#050e20] block"
                   />
                 ) : (
                   /* Simulated Corporate Website Homepage (Light Theme) */
@@ -285,7 +285,7 @@ export default function AboutPage() {
                   <img
                     src={cfg.about_hero_phone_image}
                     alt="Hindustan Projects Mobile View"
-                    className="w-full h-full object-cover block"
+                    className="w-full h-full object-contain bg-[#050e20] block"
                   />
                 ) : (
                   /* Simulated Mobile Homepage (Light Theme) */
