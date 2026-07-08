@@ -221,6 +221,8 @@ export default function HeroSection() {
                     alt="Hindustan Projects Corporate Professional"
                     className="w-full h-auto max-h-[320px] sm:max-h-[460px] lg:max-h-[485px] object-cover block"
                     style={{ display: 'block', marginBottom: '-1px' }}
+                    fetchPriority="high"
+                    decoding="async"
                   />
                 </div>
 
