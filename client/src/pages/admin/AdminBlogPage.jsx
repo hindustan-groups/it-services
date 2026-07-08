@@ -7,7 +7,7 @@ import {
   Plus, Pencil, Trash2, X, Check, Search, Eye, Star,
   Bold, Italic, List, Heading2, Link as LinkIcon, Image,
   ChevronDown, FileText, Globe, Archive, BookOpen,
-  MessageSquare, Tag, AlertCircle, CheckCircle2, Save,
+  MessageSquare, Tag, AlertCircle, CheckCircle2, Save, Code,
 } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { api } from '@/utils/api'
@@ -33,17 +33,19 @@ const inputCls = 'w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl
 // ── Simple WYSIWYG editor (same pattern as AdminLegalPage) ─────
 function RichEditor({ value, onChange, label }) {
   const editorRef = useRef(null)
+  const [htmlMode, setHtmlMode] = useState(false)
 
   useEffect(() => {
-    if (editorRef.current && value !== undefined) {
+    if (!htmlMode && editorRef.current && value !== undefined) {
       const safe = DOMPurify.sanitize(value || '')
       if (editorRef.current.innerHTML !== safe) {
         editorRef.current.innerHTML = safe
       }
     }
-  }, [value])
+  }, [value, htmlMode])
 
   const exec = (cmd, val = null) => {
+    if (htmlMode) return
     document.execCommand(cmd, false, val)
     onChange(editorRef.current?.innerHTML || '')
   }
@@ -60,53 +62,78 @@ function RichEditor({ value, onChange, label }) {
 
   return (
     <div>
-      {label && <label className="text-xs font-semibold text-gray-600 block mb-1.5">{label}</label>}
+      <div className="flex items-center justify-between mb-1.5">
+        {label && <label className="text-xs font-semibold text-gray-600 block">{label}</label>}
+        <button
+          type="button"
+          onClick={() => setHtmlMode(!htmlMode)}
+          className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-bold transition-all border ${
+            htmlMode
+              ? 'bg-brand-red text-white border-brand-red shadow-sm'
+              : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+          }`}
+        >
+          <Code className="w-3.5 h-3.5" />
+          {htmlMode ? 'Visual Editor' : 'Edit HTML'}
+        </button>
+      </div>
       <div className="border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-brand-blue/25 focus-within:border-brand-blue transition-all">
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-1 px-3 py-2 bg-gray-50 border-b border-gray-200">
-          {[
-            { icon: Heading2, cmd: () => exec('formatBlock', '<h2>'), title: 'Heading 2' },
-            { label: 'H3', cmd: () => exec('formatBlock', '<h3>'), title: 'Heading 3' },
-            { label: 'P', cmd: () => exec('formatBlock', '<p>'), title: 'Paragraph' },
-          ].map((b, i) => (
-            <button key={i} type="button" onClick={b.cmd} title={b.title}
-              className="p-1.5 rounded hover:bg-gray-200 text-gray-600 transition-colors text-xs font-bold">
-              {b.icon ? <b.icon className="w-4 h-4" /> : b.label}
-            </button>
-          ))}
-          <div className="h-4 w-px bg-gray-300 mx-1" />
-          {[
-            { icon: Bold, cmd: () => exec('bold'), title: 'Bold' },
-            { icon: Italic, cmd: () => exec('italic'), title: 'Italic' },
-          ].map((b, i) => (
-            <button key={i} type="button" onClick={b.cmd} title={b.title}
+        {!htmlMode && (
+          <div className="flex flex-wrap items-center gap-1 px-3 py-2 bg-gray-50 border-b border-gray-200">
+            {[
+              { icon: Heading2, cmd: () => exec('formatBlock', '<h2>'), title: 'Heading 2' },
+              { label: 'H3', cmd: () => exec('formatBlock', '<h3>'), title: 'Heading 3' },
+              { label: 'P', cmd: () => exec('formatBlock', '<p>'), title: 'Paragraph' },
+            ].map((b, i) => (
+              <button key={i} type="button" onClick={b.cmd} title={b.title}
+                className="p-1.5 rounded hover:bg-gray-200 text-gray-600 transition-colors text-xs font-bold">
+                {b.icon ? <b.icon className="w-4 h-4" /> : b.label}
+              </button>
+            ))}
+            <div className="h-4 w-px bg-gray-300 mx-1" />
+            {[
+              { icon: Bold, cmd: () => exec('bold'), title: 'Bold' },
+              { icon: Italic, cmd: () => exec('italic'), title: 'Italic' },
+            ].map((b, i) => (
+              <button key={i} type="button" onClick={b.cmd} title={b.title}
+                className="p-1.5 rounded hover:bg-gray-200 text-gray-600 transition-colors">
+                <b.icon className="w-4 h-4" />
+              </button>
+            ))}
+            <div className="h-4 w-px bg-gray-300 mx-1" />
+            <button type="button" onClick={() => exec('insertUnorderedList')} title="Bullet list"
               className="p-1.5 rounded hover:bg-gray-200 text-gray-600 transition-colors">
-              <b.icon className="w-4 h-4" />
+              <List className="w-4 h-4" />
             </button>
-          ))}
-          <div className="h-4 w-px bg-gray-300 mx-1" />
-          <button type="button" onClick={() => exec('insertUnorderedList')} title="Bullet list"
-            className="p-1.5 rounded hover:bg-gray-200 text-gray-600 transition-colors">
-            <List className="w-4 h-4" />
-          </button>
-          <button type="button" onClick={insertLink} title="Insert link"
-            className="p-1.5 rounded hover:bg-gray-200 text-gray-600 transition-colors">
-            <LinkIcon className="w-4 h-4" />
-          </button>
-          <button type="button" onClick={insertImage} title="Insert image"
-            className="p-1.5 rounded hover:bg-gray-200 text-gray-600 transition-colors">
-            <Image className="w-4 h-4" />
-          </button>
-        </div>
-        {/* Editable area */}
-        <div
-          ref={editorRef}
-          contentEditable
-          suppressContentEditableWarning
-          onInput={() => onChange(editorRef.current?.innerHTML || '')}
-          onBlur={() => onChange(editorRef.current?.innerHTML || '')}
-          className="p-4 min-h-[300px] max-h-[500px] overflow-y-auto focus:outline-none prose prose-slate max-w-none prose-sm prose-headings:font-heading prose-p:leading-relaxed"
-        />
+            <button type="button" onClick={insertLink} title="Insert link"
+              className="p-1.5 rounded hover:bg-gray-200 text-gray-600 transition-colors">
+              <LinkIcon className="w-4 h-4" />
+            </button>
+            <button type="button" onClick={insertImage} title="Insert image"
+              className="p-1.5 rounded hover:bg-gray-200 text-gray-600 transition-colors">
+              <Image className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {htmlMode ? (
+          <textarea
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+            className="w-full p-4 min-h-[300px] max-h-[500px] focus:outline-none font-mono text-xs bg-slate-900 text-slate-100 resize-none border-0 block"
+            placeholder="Paste HTML code here..."
+          />
+        ) : (
+          <div
+            ref={editorRef}
+            contentEditable
+            suppressContentEditableWarning
+            onInput={() => onChange(editorRef.current?.innerHTML || '')}
+            onBlur={() => onChange(editorRef.current?.innerHTML || '')}
+            className="p-4 min-h-[300px] max-h-[500px] overflow-y-auto focus:outline-none prose prose-slate max-w-none prose-sm prose-headings:font-heading prose-p:leading-relaxed"
+          />
+        )}
       </div>
     </div>
   )
