@@ -49,16 +49,35 @@ export const askQuestion = async (req, res, next) => {
         orderBy: { order: 'asc' },
       })
 
+      const STOPWORDS = new Set([
+        'what', 'your', 'does', 'with', 'have', 'from', 'about', 'this', 'that', 
+        'there', 'their', 'when', 'where', 'which', 'who', 'they', 'them', 'then',
+        'some', 'many', 'more', 'most', 'very', 'here', 'will', 'would', 'could', 
+        'should', 'been', 'were', 'have', 'your', 'ours', 'mine', 'does', 'your',
+        'about', 'from', 'with', 'how', 'are', 'you'
+      ])
+
       for (const faq of faqs) {
-        const faqKeywords = normalize(faq.question)
+        const normalizedFaqQ = normalize(faq.question)
+        
+        // Exact match check first
+        if (clean === normalizedFaqQ || clean.includes(normalizedFaqQ)) {
+          answer = faq.answer
+          isAnswered = true
+          break
+        }
+
+        const faqKeywords = normalizedFaqQ
           .split(/\s+/)
-          .filter((w) => w.length > 3)
+          .filter((w) => w.length > 3 && !STOPWORDS.has(w))
+
+        if (faqKeywords.length === 0) continue
 
         const matchCount = faqKeywords.filter((kw) => clean.includes(kw)).length
-        const matchRatio = faqKeywords.length > 0 ? matchCount / faqKeywords.length : 0
+        const matchRatio = matchCount / faqKeywords.length
 
-        // Stricter threshold (0.5) to avoid false positives between similar topics
-        if (matchRatio >= 0.5 || faqKeywords.some((kw) => kw.length > 5 && clean.includes(kw))) {
+        // Require at least one matched keyword and ratio >= 0.5
+        if (matchCount > 0 && (matchRatio >= 0.5 || faqKeywords.some((kw) => kw.length > 5 && clean.includes(kw)))) {
           answer = faq.answer
           isAnswered = true
           break
