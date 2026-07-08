@@ -144,7 +144,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400 font-bold text-lg">
                       ✓
                     </div>
-                    <h3 className="font-heading text-base font-bold text-white">
+                    <h3 className="font-heading text-base font-bold" style={{ color: '#ffffff' }}>
                       Inquiry Received!
                     </h3>
                     <p className="text-xs text-slate-300 leading-relaxed">
@@ -154,7 +154,7 @@ export default function HomePage() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-3">
-                    <h3 className="font-heading text-sm font-bold text-white mb-2 uppercase tracking-wider text-center">
+                    <h3 className="font-heading text-sm font-bold mb-2 uppercase tracking-wider text-center" style={{ color: '#ffffff' }}>
                       Request a Free Quote
                     </h3>
                     <div>
