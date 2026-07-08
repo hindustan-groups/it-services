@@ -301,33 +301,17 @@ export default function BlogPostPage() {
         {/* ════════════════════════════════════════════════════
             HERO — Full-width cover
         ════════════════════════════════════════════════════ */}
-        <div className="relative w-full min-h-[480px] sm:min-h-[540px] lg:min-h-[580px] flex items-end overflow-hidden bg-[#050e20]">
-
-          {/* Cover image & blends */}
-          {post.featuredImageUrl ? (
-            <div className="absolute inset-0 w-full h-full">
-              {/* Right-aligned image on desktop, full cover on mobile */}
-              <img src={post.featuredImageUrl} alt={post.title}
-                className="absolute right-0 top-0 h-full w-full lg:w-1/2 object-cover opacity-30 lg:opacity-75 transition-opacity duration-300" />
-              
-              {/* Left-to-right fade gradient for desktop to blend image into background */}
-              <div className="hidden lg:block absolute inset-y-0 left-0 right-1/2 bg-gradient-to-r from-[#050e20] via-[#050e20]/98 to-transparent z-[1]" />
-              <div className="hidden lg:block absolute inset-y-0 left-[45%] w-1/5 bg-gradient-to-r from-[#050e20]/90 to-transparent backdrop-blur-[3px] z-[1]" />
-              
-              {/* Top-to-bottom fade to blend with content section */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050e20] via-[#050e20]/75 to-transparent z-[1]" />
-            </div>
-          ) : (
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_60%_0%,rgba(26,62,140,0.45),transparent)]" />
-          )}
-
+        {/* ── HERO — Premium Clean Dark Section ── */}
+        <div className="relative w-full pt-16 pb-20 sm:pb-24 lg:pb-32 overflow-hidden bg-[#050e20]">
+          
           {/* Glowing blue accent in background */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_20%_30%,rgba(26,62,140,0.22),transparent)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(26,62,140,0.32),transparent)] pointer-events-none" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-brand-red/10 rounded-full blur-3xl translate-y-1/2 pointer-events-none" />
 
           {/* Dot grid */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
 
-          <Container className="relative z-10 pt-28 pb-12 sm:pb-16">
+          <Container className="relative z-10 pt-20">
 
             {/* Breadcrumb */}
             <motion.nav
@@ -414,6 +398,26 @@ export default function BlogPostPage() {
             </div>
           </Container>
         </div>
+
+        {/* ── FEATURED IMAGE CARD (Overlapping) ── */}
+        {post.featuredImageUrl && (
+          <div className="relative z-20 -mt-12 sm:-mt-20 lg:-mt-24">
+            <Container>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.15 }}
+                className="rounded-3xl overflow-hidden shadow-2xl border border-white/8 bg-white aspect-[21/9] w-full max-w-5xl mx-auto"
+              >
+                <img
+                  src={post.featuredImageUrl}
+                  alt={post.title}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+            </Container>
+          </div>
+        )}
 
         {/* ════════════════════════════════════════════════════
             CONTENT — Article + Sidebar
