@@ -686,19 +686,19 @@ export default function ServiceDetailPage() {
               {/* Contact Info Card */}
               <div className="rounded-2xl border border-gray-100 bg-white p-5 space-y-4">
                 <p className="text-sm font-bold text-brand-blue font-heading">Quick Contact</p>
-                <a href="tel:+919999999999" className="flex items-center gap-3 group">
+                <a href={`tel:${(settingsData?.data?.phone || '+919999999999').replace(/\s+/g, '')}`} className="flex items-center gap-3 group">
                   <div className="w-9 h-9 rounded-xl bg-brand-blue/8 flex items-center justify-center shrink-0 group-hover:bg-brand-blue/14 transition-colors">
                     <Phone className="w-4 h-4 text-brand-blue" />
                   </div>
                   <div>
                     <p className="text-[11px] text-text-muted">Call Us</p>
                     <p className="text-sm font-semibold text-brand-blue group-hover:text-brand-red transition-colors">
-                      +91 99999 99999
+                      {settingsData?.data?.phone || '+91 99999 99999'}
                     </p>
                   </div>
                 </a>
                 <a
-                  href="mailto:info@hindustanprojects.com"
+                  href={`mailto:${settingsData?.data?.email || 'info@hindustanprojects.com'}`}
                   className="flex items-center gap-3 group"
                 >
                   <div className="w-9 h-9 rounded-xl bg-brand-red/8 flex items-center justify-center shrink-0 group-hover:bg-brand-red/14 transition-colors">
@@ -707,7 +707,7 @@ export default function ServiceDetailPage() {
                   <div>
                     <p className="text-[11px] text-text-muted">Email Us</p>
                     <p className="text-sm font-semibold text-brand-blue group-hover:text-brand-red transition-colors">
-                      info@hindustanprojects.com
+                      {settingsData?.data?.email || 'info@hindustanprojects.com'}
                     </p>
                   </div>
                 </a>
