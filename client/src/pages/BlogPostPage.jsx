@@ -407,12 +407,12 @@ export default function BlogPostPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.15 }}
-                className="rounded-3xl overflow-hidden shadow-2xl border border-white/8 bg-white aspect-[21/9] w-full max-w-5xl mx-auto"
+                className="rounded-3xl overflow-hidden shadow-2xl border border-white/8 bg-white w-full max-w-5xl mx-auto"
               >
                 <img
                   src={post.featuredImageUrl}
                   alt={post.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-auto block"
                 />
               </motion.div>
             </Container>
