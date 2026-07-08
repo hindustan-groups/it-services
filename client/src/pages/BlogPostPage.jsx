@@ -206,7 +206,7 @@ export default function BlogPostPage() {
         <div className="bg-[#050e20] pt-10 pb-12 border-b border-white/5">
           <Container className="max-w-4xl">
             {/* Breadcrumb */}
-            <nav className="flex items-center gap-1.5 text-xs text-white/40 mb-6">
+            <nav className="flex items-center gap-1.5 text-xs text-white/70 mb-6">
               <Link to="/" className="hover:text-white/70 transition-colors">Home</Link>
               <ChevronRight className="w-3 h-3" />
               <Link to="/blog" className="hover:text-white/70 transition-colors">Blog</Link>
@@ -223,7 +223,7 @@ export default function BlogPostPage() {
             <p className="text-white/60 text-base leading-relaxed mb-6 max-w-2xl">{post.excerpt}</p>
 
             {/* Meta */}
-            <div className="flex flex-wrap items-center gap-4 text-xs text-white/40 font-medium">
+            <div className="flex flex-wrap items-center gap-4 text-xs text-white/60 font-medium">
               <span className="text-white/60 font-semibold">By {post.authorName}</span>
               {publishDate && (
                 <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{publishDate}</span>

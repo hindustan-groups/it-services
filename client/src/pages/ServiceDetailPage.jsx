@@ -432,7 +432,7 @@ export default function ServiceDetailPage() {
         <Container className="relative">
           {/* Breadcrumb */}
           <nav
-            className="flex items-center gap-2 text-sm text-white/40 mb-10"
+            className="flex items-center gap-2 text-sm text-white/70 mb-10"
             aria-label="Breadcrumb"
           >
             <Link to="/" className="hover:text-white transition-colors">

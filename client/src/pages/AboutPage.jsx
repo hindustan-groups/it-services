@@ -698,7 +698,7 @@ export default function AboutPage() {
                 Explore Services →
               </Button>
             </div>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-white/40 text-xs font-medium">
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-white/70 text-xs font-medium">
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> No upfront payment
               </span>

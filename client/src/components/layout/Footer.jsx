@@ -127,7 +127,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-heading text-xs font-bold uppercase tracking-widest text-white/40 mb-5">
+            <h3 className="font-heading text-xs font-bold uppercase tracking-widest text-white/60 mb-5">
               Quick Links
             </h3>
             <ul className="space-y-3" role="list">
@@ -147,7 +147,7 @@ export default function Footer() {
 
           {/* Services — dynamic from DB */}
           <div>
-            <h3 className="font-heading text-xs font-bold uppercase tracking-widest text-white/40 mb-5">
+            <h3 className="font-heading text-xs font-bold uppercase tracking-widest text-white/60 mb-5">
               Our Services
             </h3>
             <ul className="space-y-3" role="list">
@@ -167,7 +167,7 @@ export default function Footer() {
 
           {/* Contact — dynamic from Site Settings */}
           <div>
-            <h3 className="font-heading text-xs font-bold uppercase tracking-widest text-white/40 mb-5">
+            <h3 className="font-heading text-xs font-bold uppercase tracking-widest text-white/60 mb-5">
               Contact Us
             </h3>
             <address className="not-italic space-y-3.5 text-sm text-white/70">
@@ -238,7 +238,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/5 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/40">
+        <div className="border-t border-white/5 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/60">
           <p>© {year} Hindustan Projects. All rights reserved.</p>
           <div className="flex gap-4">
             <Link to="/privacy-policy" className="hover:text-white transition-colors">

@@ -198,7 +198,7 @@ export default function TechStackSection() {
                 className={`bg-white/5 border border-white/8 rounded-xl p-5 text-center flex flex-col items-center justify-center transition-all duration-300 ${t.color}`}
               >
                 <span className="font-heading text-sm font-semibold tracking-wide">{t.name}</span>
-                <span className="text-[10px] text-white/40 mt-1 uppercase tracking-wider font-medium">
+                <span className="text-[10px] text-white/60 mt-1 uppercase tracking-wider font-medium">
                   {t.cat}
                 </span>
               </motion.div>
