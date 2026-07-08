@@ -373,8 +373,8 @@ export default function BlogPostPage() {
               >
                 {/* Author */}
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-blue to-brand-blue-dark flex items-center justify-center text-white font-black text-sm shadow-lg border-2 border-white/20">
-                    {post.authorName?.[0]?.toUpperCase() || 'H'}
+                  <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/25 shadow-lg bg-white shrink-0">
+                    <img src="/logo-with-bg.png" alt="Hindustan Projects" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <p className="text-white font-semibold text-sm leading-none">{post.authorName}</p>
@@ -645,8 +645,8 @@ export default function BlogPostPage() {
                   <div className="relative">
                     <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-4">About the Author</p>
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-blue to-brand-blue-dark flex items-center justify-center text-white font-black text-lg shadow-md border-2 border-white">
-                        {post.authorName?.[0]?.toUpperCase() || 'H'}
+                      <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-gray-100 shadow-md bg-white shrink-0">
+                        <img src="/logo-with-bg.png" alt="Hindustan Projects" className="w-full h-full object-cover" />
                       </div>
                       <div>
                         <p className="font-bold text-gray-900 text-sm">{post.authorName}</p>
@@ -705,7 +705,7 @@ export default function BlogPostPage() {
                     <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center mb-4">
                       <TrendingUp className="w-5 h-5 text-white" />
                     </div>
-                    <h3 className="font-heading font-bold text-sm mb-2 leading-snug">Need IT Services?</h3>
+                    <h3 className="font-heading font-bold text-sm mb-2 leading-snug text-white">Need IT Services?</h3>
                     <p className="text-white/60 text-xs leading-relaxed mb-5">
                       Web development, digital marketing and IT consulting from Bhilwara's trusted tech partner.
                     </p>
