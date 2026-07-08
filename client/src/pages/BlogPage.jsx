@@ -13,6 +13,8 @@ const BLOG_CATEGORIES = [
   'Custom Software',
   'SEO & Branding',
   'Company News',
+  'Our Process',
+  'Local Growth',
 ]
 
 function BlogCardSkeleton() {

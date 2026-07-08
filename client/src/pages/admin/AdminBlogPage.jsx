@@ -17,6 +17,7 @@ import DOMPurify from 'dompurify'
 const BLOG_CATEGORIES = [
   'Web Development', 'Digital Marketing', 'IT Consulting',
   'Custom Software', 'SEO & Branding', 'Company News',
+  'Our Process', 'Local Growth',
 ]
 
 const STATUS_COLORS = {
