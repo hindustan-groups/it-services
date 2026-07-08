@@ -26,6 +26,10 @@ function AnimatedLogo({ isTransparent }) {
   const letterVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+    hover: {
+      y: -2,
+      transition: { duration: 0.15, ease: 'easeInOut' },
+    },
   }
 
   return (
@@ -34,6 +38,7 @@ function AnimatedLogo({ isTransparent }) {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
+      whileHover="hover"
       aria-label="Hindustan Projects"
     >
       {/* "Hindustan" — red or light red */}
@@ -131,7 +136,16 @@ export default function Navbar() {
           aria-label="Main navigation"
         >
           {/* ── Logo ── */}
-          <Link to="/" className="flex items-center shrink-0 focus-visible:outline-none">
+          <Link
+            to="/"
+            className="flex items-center shrink-0 focus-visible:outline-none"
+            onClick={(e) => {
+              if (location.pathname === '/') {
+                e.preventDefault()
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }
+            }}
+          >
             <AnimatedLogo isTransparent={isTransparent} />
           </Link>
 

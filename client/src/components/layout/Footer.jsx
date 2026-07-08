@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Container } from '@/components/ui'
 import { useSiteSettings } from '@/hooks/useContent'
 import { useServices } from '@/hooks/useServices'
@@ -75,6 +75,7 @@ export default function Footer() {
   const year = new Date().getFullYear()
   const { data: settingsData } = useSiteSettings()
   const { data: servicesData } = useServices()
+  const location = useLocation()
 
   const cfg = settingsData?.data || {}
   const phone = cfg.phone || '+91 99999 99999'
@@ -97,7 +98,16 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 py-14 lg:py-16">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link to="/" className="inline-block mb-4">
+            <Link
+              to="/"
+              className="inline-block mb-4 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+              onClick={(e) => {
+                if (location.pathname === '/') {
+                  e.preventDefault()
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }
+              }}
+            >
               <span className="font-heading text-xl font-bold tracking-wide">
                 <span className="text-brand-red-light">Hindustan </span>
                 <span className="text-white">Projects</span>
