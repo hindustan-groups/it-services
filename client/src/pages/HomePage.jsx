@@ -127,7 +127,7 @@ export default function HomePage() {
               <span className="text-xs font-bold tracking-widest uppercase text-brand-red-light bg-brand-red/10 border border-brand-red-light/20 px-3 py-1 rounded-full w-fit block">
                 Start Your Project Today
               </span>
-              <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-white leading-tight">
+              <h2 className="font-heading text-3xl sm:text-4xl font-extrabold !text-white leading-tight">
                 Ready to Grow Your Business Digitally?
               </h2>
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-md">
