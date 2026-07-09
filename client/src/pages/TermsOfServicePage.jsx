@@ -10,7 +10,9 @@ export default function TermsOfServicePage() {
     <>
       <SEO
         title={page?.title || 'Terms of Service'}
-        description="Terms of service and contract conditions for Hindustan Projects."
+        description="Terms of service and contract conditions for using Hindustan Projects services."
+        path="/terms-of-service"
+        noIndex
       />
 
       <div className="bg-gray-50/50 min-h-screen pt-28 pb-16">

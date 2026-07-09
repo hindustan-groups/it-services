@@ -16,6 +16,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { Container, Button, SEO } from '@/components/ui'
+import { SITE } from '@/components/ui/SEO'
 import { useJobDetail, useApplyJob } from '@/hooks/useCareers'
 
 const JOB_TYPE_LABELS = {
@@ -198,9 +199,44 @@ export default function JobDetailPage() {
 
   const isGeneral = job.slug === 'general-application'
 
+  const jobPostingSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'JobPosting',
+    title: job.title,
+    description: job.description,
+    datePosted: job.createdAt,
+    validThrough: job.deadline || undefined,
+    employmentType: job.jobType || 'FULL_TIME',
+    hiringOrganization: {
+      '@type': 'Organization',
+      name: SITE.name,
+      sameAs: SITE.url,
+      logo: SITE.logo,
+    },
+    jobLocation: {
+      '@type': 'Place',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: SITE.address.street,
+        addressLocality: SITE.address.city,
+        addressRegion: SITE.address.state,
+        postalCode: SITE.address.postalCode,
+        addressCountry: SITE.address.country,
+      },
+    },
+    applicantLocationRequirements: { '@type': 'Country', name: 'India' },
+    jobLocationType: 'TELECOMMUTE',
+  }
+
   return (
     <>
-      <SEO title={`${job.title} | Careers`} description={job.description} />
+      <SEO
+        title={`${job.title} | Careers at Hindustan Projects`}
+        description={job.description?.slice(0, 155) || `Apply for ${job.title} at Hindustan Projects, Bhilwara. Join our growing IT team.`}
+        path={`/careers/${job.slug}`}
+        keywords={`${job.title} job Bhilwara, IT careers Rajasthan, ${job.department} jobs India`}
+        schemas={[jobPostingSchema]}
+      />
 
       <div className="bg-gray-50/50 pt-20 pb-10 sm:pt-24 sm:pb-12 lg:pt-16 lg:pb-16 min-h-screen text-slate-700 relative overflow-hidden">
         <Container className="relative">

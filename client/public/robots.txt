@@ -5,5 +5,10 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
+# Block legal utility pages (low SEO value)
+Disallow: /privacy-policy
+Disallow: /terms-of-service
+Disallow: /refund-policy
+
 # Sitemap location
 Sitemap: https://www.itservices.hindustanprojects.in/sitemap.xml

@@ -45,7 +45,9 @@ export default function CareersPage() {
     <>
       <SEO
         title="Careers | Join Hindustan Projects"
-        description="Build premium tech products, craft high-impact marketing strategies, and grow your career with Hindustan Projects. Explore open positions."
+        description="Build premium tech products, craft high-impact marketing strategies, and grow your career with Hindustan Projects. Explore open positions in Bhilwara, Rajasthan."
+        path="/careers"
+        keywords="IT jobs Bhilwara, software developer jobs Rajasthan, digital marketing jobs India, careers Hindustan Projects"
       />
 
       {/* Hero Section - Dark Blue (Matches /services page hero) */}

@@ -268,15 +268,15 @@ export default function BlogPostPage() {
 
   const articleSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
     headline: post.title,
     description: post.excerpt,
-    image: post.featuredImageUrl || `${SITE.url}/logo-with-bg.png`,
-    author: { '@type': 'Organization', name: post.authorName || 'Hindustan Projects' },
+    image: post.featuredImageUrl || `${SITE.url}/og-image.png`,
+    author: { '@type': 'Person', name: post.authorName || 'Hindustan Projects Team' },
     publisher: {
       '@type': 'Organization',
       name: 'Hindustan Projects',
-      logo: { '@type': 'ImageObject', url: `${SITE.url}/logo-with-bg.png` },
+      logo: { '@type': 'ImageObject', url: `${SITE.url}/og-image.png` },
     },
     datePublished: post.publishedAt || post.createdAt,
     dateModified: post.updatedAt,
@@ -289,7 +289,7 @@ export default function BlogPostPage() {
         title={`${metaTitle} | Hindustan Projects Blog`}
         description={metaDescription}
         path={`/blog/${post.slug}`}
-        image={post.featuredImageUrl}
+        ogImage={post.featuredImageUrl}
         schemas={[articleSchema]}
       />
 

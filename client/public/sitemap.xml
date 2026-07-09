@@ -72,6 +72,14 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- Blog -->
+  <url>
+    <loc>https://www.itservices.hindustanprojects.in/blog</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Portfolio -->
   <url>
     <loc>https://www.itservices.hindustanprojects.in/portfolio</loc>

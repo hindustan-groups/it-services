@@ -10,7 +10,9 @@ export default function RefundPolicyPage() {
     <>
       <SEO
         title={page?.title || 'Refund Policy'}
-        description="Refund policy and cancellation terms for projects with Hindustan Projects."
+        description="Refund policy and cancellation terms for projects with Hindustan Projects, Bhilwara."
+        path="/refund-policy"
+        noIndex
       />
 
       <div className="bg-gray-50/50 min-h-screen pt-28 pb-16">

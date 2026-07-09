@@ -10,7 +10,9 @@ export default function PrivacyPolicyPage() {
     <>
       <SEO
         title={page?.title || 'Privacy Policy'}
-        description="Privacy policy and data collection terms for Hindustan Projects."
+        description="Read the privacy policy of Hindustan Projects — how we collect, use, and protect your data."
+        path="/privacy-policy"
+        noIndex
       />
 
       <div className="bg-gray-50/50 min-h-screen pt-28 pb-16">

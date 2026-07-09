@@ -11,7 +11,7 @@ export const SITE = {
   url: 'https://www.itservices.hindustanprojects.in',
   description:
     'Hindustan Projects is a leading IT services company in Bhilwara, Rajasthan offering custom web development, digital marketing, IT consulting, mobile app development, and SEO services.',
-  phone: '+91 99999 99999',
+  phone: '+91 7597000601',
   email: 'info@hindustanprojects.com',
   address: {
     street: 'Bhilwara',
@@ -21,12 +21,18 @@ export const SITE = {
     country: 'IN',
   },
   geo: { lat: 25.3478, lng: 74.6367 },
-  logo: 'https://www.itservices.hindustanprojects.in/favicon-32x32.png',
-  ogImage: 'https://www.itservices.hindustanprojects.in/logo-with-bg.png',
+  logo: 'https://www.itservices.hindustanprojects.in/og-image.png',
+  ogImage: 'https://www.itservices.hindustanprojects.in/og-image.png',
   twitterHandle: '@hindustanprojects',
   founded: '2019',
   keywords:
     'IT services Bhilwara, web development Rajasthan, digital marketing Bhilwara, IT company Rajasthan, custom software development, SEO services India',
+  sameAs: [
+    'https://www.linkedin.com/company/hindustan-projects',
+    'https://www.facebook.com/hindustanprojects',
+    'https://twitter.com/hindustanprojects',
+    'https://www.instagram.com/hindustanprojects',
+  ],
 }
 
 // ── JSON-LD Schemas ────────────────────────────────────────────
@@ -60,7 +66,7 @@ export function organizationSchema() {
       postalCode: SITE.address.postalCode,
       addressCountry: SITE.address.country,
     },
-    sameAs: [],
+    sameAs: SITE.sameAs,
   }
 }
 
@@ -93,7 +99,6 @@ export function localBusinessSchema() {
       longitude: SITE.geo.lng,
     },
     hasMap: `https://www.google.com/maps?q=${SITE.geo.lat},${SITE.geo.lng}`,
-    servedCuisine: null,
     knowsAbout: [
       'Web Development',
       'Digital Marketing',
@@ -107,6 +112,7 @@ export function localBusinessSchema() {
       { '@type': 'State', name: 'Rajasthan' },
       { '@type': 'Country', name: 'India' },
     ],
+    sameAs: SITE.sameAs,
   }
 }
 
@@ -119,14 +125,6 @@ export function websiteSchema() {
     name: SITE.name,
     description: SITE.description,
     inLanguage: 'en-IN',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${SITE.url}/services?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
-    },
   }
 }
 
@@ -243,13 +241,17 @@ export default function SEO({
       <meta property="og:image" content={image} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={fullTitle} />
       <meta property="og:locale" content="en_IN" />
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content={SITE.twitterHandle} />
+      <meta name="twitter:creator" content={SITE.twitterHandle} />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={desc} />
       <meta name="twitter:image" content={image} />
+      <meta name="twitter:image:alt" content={fullTitle} />
 
       {/* Geo tags — Local SEO */}
       <meta name="geo.region" content="IN-RJ" />
