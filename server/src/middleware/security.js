@@ -40,7 +40,13 @@ export const helmetConfig = helmet({
         'blob:',
         'https://res.cloudinary.com', // Cloudinary images
       ],
-      connectSrc: ["'self'", process.env.CLIENT_URL || 'http://localhost:5173'],
+      connectSrc: [
+        "'self'",
+        // API server URL (where fetch requests go)
+        process.env.SERVER_URL || process.env.CLIENT_URL || 'http://localhost:5000',
+        // In dev, also allow the Vite dev server
+        ...(process.env.NODE_ENV === 'development' ? ['http://localhost:5173', 'ws://localhost:5173'] : []),
+      ],
       frameSrc: [
         'https://www.google.com', // reCAPTCHA iframe
         'https://maps.google.com', // Google Maps embed

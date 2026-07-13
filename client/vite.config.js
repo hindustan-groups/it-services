@@ -20,7 +20,8 @@ export default defineConfig({
     },
   },
   build: {
-    // Increase chunk warning limit (Framer Motion is large by design)
+    // Chunk warning limit — framer-motion is now only in lazy-loaded chunks (not initial bundle)
+    // 600 covers large lazy pages: BlogPostPage (42KB), AboutPage (38KB), etc.
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {

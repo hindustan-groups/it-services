@@ -1,32 +1,13 @@
 /**
- * HeroSection — Professional corporate hero, no external images needed.
+ * HeroSection — Professional corporate hero.
  * Deep blue gradient background with geometric accents.
+ * Animations: Pure CSS (no framer-motion) — keeps framer-motion out of the initial JS bundle.
  */
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { ArrowRight, ChevronDown, CheckCircle2 } from 'lucide-react'
 import { Button, Container } from '@/components/ui'
 import { useSiteSettings } from '@/hooks/useContent'
 import professionalHero from '@/assets/professional_hero.webp'
-
-// ── Animation variants ─────────────────────────────────────────
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: (delay = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1], delay },
-  }),
-}
-
-const wordVariants = {
-  hidden: { opacity: 0, y: 36 },
-  visible: (i) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.25 + i * 0.08 },
-  }),
-}
 
 const HEADLINE_LINE1 = ['Building', 'Digital', 'Solutions']
 const HEADLINE_LINE2 = ['That', 'Drive', 'Business', 'Growth']
@@ -90,14 +71,14 @@ export default function HeroSection() {
         />
       </div>
 
-      {/* ── Main content — pushed below fixed navbar (h-16 = 64px) ── */}
+      {/* ── Main content — pushed below fixed navbar ── */}
       <div className="flex-1 flex items-center pt-28 lg:pt-28 pb-12 lg:pb-8">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             {/* ── Left: text ── */}
             <div className="lg:col-span-7">
               {/* Eyebrow */}
-              <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible">
+              <div className="hero-fade-up" style={{ animationDelay: '0s' }}>
                 <span
                   className="inline-flex items-center gap-2 px-4 py-1.5 mb-3
                   rounded-full border border-white/20 bg-white/8
@@ -106,63 +87,51 @@ export default function HeroSection() {
                   <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
                   IT Services — Bhilwara, Rajasthan
                 </span>
-              </motion.div>
+              </div>
 
-              {/* Headline — word by word */}
+              {/* Headline — word by word staggered */}
               <h1 className="font-heading font-bold leading-[1.1] mb-3 text-white">
                 {/* Line 1 */}
                 <div className="flex flex-wrap gap-x-3 mb-1">
                   {HEADLINE_LINE1.map((word, i) => (
-                    <motion.span
+                    <span
                       key={word}
-                      custom={i}
-                      variants={wordVariants}
-                      initial="hidden"
-                      animate="visible"
-                      className="inline-block text-3xl sm:text-4xl lg:text-5xl xl:text-6xl text-white"
+                      className="inline-block text-3xl sm:text-4xl lg:text-5xl xl:text-6xl text-white hero-fade-up"
+                      style={{ animationDelay: `${0.25 + i * 0.08}s` }}
                     >
                       {word}
-                    </motion.span>
+                    </span>
                   ))}
                 </div>
                 {/* Line 2 — "Drive Business Growth" in light red */}
                 <div className="flex flex-wrap gap-x-3">
                   {HEADLINE_LINE2.map((word, i) => (
-                    <motion.span
+                    <span
                       key={word}
-                      custom={HEADLINE_LINE1.length + i}
-                      variants={wordVariants}
-                      initial="hidden"
-                      animate="visible"
-                      className={`inline-block text-3xl sm:text-4xl lg:text-5xl xl:text-6xl ${
+                      className={`inline-block text-3xl sm:text-4xl lg:text-5xl xl:text-6xl hero-fade-up ${
                         i >= 1 ? 'text-brand-red-light font-extrabold' : 'text-white'
                       }`}
+                      style={{ animationDelay: `${0.25 + (HEADLINE_LINE1.length + i) * 0.08}s` }}
                     >
                       {word}
-                    </motion.span>
+                    </span>
                   ))}
                 </div>
               </h1>
 
               {/* Subtext */}
-              <motion.p
-                variants={fadeUp}
-                custom={0.85}
-                initial="hidden"
-                animate="visible"
-                className="text-white/80 text-sm sm:text-base leading-relaxed mb-4 max-w-lg"
+              <p
+                className="text-white/80 text-sm sm:text-base leading-relaxed mb-4 max-w-lg hero-fade-up"
+                style={{ animationDelay: '0.85s' }}
               >
                 We design custom websites, run result-driven digital marketing, and provide
                 strategic IT consulting — helping businesses across India grow online.
-              </motion.p>
+              </p>
 
               {/* Trust points */}
-              <motion.ul
-                variants={fadeUp}
-                custom={0.95}
-                initial="hidden"
-                animate="visible"
-                className="space-y-2 mb-4"
+              <ul
+                className="space-y-2 mb-4 hero-fade-up"
+                style={{ animationDelay: '0.95s' }}
               >
                 {TRUST_POINTS.map((pt) => (
                   <li key={pt} className="flex items-center gap-2.5 text-sm text-white/85">
@@ -170,15 +139,12 @@ export default function HeroSection() {
                     {pt}
                   </li>
                 ))}
-              </motion.ul>
+              </ul>
 
               {/* CTAs */}
-              <motion.div
-                variants={fadeUp}
-                custom={1.1}
-                initial="hidden"
-                animate="visible"
-                className="flex flex-wrap gap-6"
+              <div
+                className="flex flex-wrap gap-6 hero-fade-up"
+                style={{ animationDelay: '1.1s' }}
               >
                 <Button
                   variant="primary"
@@ -199,22 +165,19 @@ export default function HeroSection() {
                 >
                   View Our Work
                 </Button>
-              </motion.div>
+              </div>
             </div>
 
             {/* ── Right: Visual image container ── */}
-            <motion.div
-              variants={fadeUp}
-              custom={0.6}
-              initial="hidden"
-              animate="visible"
-              className="flex justify-center items-end relative self-end lg:col-span-5 h-full pt-8 lg:pt-2 w-full max-w-md mx-auto lg:max-w-none"
+            <div
+              className="flex justify-center items-end relative self-end lg:col-span-5 h-full pt-8 lg:pt-2 w-full max-w-md mx-auto lg:max-w-none hero-fade-up"
+              style={{ animationDelay: '0.6s' }}
             >
               <div className="relative w-full max-w-xs sm:max-w-md lg:max-w-lg self-end mt-auto px-4 sm:px-0">
                 {/* Glowing background aura behind the arch portal */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 h-4/5 rounded-full bg-brand-blue-light/10 blur-3xl -z-10" />
 
-                {/* Person image - rendered as a premium arch portal, 100% sharp and clear */}
+                {/* Person image - rendered as a premium arch portal */}
                 <div className="relative z-10 overflow-hidden rounded-t-full border-t border-x border-white/20 shadow-2xl">
                   <img
                     src={cfg.hero_image_url || professionalHero}
@@ -243,17 +206,15 @@ export default function HeroSection() {
                   <p className="text-[8px] sm:text-[10px] text-white mt-0.5 leading-none">Delivered Successfully</p>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </Container>
       </div>
 
       {/* ── Stats strip ── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4, duration: 0.5 }}
-        className="border-t border-white/10 bg-white/5 backdrop-blur-sm"
+      <div
+        className="border-t border-white/10 bg-white/5 backdrop-blur-sm hero-fade-in"
+        style={{ animationDelay: '1.4s' }}
       >
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4">
@@ -270,27 +231,19 @@ export default function HeroSection() {
             ))}
           </div>
         </Container>
-      </motion.div>
+      </div>
 
       {/* Scroll hint */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 0.5 }}
-        className="absolute bottom-20 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-1 z-20"
+      <div
+        className="absolute bottom-20 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-1 z-20 hero-fade-in"
+        style={{ animationDelay: '2s' }}
         aria-hidden="true"
       >
         <span className="text-white/30 text-[10px] tracking-widest uppercase">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}
-        >
+        <div className="hero-bounce">
           <ChevronDown className="w-4 h-4 text-white/30" />
-        </motion.div>
-      </motion.div>
-
-      {/* Spin animation keyframe */}
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+        </div>
+      </div>
     </section>
   )
 }

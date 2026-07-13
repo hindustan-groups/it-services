@@ -245,3 +245,56 @@ select {
   background-size: 200% auto;
   animation: gradient 4s ease infinite;
 }
+
+/* ── HeroSection CSS Animations (replaces Framer Motion in initial bundle) ── */
+
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes heroBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* Word-by-word fade-up — use animationDelay inline for stagger */
+.hero-fade-up {
+  opacity: 0;
+  animation: heroFadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Simple opacity fade for stats strip and scroll hint */
+.hero-fade-in {
+  opacity: 0;
+  animation: heroFadeIn 0.5s ease forwards;
+}
+
+/* Infinite bounce for scroll hint icon */
+.hero-bounce {
+  animation: heroBounce 1.4s ease-in-out infinite;
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .hero-fade-up,
+  .hero-fade-in {
+    animation: none;
+    opacity: 1;
+  }
+  .hero-bounce {
+    animation: none;
+  }
+}
+

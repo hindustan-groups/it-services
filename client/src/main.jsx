@@ -1,8 +1,7 @@
-import { StrictMode } from 'react'
+import React, { StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { HelmetProvider } from 'react-helmet-async'
 
 // Local fonts — no internet required
@@ -37,6 +36,15 @@ const queryClient = new QueryClient({
   },
 })
 
+// DevtoolsLoader — only ever imported in DEV, completely absent from production bundle
+const DevtoolsLoader = import.meta.env.DEV
+  ? React.lazy(() =>
+      import('@tanstack/react-query-devtools').then((m) => ({
+        default: () => <m.ReactQueryDevtools initialIsOpen={false} />,
+      }))
+    )
+  : null
+
 // Render the React application immediately to prevent blocking LCP (Largest Contentful Paint)
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -45,7 +53,12 @@ createRoot(document.getElementById('root')).render(
         <BrowserRouter>
           <QueryClientProvider client={queryClient}>
             <App />
-            {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+            {/* ReactQueryDevtools: only loads in dev, completely excluded from production bundle */}
+            {import.meta.env.DEV && DevtoolsLoader && (
+              <Suspense fallback={null}>
+                <DevtoolsLoader />
+              </Suspense>
+            )}
           </QueryClientProvider>
         </BrowserRouter>
       </HelmetProvider>

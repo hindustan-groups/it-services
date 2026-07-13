@@ -64,7 +64,6 @@ app.use('/api', globalLimiter) // 100 requests per minute
 app.use('/api', apiLimiter) // 500 requests per 15 mins (secondary relaxed defense)
 
 // ── 5. Routes ─────────────────────────────────────────────────
-app.use('/api/health', healthRouter)
 app.use('/api/services', servicesRouter)
 app.use('/api/projects', projectsRouter)
 app.use('/api/team', teamRouter)
@@ -80,7 +79,6 @@ app.use('/api/blog', blogRouter)
 app.use('/api', contentRouter)
 app.use('/api', monitoringRouter)
 app.use('/sitemap.xml', sitemapRouter)
-app.get('/sitemap.xml', sitemapRouter)
 
 // ── 6. 404 + Error handlers ───────────────────────────────────
 app.use(notFound)

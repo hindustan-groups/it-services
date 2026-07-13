@@ -18,11 +18,11 @@ import { usePartners, useSiteSettings } from '@/hooks/useContent'
 import { api } from '@/utils/api'
 
 const FALLBACK_PARTNERS = [
-  { id: '1', name: 'Bhilwara Textiles' },
-  { id: '2', name: 'Jaipur Crafts' },
-  { id: '3', name: 'Singhal Marbles' },
-  { id: '4', name: 'Rajasthan Polytech' },
-  { id: '5', name: 'RetailHub' },
+  { id: '1', name: 'Local Business 1' },
+  { id: '2', name: 'Local Business 2' },
+  { id: '3', name: 'Local Business 3' },
+  { id: '4', name: 'Local Business 4' },
+  { id: '5', name: 'Local Business 5' },
 ]
 
 /**
@@ -33,6 +33,7 @@ export default function HomePage() {
   const [email, setEmail] = useState('')
   const [service, setService] = useState('Web Development')
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const { data: partnersData } = usePartners()
   const { data: settingsData } = useSiteSettings()
@@ -45,20 +46,30 @@ export default function HomePage() {
     e.preventDefault()
     if (!name || !email) return
     setSubmitting(true)
+    setSubmitError(false)
     try {
+      // Get reCAPTCHA v3 token if available, otherwise skip (honeypot _hp field handles spam)
+      let recaptchaToken = null
+      if (window.grecaptcha) {
+        const siteKey = document.querySelector('meta[name="recaptcha-site-key"]')?.content
+        if (siteKey) {
+          recaptchaToken = await window.grecaptcha.execute(siteKey, { action: 'homepage_quote' })
+        }
+      }
       await api.post('/contact', {
         name,
         email,
         serviceInterested: service,
         message: `Quick quote request from homepage for: ${service}`,
-        recaptchaToken: 'dev-token',
+        recaptchaToken,
         _hp: '',
       })
+      setSubmitted(true)
     } catch {
-      /* silent — UX first */
+      setSubmitError(true)
+    } finally {
+      setSubmitting(false)
     }
-    setSubmitted(true)
-    setSubmitting(false)
   }
 
   return (
@@ -70,8 +81,8 @@ export default function HomePage() {
       />
       <HeroSection />
 
-      {/* ── Partner Logos Banner ── */}
-      <section className="py-12 bg-white border-b border-gray-100" aria-label="Our Partners">
+      {/* ── Partner Logos Banner — decorative, screen readers skip ── */}
+      <section className="py-12 bg-white border-b border-gray-100" aria-hidden="true">
         <Container>
           <p className="text-center text-[10px] md:text-xs font-bold text-text-muted tracking-widest uppercase mb-8">
             Trusted By Forward-Thinking Brands & Businesses
@@ -108,14 +119,13 @@ export default function HomePage() {
           background: 'linear-gradient(135deg, #020712 0%, #08173d 100%)',
         }}
       >
-        {/* Background image overlay */}
+        {/* Background gradient overlay (replaces external Unsplash image) */}
         <div
-          className="absolute inset-0 opacity-[0.07]"
+          className="absolute inset-0 opacity-[0.06]"
           style={{
             backgroundImage:
-              'url(https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400&q=60&auto=format&fit=crop)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+              'linear-gradient(45deg, #1a3e8c 0%, #0d2460 50%, #1a3e8c 100%)',
+            backgroundSize: '200% 200%',
           }}
           aria-hidden="true"
         />
@@ -140,7 +150,7 @@ export default function HomePage() {
             <div className="bg-slate-900/80 border border-white/15 backdrop-blur-lg rounded-2xl p-6 lg:p-7 max-w-md lg:ml-auto w-full shadow-2xl">
               <div className="space-y-4">
                 {submitted ? (
-                  <div className="text-center py-5 space-y-3">
+                  <div className="text-center py-5 space-y-3" role="alert" aria-live="polite">
                     <div className="w-11 h-11 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400 font-bold text-lg">
                       ✓
                     </div>
@@ -152,16 +162,35 @@ export default function HomePage() {
                       within 2 hours.
                     </p>
                   </div>
+                ) : submitError ? (
+                  <div className="text-center py-5 space-y-3" role="alert" aria-live="assertive">
+                    <div className="w-11 h-11 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto text-red-400 font-bold text-lg">
+                      ✕
+                    </div>
+                    <h3 className="font-heading text-base font-bold text-red-400">
+                      Something Went Wrong
+                    </h3>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Sorry, we couldn&apos;t send your message. Please try again or contact us directly.
+                    </p>
+                    <button
+                      onClick={() => setSubmitError(false)}
+                      className="text-xs text-brand-red-light underline cursor-pointer"
+                    >
+                      Try again
+                    </button>
+                  </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-3">
                     <h3 className="font-heading text-sm font-bold mb-2 uppercase tracking-wider text-center" style={{ color: '#ffffff' }}>
                       Request a Free Quote
                     </h3>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1">
+                      <label htmlFor="quote-name" className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1">
                         Your Name
                       </label>
                       <input
+                        id="quote-name"
                         type="text"
                         required
                         value={name}
@@ -171,10 +200,11 @@ export default function HomePage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1">
+                      <label htmlFor="quote-email" className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1">
                         Your Email
                       </label>
                       <input
+                        id="quote-email"
                         type="email"
                         required
                         value={email}
@@ -184,17 +214,18 @@ export default function HomePage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1">
+                      <label htmlFor="quote-service" className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-1">
                         Service Needed
                       </label>
                       <select
+                        id="quote-service"
                         value={service}
                         onChange={(e) => setService(e.target.value)}
                         className="w-full bg-slate-950 border border-white/10 rounded-lg px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-red-light transition-all cursor-pointer"
                       >
                         <option value="Web Development">Web Development</option>
                         <option value="App Development">Mobile App Development</option>
-                        <option value="Digital Marketing">Digital Marketing & SEO</option>
+                        <option value="Digital Marketing">Digital Marketing &amp; SEO</option>
                         <option value="E-Commerce Solutions">E-Commerce Solutions</option>
                       </select>
                     </div>

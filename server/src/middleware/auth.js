@@ -70,7 +70,19 @@ export const requireRole =
  * if the request lacks a valid token.
  */
 export const hideAdminRoutes = (req, res, next) => {
-  const secretPath = process.env.ADMIN_SECRET_PATH || 'secure-hp-portal-2026'
+  const secretPath = process.env.ADMIN_SECRET_PATH
+
+  // CRITICAL: ADMIN_SECRET_PATH must be set in production
+  if (!secretPath) {
+    console.error(
+      '[SECURITY] ADMIN_SECRET_PATH env var is not set! All admin routes are blocked for safety.'
+    )
+    return res.status(404).json({
+      status: 'error',
+      message: `Cannot ${req.method} ${req.originalUrl}`,
+    })
+  }
+
   const cleanUrl = req.originalUrl.split('?')[0]
 
   // Public/login paths allowed to bypass the stealth 404 filter
