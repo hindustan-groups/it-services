@@ -106,7 +106,7 @@ cd server && npm run dev
 
 - 🌐 Main Org: [hindustan-groups](https://github.com/hindustan-groups)  
 - 📂 All Projects: [hindustan-projects](https://github.com/hindustan-groups/hindustan-projects)  
-- 📧 Email: your-hindustanprojectsofficial@gmail.com  
+- 📧 Email: info@hindustanprojects.in
 - 📱 Phone: +91-7597000601  
 
 ---
