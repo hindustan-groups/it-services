@@ -4,7 +4,7 @@
  * Theme: Brand-blue sidebar + white content (no dark mode)
  */
 import { useState, useEffect, useRef } from 'react'
-import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate, useLocation, Link } from 'react-router-dom'
 import {
   LayoutDashboard,
   MessageSquare,
@@ -33,6 +33,8 @@ import {
   History,
   Activity,
   Newspaper,
+  Search,
+  Loader2,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 import { useQuery } from '@tanstack/react-query'
@@ -132,6 +134,13 @@ export default function AdminLayout() {
   const notifRef = useRef(null)
   const avatarRef = useRef(null)
 
+  // Global search state
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState(null)
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const searchRef = useRef(null)
+
   // Auto-close dropdowns and sidebar on route change
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -159,6 +168,9 @@ export default function AdminLayout() {
       if (avatarOpen && avatarRef.current && !avatarRef.current.contains(event.target)) {
         setAvatarOpen(false)
       }
+      if (searchOpen && searchRef.current && !searchRef.current.contains(event.target)) {
+        setSearchOpen(false)
+      }
     }
     document.addEventListener('mousedown', handleClickOutside)
     document.addEventListener('touchstart', handleClickOutside)
@@ -166,7 +178,27 @@ export default function AdminLayout() {
       document.removeEventListener('mousedown', handleClickOutside)
       document.removeEventListener('touchstart', handleClickOutside)
     }
-  }, [notifOpen, avatarOpen])
+  }, [notifOpen, avatarOpen, searchOpen])
+
+  // Global search debouncing
+  useEffect(() => {
+    if (searchQuery.trim().length < 2) {
+      return
+    }
+
+    const delayDebounce = setTimeout(async () => {
+      try {
+        const res = await api.get(`/admin/search?q=${encodeURIComponent(searchQuery)}`)
+        setSearchResults(res.data)
+      } catch (err) {
+        console.error('Global search error:', err)
+      } finally {
+        setSearchLoading(false)
+      }
+    }, 300)
+
+    return () => clearTimeout(delayDebounce)
+  }, [searchQuery])
 
   const currentTitle = PAGE_TITLES[location.pathname] || 'Admin'
 
@@ -417,6 +449,83 @@ export default function AdminLayout() {
               <ChevronRight className="w-3.5 h-3.5 text-gray-300 hidden sm:inline" />
               <span className="font-semibold text-gray-800">{currentTitle}</span>
             </div>
+          </div>
+
+          {/* Global Search Bar (Admin only) */}
+          <div ref={searchRef} className="relative hidden md:block w-72 max-w-xs z-30">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search leads, tasks, blog..."
+                value={searchQuery}
+                onChange={(e) => {
+                  const val = e.target.value
+                  setSearchQuery(val)
+                  setSearchOpen(true)
+                  if (val.trim().length < 2) {
+                    setSearchResults(null)
+                    setSearchLoading(false)
+                  } else {
+                    setSearchLoading(true)
+                  }
+                }}
+                onFocus={() => setSearchOpen(true)}
+                className="w-full pl-9 pr-8 py-1.5 text-xs border border-gray-250 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all"
+              />
+              {searchLoading && (
+                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 animate-spin" />
+              )}
+            </div>
+
+            {/* Floating Dropdown Results */}
+            {searchOpen && searchResults && (
+              <div className="absolute left-0 mt-1.5 w-[360px] bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col max-h-[400px]">
+                <div className="px-4 py-2 border-b border-gray-150 bg-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                  Search Results
+                </div>
+                <div className="overflow-y-auto divide-y divide-gray-100 scrollbar-thin">
+                  {Object.keys(searchResults).every(k => searchResults[k].length === 0) ? (
+                    <div className="p-4 text-center text-xs text-gray-400">
+                      No results found for "{searchQuery}"
+                    </div>
+                  ) : (
+                    Object.entries(searchResults).map(([category, items]) => {
+                      if (items.length === 0) return null
+                      return (
+                        <div key={category} className="py-2">
+                          <div className="px-4 py-1 text-[10px] font-bold text-brand-blue uppercase tracking-wide">
+                            {category === 'leads' ? 'Contact Leads' :
+                             category === 'projects' ? 'Client Projects' :
+                             category === 'tasks' ? 'Work Tasks' :
+                             category === 'blog' ? 'Blog Posts' :
+                             category === 'team' ? 'Team Members' : category}
+                          </div>
+                          {items.map((item) => (
+                            <Link
+                              key={item.id}
+                              to={item.route}
+                              onClick={() => {
+                                setSearchOpen(false)
+                                setSearchQuery('')
+                              }}
+                              className="block px-4 py-2 hover:bg-slate-50 transition-colors text-left"
+                            >
+                              <div className="text-xs font-semibold text-gray-800 line-clamp-1">
+                                {item.title}
+                              </div>
+                              <div className="text-[10px] text-gray-400 mt-0.5 line-clamp-1">
+                                {item.subtitle}
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      )
+                    })
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-2">

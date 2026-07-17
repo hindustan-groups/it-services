@@ -71,7 +71,7 @@ export default function ClientProjectDetailPage() {
 
   const tasks = project.tasks || []
   const completedTasks = tasks.filter((t) => t.status === 'DONE')
-  const pendingTasks = tasks.filter((t) => t.status !== 'DONE')
+
 
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString(undefined, {
