@@ -4,6 +4,7 @@
 import prisma from '../config/db.js'
 import { getCache, setCache, deleteCacheByPrefix } from '../utils/cache.js'
 import { createHash } from 'crypto'
+import { logActivity } from '../utils/activity.js'
 
 const CACHE_SHORT = 'public, max-age=300, stale-while-revalidate=60'
 const CACHE_LONG = 'public, max-age=3600, stale-while-revalidate=300'
@@ -380,6 +381,7 @@ export const adminCreatePost = async (req, res, next) => {
     })
 
     deleteCacheByPrefix('blog:')
+    await logActivity(req, 'CREATE', 'BlogPost', `Created blog post '${post.title}'`)
     res.status(201).json({ status: 'ok', data: post })
   } catch (err) {
     next(err)
@@ -435,6 +437,7 @@ export const adminUpdatePost = async (req, res, next) => {
     })
 
     deleteCacheByPrefix('blog:')
+    await logActivity(req, 'UPDATE', 'BlogPost', `Updated blog post '${post.title}'`)
     res.json({ status: 'ok', data: post })
   } catch (err) {
     next(err)
@@ -447,8 +450,12 @@ export const adminUpdatePost = async (req, res, next) => {
 export const adminDeletePost = async (req, res, next) => {
   try {
     const { id } = req.params
-    await prisma.blogPost.delete({ where: { id } })
-    deleteCacheByPrefix('blog:')
+    const post = await prisma.blogPost.findUnique({ where: { id } })
+    if (post) {
+      await prisma.blogPost.delete({ where: { id } })
+      deleteCacheByPrefix('blog:')
+      await logActivity(req, 'DELETE', 'BlogPost', `Deleted blog post '${post.title}'`)
+    }
     res.json({ status: 'ok', message: 'Blog post deleted.' })
   } catch (err) {
     next(err)
@@ -492,6 +499,13 @@ export const adminApproveComment = async (req, res, next) => {
       data: { isApproved: Boolean(isApproved) },
     })
 
+    await logActivity(
+      req,
+      'UPDATE',
+      'BlogComment',
+      `${isApproved ? 'Approved' : 'Rejected'} comment by '${comment.name}' on blog post ID ${comment.blogPostId}`
+    )
+
     res.json({ status: 'ok', data: comment })
   } catch (err) {
     next(err)
@@ -504,7 +518,16 @@ export const adminApproveComment = async (req, res, next) => {
 export const adminDeleteComment = async (req, res, next) => {
   try {
     const { id } = req.params
-    await prisma.blogComment.delete({ where: { id } })
+    const comment = await prisma.blogComment.findUnique({ where: { id } })
+    if (comment) {
+      await prisma.blogComment.delete({ where: { id } })
+      await logActivity(
+        req,
+        'DELETE',
+        'BlogComment',
+        `Deleted comment by '${comment.name}' on blog post ID ${comment.blogPostId}`
+      )
+    }
     res.json({ status: 'ok', message: 'Comment deleted.' })
   } catch (err) {
     next(err)

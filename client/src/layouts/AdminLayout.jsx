@@ -80,9 +80,9 @@ const NAV_GROUPS = [
     label: 'Settings',
     items: [
       { to: '/admin/site-settings', icon: SlidersHorizontal, label: 'Site Settings' },
-      { to: '/admin/integrations', icon: Plug, label: 'Integrations', badge: 'key' },
-      { to: '/admin/monitoring', icon: Activity, label: 'Monitoring', badge: 'live' },
-      { to: '/admin/backup', icon: Database, label: 'Data Backup', badge: 'dl' },
+      { to: '/admin/integrations', icon: Plug, label: 'Integrations', badge: 'key', roles: ['SUPER_ADMIN'] },
+      { to: '/admin/monitoring', icon: Activity, label: 'Monitoring', badge: 'live', roles: ['SUPER_ADMIN'] },
+      { to: '/admin/backup', icon: Database, label: 'Data Backup', badge: 'dl', roles: ['SUPER_ADMIN'] },
       { to: '/admin/settings', icon: Settings, label: 'Account' },
     ],
   },
@@ -298,58 +298,69 @@ export default function AdminLayout() {
           style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.15) transparent' }}
           aria-label="Admin navigation"
         >
-          {NAV_GROUPS.map((group) => (
-            <div key={group.label}>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 px-3 mb-1.5">
-                {group.label}
-              </p>
-              <div className="space-y-0.5">
-                {group.items.map(({ to, icon: Icon, label, badge }) => (
-                  <NavLink
-                    key={to}
-                    to={to}
-                    onClick={() => setSidebarOpen(false)}
-                    className={({ isActive }) =>
-                      `relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
-                      transition-all duration-150 group ${
-                        isActive
-                          ? 'bg-white/15 text-white shadow-sm'
-                          : 'text-white/60 hover:bg-white/8 hover:text-white/90'
-                      }`
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        {isActive && (
-                          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-brand-red rounded-full" />
-                        )}
-                        <Icon className="w-4 h-4 shrink-0" />
-                        <span className="flex-1">{label}</span>
-                        {badge === 'new' && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
-                        )}
-                        {badge === 'key' && (
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30 shrink-0 tracking-wide">
-                            API
-                          </span>
-                        )}
-                        {badge === 'dl' && (
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 shrink-0 tracking-wide">
-                            ↓
-                          </span>
-                        )}
-                        {badge === 'comments' && pendingBlogCommentsCount > 0 && (
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-400/30 text-amber-200 border border-amber-400/30 shrink-0">
-                            {pendingBlogCommentsCount}
-                          </span>
-                        )}
-                      </>
-                    )}
-                  </NavLink>
-                ))}
+          {NAV_GROUPS.map((group) => {
+            const visibleItems = group.items.filter((item) => {
+              if (item.roles && !item.roles.includes(admin.role)) {
+                return false
+              }
+              return true
+            })
+
+            if (visibleItems.length === 0) return null
+
+            return (
+              <div key={group.label}>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 px-3 mb-1.5">
+                  {group.label}
+                </p>
+                <div className="space-y-0.5">
+                  {visibleItems.map(({ to, icon: Icon, label, badge }) => (
+                    <NavLink
+                      key={to}
+                      to={to}
+                      onClick={() => setSidebarOpen(false)}
+                      className={({ isActive }) =>
+                        `relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
+                        transition-all duration-150 group ${
+                          isActive
+                            ? 'bg-white/15 text-white shadow-sm'
+                            : 'text-white/60 hover:bg-white/8 hover:text-white/90'
+                        }`
+                      }
+                    >
+                      {({ isActive }) => (
+                        <>
+                          {isActive && (
+                            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-brand-red rounded-full" />
+                          )}
+                          <Icon className="w-4 h-4 shrink-0" />
+                          <span className="flex-1">{label}</span>
+                          {badge === 'new' && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
+                          )}
+                          {badge === 'key' && (
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30 shrink-0 tracking-wide">
+                              API
+                            </span>
+                          )}
+                          {badge === 'dl' && (
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 shrink-0 tracking-wide">
+                              ↓
+                            </span>
+                          )}
+                          {badge === 'comments' && pendingBlogCommentsCount > 0 && (
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-400/30 text-amber-200 border border-amber-400/30 shrink-0">
+                              {pendingBlogCommentsCount}
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </NavLink>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </nav>
 
         {/* ── User + logout ── */}

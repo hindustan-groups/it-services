@@ -2,6 +2,7 @@
  * adminProjects.controller.js — Admin CRUD for Projects
  */
 import prisma from '../config/db.js'
+import { logActivity } from '../utils/activity.js'
 
 /**
  * Automatically generates a pre-formatted social media post draft when a project is marked featured.
@@ -72,6 +73,9 @@ export const createProject = async (req, res, next) => {
         console.error('[SocialDraft] Generation failed:', err.message)
       )
     }
+    
+    await logActivity(req, 'CREATE', 'Project', `Created project '${project.title}'`)
+    
     res.status(201).json({ status: 'ok', data: project })
   } catch (err) {
     next(err)
@@ -87,6 +91,9 @@ export const updateProject = async (req, res, next) => {
         console.error('[SocialDraft] Generation failed:', err.message)
       )
     }
+    
+    await logActivity(req, 'UPDATE', 'Project', `Updated project '${project.title}'`)
+    
     res.json({ status: 'ok', data: project })
   } catch (err) {
     next(err)
@@ -95,7 +102,12 @@ export const updateProject = async (req, res, next) => {
 
 export const deleteProject = async (req, res, next) => {
   try {
-    await prisma.project.delete({ where: { id: req.params.id } })
+    const { id } = req.params
+    const project = await prisma.project.findUnique({ where: { id } })
+    if (project) {
+      await prisma.project.delete({ where: { id } })
+      await logActivity(req, 'DELETE', 'Project', `Deleted project '${project.title}'`)
+    }
     res.json({ status: 'ok', message: 'Project deleted.' })
   } catch (err) {
     next(err)

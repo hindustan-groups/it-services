@@ -100,6 +100,225 @@ import {
   checkUnlockToken,
 } from '../controllers/integration.controller.js'
 
+// ── CMS Validation Schemas ─────────────────────────────────────
+
+// Services
+const serviceCreateValidation = [
+  body('title').trim().notEmpty().withMessage('Title is required.').isLength({ max: 100 }).escape(),
+  body('slug')
+    .trim()
+    .notEmpty()
+    .withMessage('Slug is required.')
+    .matches(/^[a-z0-9-]+$/)
+    .withMessage('Slug can only contain lowercase letters, numbers, and hyphens.')
+    .isLength({ max: 100 }),
+  body('shortDescription').trim().notEmpty().withMessage('Short description is required.').isLength({ max: 300 }).escape(),
+  body('fullDescription').trim().notEmpty().withMessage('Full description is required.').isLength({ max: 5000 }),
+  body('icon').trim().notEmpty().withMessage('Icon is required.').isLength({ max: 50 }).escape(),
+  body('order').optional().isInt({ min: 0 }).toInt(),
+  body('isActive').optional().isBoolean().toBoolean(),
+  body('tag').optional({ checkFalsy: true }).trim().isLength({ max: 50 }).escape(),
+  body('deliveryTime').optional({ checkFalsy: true }).trim().isLength({ max: 50 }).escape(),
+  body('techStack').optional().isArray().custom((arr) => arr.every((item) => typeof item === 'string')),
+  body('keyFeatures').optional().isArray().custom((arr) => arr.every((item) => typeof item === 'string')),
+  body('colorFrom').optional({ checkFalsy: true }).trim().isLength({ max: 50 }).escape(),
+  body('colorTo').optional({ checkFalsy: true }).trim().isLength({ max: 50 }).escape(),
+]
+
+const serviceUpdateValidation = [
+  body('title').optional().trim().notEmpty().withMessage('Title cannot be empty.').isLength({ max: 100 }).escape(),
+  body('slug')
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage('Slug cannot be empty.')
+    .matches(/^[a-z0-9-]+$/)
+    .withMessage('Slug can only contain lowercase letters, numbers, and hyphens.')
+    .isLength({ max: 100 }),
+  body('shortDescription').optional().trim().notEmpty().withMessage('Short description cannot be empty.').isLength({ max: 300 }).escape(),
+  body('fullDescription').optional().trim().notEmpty().withMessage('Full description cannot be empty.').isLength({ max: 5000 }),
+  body('icon').optional().trim().notEmpty().withMessage('Icon cannot be empty.').isLength({ max: 50 }).escape(),
+  body('order').optional().isInt({ min: 0 }).toInt(),
+  body('isActive').optional().isBoolean().toBoolean(),
+  body('tag').optional({ checkFalsy: true }).trim().isLength({ max: 50 }).escape(),
+  body('deliveryTime').optional({ checkFalsy: true }).trim().isLength({ max: 50 }).escape(),
+  body('techStack').optional().isArray().custom((arr) => arr.every((item) => typeof item === 'string')),
+  body('keyFeatures').optional().isArray().custom((arr) => arr.every((item) => typeof item === 'string')),
+  body('colorFrom').optional({ checkFalsy: true }).trim().isLength({ max: 50 }).escape(),
+  body('colorTo').optional({ checkFalsy: true }).trim().isLength({ max: 50 }).escape(),
+]
+
+// Projects
+const projectCreateValidation = [
+  body('title').trim().notEmpty().withMessage('Title is required.').isLength({ max: 150 }).escape(),
+  body('slug')
+    .trim()
+    .notEmpty()
+    .withMessage('Slug is required.')
+    .matches(/^[a-z0-9-]+$/)
+    .withMessage('Slug can only contain lowercase letters, numbers, and hyphens.')
+    .isLength({ max: 150 }),
+  body('clientName').trim().notEmpty().withMessage('Client name is required.').isLength({ max: 150 }).escape(),
+  body('description').trim().notEmpty().withMessage('Description is required.').isLength({ max: 2000 }).escape(),
+  body('thumbnailUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('Thumbnail URL must be valid.').isLength({ max: 1000 }),
+  body('images').optional().isArray().custom((arr) => arr.every((item) => typeof item === 'string')),
+  body('technologies').optional().isArray().custom((arr) => arr.every((item) => typeof item === 'string')),
+  body('category').trim().notEmpty().withMessage('Category is required.').isLength({ max: 50 }).escape(),
+  body('isFeatured').optional().isBoolean().toBoolean(),
+  body('liveUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('Live URL must be valid.').isLength({ max: 1000 }),
+]
+
+const projectUpdateValidation = [
+  body('title').optional().trim().notEmpty().withMessage('Title cannot be empty.').isLength({ max: 150 }).escape(),
+  body('slug')
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage('Slug cannot be empty.')
+    .matches(/^[a-z0-9-]+$/)
+    .withMessage('Slug can only contain lowercase letters, numbers, and hyphens.')
+    .isLength({ max: 150 }),
+  body('clientName').optional().trim().notEmpty().withMessage('Client name cannot be empty.').isLength({ max: 150 }).escape(),
+  body('description').optional().trim().notEmpty().withMessage('Description cannot be empty.').isLength({ max: 2000 }).escape(),
+  body('thumbnailUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('Thumbnail URL must be valid.').isLength({ max: 1000 }),
+  body('images').optional().isArray().custom((arr) => arr.every((item) => typeof item === 'string')),
+  body('technologies').optional().isArray().custom((arr) => arr.every((item) => typeof item === 'string')),
+  body('category').optional().trim().notEmpty().withMessage('Category cannot be empty.').isLength({ max: 50 }).escape(),
+  body('isFeatured').optional().isBoolean().toBoolean(),
+  body('liveUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('Live URL must be valid.').isLength({ max: 1000 }),
+]
+
+// Team Members
+const teamCreateValidation = [
+  body('name').trim().notEmpty().withMessage('Name is required.').isLength({ max: 100 }).escape(),
+  body('role').trim().notEmpty().withMessage('Role is required.').isLength({ max: 100 }).escape(),
+  body('photoUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('Photo URL must be valid.').isLength({ max: 1000 }),
+  body('bio').optional({ checkFalsy: true }).trim().isLength({ max: 1000 }).escape(),
+  body('linkedinUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('LinkedIn URL must be valid.').isLength({ max: 1000 }),
+  body('order').optional().isInt({ min: 0 }).toInt(),
+]
+
+const teamUpdateValidation = [
+  body('name').optional().trim().notEmpty().withMessage('Name cannot be empty.').isLength({ max: 100 }).escape(),
+  body('role').optional().trim().notEmpty().withMessage('Role cannot be empty.').isLength({ max: 100 }).escape(),
+  body('photoUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('Photo URL must be valid.').isLength({ max: 1000 }),
+  body('bio').optional({ checkFalsy: true }).trim().isLength({ max: 1000 }).escape(),
+  body('linkedinUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('LinkedIn URL must be valid.').isLength({ max: 1000 }),
+  body('order').optional().isInt({ min: 0 }).toInt(),
+]
+
+// Testimonials
+const testimonialCreateValidation = [
+  body('name').trim().notEmpty().withMessage('Name is required.').isLength({ max: 100 }).escape(),
+  body('role').trim().notEmpty().withMessage('Role is required.').isLength({ max: 100 }).escape(),
+  body('company').trim().notEmpty().withMessage('Company is required.').isLength({ max: 100 }).escape(),
+  body('text').trim().notEmpty().withMessage('Testimonial text is required.').isLength({ max: 1000 }).escape(),
+  body('rating').optional().isInt({ min: 1, max: 5 }).toInt(),
+  body('avatarUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('Avatar URL must be valid.').isLength({ max: 1000 }),
+  body('isActive').optional().isBoolean().toBoolean(),
+  body('order').optional().isInt({ min: 0 }).toInt(),
+]
+
+const testimonialUpdateValidation = [
+  body('name').optional().trim().notEmpty().withMessage('Name cannot be empty.').isLength({ max: 100 }).escape(),
+  body('role').optional().trim().notEmpty().withMessage('Role cannot be empty.').isLength({ max: 100 }).escape(),
+  body('company').optional().trim().notEmpty().withMessage('Company cannot be empty.').isLength({ max: 100 }).escape(),
+  body('text').optional().trim().notEmpty().withMessage('Testimonial text cannot be empty.').isLength({ max: 1000 }).escape(),
+  body('rating').optional().isInt({ min: 1, max: 5 }).toInt(),
+  body('avatarUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('Avatar URL must be valid.').isLength({ max: 1000 }),
+  body('isActive').optional().isBoolean().toBoolean(),
+  body('order').optional().isInt({ min: 0 }).toInt(),
+]
+
+// FAQs
+const faqCreateValidation = [
+  body('question').trim().notEmpty().withMessage('Question is required.').isLength({ max: 500 }).escape(),
+  body('answer').trim().notEmpty().withMessage('Answer is required.').isLength({ max: 2000 }).escape(),
+  body('order').optional().isInt({ min: 0 }).toInt(),
+  body('isActive').optional().isBoolean().toBoolean(),
+]
+
+const faqUpdateValidation = [
+  body('question').optional().trim().notEmpty().withMessage('Question cannot be empty.').isLength({ max: 500 }).escape(),
+  body('answer').optional().trim().notEmpty().withMessage('Answer cannot be empty.').isLength({ max: 2000 }).escape(),
+  body('order').optional().isInt({ min: 0 }).toInt(),
+  body('isActive').optional().isBoolean().toBoolean(),
+]
+
+// Milestones
+const milestoneCreateValidation = [
+  body('year').trim().notEmpty().withMessage('Year is required.').isLength({ max: 10 }).escape(),
+  body('title').trim().notEmpty().withMessage('Title is required.').isLength({ max: 150 }).escape(),
+  body('desc').trim().notEmpty().withMessage('Description is required.').isLength({ max: 500 }).escape(),
+  body('order').optional().isInt({ min: 0 }).toInt(),
+]
+
+const milestoneUpdateValidation = [
+  body('year').optional().trim().notEmpty().withMessage('Year cannot be empty.').isLength({ max: 10 }).escape(),
+  body('title').optional().trim().notEmpty().withMessage('Title cannot be empty.').isLength({ max: 150 }).escape(),
+  body('desc').optional().trim().notEmpty().withMessage('Description cannot be empty.').isLength({ max: 500 }).escape(),
+  body('order').optional().isInt({ min: 0 }).toInt(),
+]
+
+// Partners
+const partnerCreateValidation = [
+  body('name').trim().notEmpty().withMessage('Name is required.').isLength({ max: 100 }).escape(),
+  body('logoUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('Logo URL must be valid.').isLength({ max: 1000 }),
+  body('order').optional().isInt({ min: 0 }).toInt(),
+  body('isActive').optional().isBoolean().toBoolean(),
+]
+
+const partnerUpdateValidation = [
+  body('name').optional().trim().notEmpty().withMessage('Name cannot be empty.').isLength({ max: 100 }).escape(),
+  body('logoUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('Logo URL must be valid.').isLength({ max: 1000 }),
+  body('order').optional().isInt({ min: 0 }).toInt(),
+  body('isActive').optional().isBoolean().toBoolean(),
+]
+
+// Blog Posts
+const blogPostCreateValidation = [
+  body('title').trim().notEmpty().withMessage('Title is required.').isLength({ max: 200 }).escape(),
+  body('slug')
+    .trim()
+    .notEmpty()
+    .withMessage('Slug is required.')
+    .matches(/^[a-z0-9-]+$/)
+    .withMessage('Slug can only contain lowercase letters, numbers, and hyphens.')
+    .isLength({ max: 200 }),
+  body('excerpt').trim().notEmpty().withMessage('Excerpt is required.').isLength({ max: 500 }).escape(),
+  body('content').trim().notEmpty().withMessage('Content is required.').isLength({ max: 50000 }),
+  body('featuredImageUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('Featured Image URL must be valid.').isLength({ max: 1000 }),
+  body('category').trim().notEmpty().withMessage('Category is required.').isLength({ max: 100 }).escape(),
+  body('tags').optional().isArray().custom((arr) => arr.every((item) => typeof item === 'string')),
+  body('authorName').optional({ checkFalsy: true }).trim().isLength({ max: 100 }).escape(),
+  body('status').optional().isIn(['DRAFT', 'PUBLISHED', 'ARCHIVED']).withMessage('Status must be DRAFT, PUBLISHED, or ARCHIVED.'),
+  body('metaTitle').optional({ checkFalsy: true }).trim().isLength({ max: 200 }).escape(),
+  body('metaDescription').optional({ checkFalsy: true }).trim().isLength({ max: 500 }).escape(),
+  body('isFeatured').optional().isBoolean().toBoolean(),
+]
+
+const blogPostUpdateValidation = [
+  body('title').optional().trim().notEmpty().withMessage('Title cannot be empty.').isLength({ max: 200 }).escape(),
+  body('slug')
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage('Slug cannot be empty.')
+    .matches(/^[a-z0-9-]+$/)
+    .withMessage('Slug can only contain lowercase letters, numbers, and hyphens.')
+    .isLength({ max: 200 }),
+  body('excerpt').optional().trim().notEmpty().withMessage('Excerpt cannot be empty.').isLength({ max: 500 }).escape(),
+  body('content').optional().trim().notEmpty().withMessage('Content cannot be empty.').isLength({ max: 50000 }),
+  body('featuredImageUrl').optional({ checkFalsy: true }).trim().isURL().withMessage('Featured Image URL must be valid.').isLength({ max: 1000 }),
+  body('category').optional().trim().notEmpty().withMessage('Category cannot be empty.').isLength({ max: 100 }).escape(),
+  body('tags').optional().isArray().custom((arr) => arr.every((item) => typeof item === 'string')),
+  body('authorName').optional({ checkFalsy: true }).trim().isLength({ max: 100 }).escape(),
+  body('status').optional().isIn(['DRAFT', 'PUBLISHED', 'ARCHIVED']).withMessage('Status must be DRAFT, PUBLISHED, or ARCHIVED.'),
+  body('metaTitle').optional({ checkFalsy: true }).trim().isLength({ max: 200 }).escape(),
+  body('metaDescription').optional({ checkFalsy: true }).trim().isLength({ max: 500 }).escape(),
+  body('isFeatured').optional().isBoolean().toBoolean(),
+]
+
 const router = Router()
 
 // Dynamic admin login route based on secret path
@@ -176,37 +395,102 @@ router.delete('/leads/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteLead)
 
 // ── Services ───────────────────────────────────────────────────
 router.get('/services', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listServices)
-router.post('/services', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), createService)
-router.patch('/services/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateService)
+router.post(
+  '/services',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  serviceCreateValidation,
+  validateRequest,
+  createService
+)
+router.patch(
+  '/services/:id',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  serviceUpdateValidation,
+  validateRequest,
+  updateService
+)
 router.delete('/services/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteService)
 
 // ── Projects ───────────────────────────────────────────────────
 router.get('/projects', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listProjects)
-router.post('/projects', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), createProject)
-router.patch('/projects/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateProject)
+router.post(
+  '/projects',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  projectCreateValidation,
+  validateRequest,
+  createProject
+)
+router.patch(
+  '/projects/:id',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  projectUpdateValidation,
+  validateRequest,
+  updateProject
+)
 router.delete('/projects/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteProject)
 
 // ── Team ───────────────────────────────────────────────────────
 router.get('/team', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listTeam)
-router.post('/team', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), createTeamMember)
-router.patch('/team/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateTeamMember)
+router.post(
+  '/team',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  teamCreateValidation,
+  validateRequest,
+  createTeamMember
+)
+router.patch(
+  '/team/:id',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  teamUpdateValidation,
+  validateRequest,
+  updateTeamMember
+)
 router.delete('/team/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteTeamMember)
 
 // ── Testimonials ───────────────────────────────────────────────
 router.get('/testimonials', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listTestimonials)
-router.post('/testimonials', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), createTestimonial)
+router.post(
+  '/testimonials',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  testimonialCreateValidation,
+  validateRequest,
+  createTestimonial
+)
 router.patch(
   '/testimonials/:id',
   verifyToken,
   requireRole('ADMIN', 'SUPER_ADMIN'),
+  testimonialUpdateValidation,
+  validateRequest,
   updateTestimonial
 )
 router.delete('/testimonials/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteTestimonial)
 
 // ── FAQs ───────────────────────────────────────────────────────
 router.get('/faqs', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listFaqs)
-router.post('/faqs', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), createFaq)
-router.patch('/faqs/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateFaq)
+router.post(
+  '/faqs',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  faqCreateValidation,
+  validateRequest,
+  createFaq
+)
+router.patch(
+  '/faqs/:id',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  faqUpdateValidation,
+  validateRequest,
+  updateFaq
+)
 router.delete('/faqs/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteFaq)
 
 // ── Site Settings ──────────────────────────────────────────────
@@ -218,14 +502,42 @@ router.put('/legal/:pageType', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'),
 
 // ── Milestones ─────────────────────────────────────────────────
 router.get('/milestones', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), getMilestones)
-router.post('/milestones', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), createMilestone)
-router.patch('/milestones/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateMilestone)
+router.post(
+  '/milestones',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  milestoneCreateValidation,
+  validateRequest,
+  createMilestone
+)
+router.patch(
+  '/milestones/:id',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  milestoneUpdateValidation,
+  validateRequest,
+  updateMilestone
+)
 router.delete('/milestones/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteMilestone)
 
 // ── Partners ───────────────────────────────────────────────────
 router.get('/partners', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listPartners)
-router.post('/partners', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), createPartner)
-router.patch('/partners/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updatePartner)
+router.post(
+  '/partners',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  partnerCreateValidation,
+  validateRequest,
+  createPartner
+)
+router.patch(
+  '/partners/:id',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  partnerUpdateValidation,
+  validateRequest,
+  updatePartner
+)
 router.delete('/partners/:id', verifyToken, requireRole('SUPER_ADMIN'), deletePartner)
 
 // ── Careers ────────────────────────────────────────────────────
@@ -278,8 +590,22 @@ router.get('/activities', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), list
 router.get('/blog', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), adminListPosts)
 router.get('/blog/comments', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), adminListComments)
 router.get('/blog/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), adminGetPost)
-router.post('/blog', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), adminCreatePost)
-router.patch('/blog/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), adminUpdatePost)
+router.post(
+  '/blog',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  blogPostCreateValidation,
+  validateRequest,
+  adminCreatePost
+)
+router.patch(
+  '/blog/:id',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  blogPostUpdateValidation,
+  validateRequest,
+  adminUpdatePost
+)
 router.delete('/blog/:id', verifyToken, requireRole('SUPER_ADMIN'), adminDeletePost)
 router.patch('/blog/comments/:id/approve', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), adminApproveComment)
 router.delete('/blog/comments/:id', verifyToken, requireRole('SUPER_ADMIN'), adminDeleteComment)
