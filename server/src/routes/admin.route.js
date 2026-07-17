@@ -99,6 +99,12 @@ import {
   verifyIntegrationKey,
   checkUnlockToken,
 } from '../controllers/integration.controller.js'
+import {
+  listAdminUsers,
+  createAdminUser,
+  updateAdminUser,
+  deleteAdminUser,
+} from '../controllers/adminUsers.controller.js'
 
 // ── CMS Validation Schemas ─────────────────────────────────────
 
@@ -386,10 +392,10 @@ router.post(
 router.get('/master-key-hint', verifyToken, requireRole('SUPER_ADMIN'), getMasterKeyHint)
 
 // ── Dashboard stats ────────────────────────────────────────────
-router.get('/stats', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), getDashboardStats)
+router.get('/stats', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), getDashboardStats)
 
 // ── Leads ──────────────────────────────────────────────────────
-router.get('/leads', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), getLeads)
+router.get('/leads', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), getLeads)
 router.patch('/leads/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateLeadStatus)
 router.delete('/leads/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteLead)
 
@@ -496,6 +502,12 @@ router.delete('/faqs/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteFaq)
 // ── Site Settings ──────────────────────────────────────────────
 router.patch('/settings', verifyToken, requireRole('SUPER_ADMIN'), updateSettings)
 
+// ── Admin & Staff User Management ──────────────────────────────
+router.get('/users', verifyToken, requireRole('SUPER_ADMIN'), listAdminUsers)
+router.post('/users', verifyToken, requireRole('SUPER_ADMIN'), createAdminUser)
+router.patch('/users/:id', verifyToken, requireRole('SUPER_ADMIN'), updateAdminUser)
+router.delete('/users/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteAdminUser)
+
 // ── Legal Pages ────────────────────────────────────────────────
 router.get('/legal', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listLegalPages)
 router.put('/legal/:pageType', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateLegalPage)
@@ -572,16 +584,16 @@ router.patch(
 router.delete('/client-projects/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteClientProject)
 
 // ── Work Tasks ─────────────────────────────────────────────────
-router.get('/tasks', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listTasks)
-router.post('/tasks', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), createTask)
-router.patch('/tasks/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateTask)
-router.delete('/tasks/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteTask)
+router.get('/tasks', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), listTasks)
+router.post('/tasks', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), createTask)
+router.patch('/tasks/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), updateTask)
+router.delete('/tasks/:id', verifyToken, requireRole('SUPER_ADMIN', 'STAFF'), deleteTask)
 
 // ── Quick Notes ────────────────────────────────────────────────
-router.get('/notes', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listNotes)
-router.post('/notes', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), createNote)
-router.patch('/notes/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateNote)
-router.delete('/notes/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), deleteNote)
+router.get('/notes', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), listNotes)
+router.post('/notes', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), createNote)
+router.patch('/notes/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), updateNote)
+router.delete('/notes/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), deleteNote)
 
 // ── Activity Logs ──────────────────────────────────────────────
 router.get('/activities', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listActivities)

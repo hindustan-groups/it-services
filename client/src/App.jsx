@@ -94,6 +94,7 @@ const AdminActivitiesPage = lazyWithRetry(() => import('@/pages/admin/AdminActiv
 const AdminMonitoringPage = lazyWithRetry(() => import('@/pages/admin/AdminMonitoringPage'))
 const AdminBlogPage = lazyWithRetry(() => import('@/pages/admin/AdminBlogPage'))
 const AdminBlogCommentsPage = lazyWithRetry(() => import('@/pages/admin/AdminBlogCommentsPage'))
+const AdminUsersPage = lazyWithRetry(() => import('@/pages/admin/AdminUsersPage'))
 
 export default function App() {
   return (
@@ -178,6 +179,14 @@ export default function App() {
             element={
               <Suspense fallback={<PageFallback />}>
                 <AdminSiteSettingsPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="users"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <AdminUsersPage />
               </Suspense>
             }
           />

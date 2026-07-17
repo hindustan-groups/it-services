@@ -191,6 +191,7 @@ model ContactLead {
 enum AdminRole {
   SUPER_ADMIN
   ADMIN
+  STAFF
 }
 
 model Admin {
@@ -198,6 +199,7 @@ model Admin {
   email            String    @unique
   passwordHash     String
   role             AdminRole @default(ADMIN)
+  isActive         Boolean   @default(true)
   loginAttempts    Int       @default(0)
   lockoutUntil     DateTime?
   refreshToken     String?
@@ -350,6 +352,8 @@ model WorkTask {
   clientProjectId String?
   clientProject   ClientProject? @relation(fields: [clientProjectId], references: [id], onDelete: Cascade)
   tags            String[]
+  creatorId       String?
+  assignedToAdminId String?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
@@ -363,6 +367,7 @@ model QuickNote {
   content   String
   color     String   @default("yellow") // yellow | blue | green | pink | purple
   isPinned  Boolean  @default(false)
+  creatorId String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

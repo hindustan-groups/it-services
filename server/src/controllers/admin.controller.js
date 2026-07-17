@@ -42,6 +42,13 @@ export const adminLogin = async (req, res, next) => {
       return res.status(401).json({ status: 'error', message: 'Invalid credentials.' })
     }
 
+    if (!admin.isActive) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Your account has been deactivated. Please contact your system administrator.',
+      })
+    }
+
     // Check account lockout status
     if (admin.lockoutUntil && new Date() < new Date(admin.lockoutUntil)) {
       const waitTime = Math.ceil((new Date(admin.lockoutUntil) - new Date()) / 60000)
@@ -521,8 +528,56 @@ export const changeMasterKey = async (req, res, next) => {
     next(err)
   }
 }
-export const getDashboardStats = async (_req, res, next) => {
+export const getDashboardStats = async (req, res, next) => {
   try {
+    const isStaff = req.admin.role === 'STAFF'
+    if (isStaff) {
+      const [myTasks, myRecentNotes] = await Promise.all([
+        prisma.workTask.findMany({
+          where: {
+            OR: [
+              { creatorId: req.admin.id },
+              { assignedToAdminId: req.admin.id },
+              { assignedTo: req.admin.email },
+            ],
+          },
+        }),
+        prisma.quickNote.findMany({
+          where: { creatorId: req.admin.id },
+          orderBy: { createdAt: 'desc' },
+          take: 5,
+        }),
+      ])
+
+      const totalTasks = myTasks.length
+      const todoTasks = myTasks.filter((t) => t.status === 'TODO').length
+      const inProgressTasks = myTasks.filter((t) => t.status === 'IN_PROGRESS').length
+      const completedTasks = myTasks.filter((t) => t.status === 'DONE').length
+
+      const todayStart = new Date()
+      todayStart.setHours(0, 0, 0, 0)
+      const todayEnd = new Date()
+      todayEnd.setHours(23, 59, 59, 999)
+      const dueTodayTasksCount = myTasks.filter((t) => {
+        if (!t.dueDate || t.status === 'DONE') return false
+        const d = new Date(t.dueDate)
+        return d >= todayStart && d <= todayEnd
+      }).length
+
+      return res.json({
+        status: 'ok',
+        data: {
+          role: 'STAFF',
+          totalTasks,
+          todoTasks,
+          inProgressTasks,
+          completedTasks,
+          dueTodayTasksCount,
+          recentNotes: myRecentNotes,
+        },
+      })
+    }
+
     const [
       totalLeads,
       newLeads,

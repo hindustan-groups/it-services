@@ -6,7 +6,8 @@ import { logActivity } from '../utils/activity.js'
 
 export const listNotes = async (req, res, next) => {
   try {
-    const notes = await prisma.quickNote.findMany()
+    const where = req.admin.role === 'STAFF' ? { creatorId: req.admin.id } : {}
+    const notes = await prisma.quickNote.findMany({ where })
     const sorted = [...notes].sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1
       if (!a.isPinned && b.isPinned) return 1
@@ -30,6 +31,7 @@ export const createNote = async (req, res, next) => {
         content,
         color: color ?? 'yellow',
         isPinned: false,
+        creatorId: req.admin.id,
       },
     })
 
@@ -49,6 +51,20 @@ export const createNote = async (req, res, next) => {
 export const updateNote = async (req, res, next) => {
   try {
     const { id } = req.params
+
+    const existingNote = await prisma.quickNote.findUnique({ where: { id } })
+    if (!existingNote) {
+      return res.status(404).json({ status: 'error', message: 'Note not found.' })
+    }
+
+    // Enforce STAFF permission (must be owner)
+    if (req.admin.role === 'STAFF' && existingNote.creatorId !== req.admin.id) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'You do not have permission to modify this note.',
+      })
+    }
+
     const note = await prisma.quickNote.update({
       where: { id },
       data: req.body,
@@ -71,15 +87,26 @@ export const deleteNote = async (req, res, next) => {
   try {
     const { id } = req.params
     const note = await prisma.quickNote.findUnique({ where: { id } })
-    if (note) {
-      await prisma.quickNote.delete({ where: { id } })
-      await logActivity(
-        req,
-        'DELETE',
-        'QuickNote',
-        `Deleted sticky note '${note.title || 'Untitled'}'`
-      )
+    if (!note) {
+      return res.status(404).json({ status: 'error', message: 'Note not found.' })
     }
+
+    // Enforce STAFF permission (must be owner)
+    if (req.admin.role === 'STAFF' && note.creatorId !== req.admin.id) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'You do not have permission to delete this note.',
+      })
+    }
+
+    await prisma.quickNote.delete({ where: { id } })
+    await logActivity(
+      req,
+      'DELETE',
+      'QuickNote',
+      `Deleted sticky note '${note.title || 'Untitled'}'`
+    )
+
     res.json({ status: 'ok', message: 'Note deleted.' })
   } catch (err) {
     next(err)

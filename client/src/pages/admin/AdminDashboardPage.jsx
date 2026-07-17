@@ -231,6 +231,223 @@ export default function AdminDashboardPage() {
   const progressPercent =
     checklistItems.length > 0 ? Math.round((completedCount / checklistItems.length) * 100) : 0
 
+  if (data?.role === 'STAFF') {
+    return (
+      <>
+        <SEO title="Staff Dashboard" noIndex />
+        <div className="space-y-6">
+          {/* ── Welcome banner ── */}
+          <div
+            className="relative rounded-2xl overflow-hidden p-6"
+            style={{ background: 'linear-gradient(135deg, #1A3E8C 0%, #0f2660 100%)' }}
+          >
+            {/* Subtle grid */}
+            <div
+              className="absolute inset-0 opacity-10"
+              style={{
+                backgroundImage:
+                  'linear-gradient(to right,#fff 1px,transparent 1px),linear-gradient(to bottom,#fff 1px,transparent 1px)',
+                backgroundSize: '28px 28px',
+              }}
+            />
+            <div className="absolute top-0 right-0 w-48 h-48 bg-brand-red/15 rounded-full blur-3xl" />
+
+            <div className="relative flex items-end justify-between gap-4 flex-wrap">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                  <span className="text-white/50 text-xs font-medium">All systems operational</span>
+                  <span className="text-white/20 text-xs">·</span>
+                  <span className="text-white/40 text-xs font-medium">Staff Portal</span>
+                </div>
+                <h1
+                  className="font-heading text-2xl font-bold text-white mb-1"
+                  style={{ color: '#fff' }}
+                >
+                  {getGreeting()} 👋
+                </h1>
+                <p className="text-white/60 text-sm">
+                  Welcome back! Here's an overview of your assigned tasks and updates.
+                </p>
+              </div>
+
+              {/* Real-time clock */}
+              <div className="text-right shrink-0">
+                <p className="font-heading text-3xl font-bold text-white tabular-nums tracking-tight leading-none">
+                  {now.toLocaleTimeString('en-IN', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true,
+                  })}
+                </p>
+                <p className="text-white/40 text-xs mt-1 font-medium">
+                  {now.toLocaleDateString('en-IN', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Stats grid ── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard
+              icon={CheckSquare}
+              label="Assigned Tasks"
+              bg="bg-blue-100"
+              color="text-brand-blue"
+              to="/admin/tasks"
+              value={isLoading ? '…' : data?.totalTasks}
+            />
+            <StatCard
+              icon={AlertCircle}
+              label="Due Today"
+              bg="bg-amber-100"
+              color="text-amber-600"
+              to="/admin/tasks"
+              value={isLoading ? '…' : data?.dueTodayTasksCount}
+            />
+            <StatCard
+              icon={Activity}
+              label="In Progress"
+              bg="bg-orange-100"
+              color="text-orange-600"
+              to="/admin/tasks"
+              value={isLoading ? '…' : data?.inProgressTasks}
+            />
+            <StatCard
+              icon={Check}
+              label="Completed Tasks"
+              bg="bg-emerald-100"
+              color="text-emerald-600"
+              to="/admin/tasks"
+              value={isLoading ? '…' : data?.completedTasks}
+            />
+          </div>
+
+          {/* ── Quick actions ── */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-5">
+              <Activity className="w-4 h-4 text-brand-blue" />
+              <h2 className="font-heading text-base font-bold text-gray-800">Quick Actions</h2>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                {
+                  label: 'Tasks Board',
+                  to: '/admin/tasks',
+                  icon: CheckSquare,
+                  color: 'text-emerald-700',
+                  bg: 'bg-emerald-50',
+                },
+                {
+                  label: 'Sticky Notes',
+                  to: '/admin/notes',
+                  icon: StickyNote,
+                  color: 'text-amber-600',
+                  bg: 'bg-amber-50',
+                },
+                {
+                  label: 'Work Calendar',
+                  to: '/admin/calendar',
+                  icon: Calendar,
+                  color: 'text-purple-600',
+                  bg: 'bg-purple-50',
+                },
+                {
+                  label: 'Account Settings',
+                  to: '/admin/settings',
+                  icon: Settings,
+                  color: 'text-pink-600',
+                  bg: 'bg-pink-50',
+                },
+              ].map((a) => {
+                const Icon = a.icon
+                return (
+                  <Link
+                    key={a.to}
+                    to={a.to}
+                    className="flex flex-col items-center gap-2.5 px-3 py-4 rounded-xl border border-gray-100
+                      text-center transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-gray-200 bg-gray-50 group"
+                  >
+                    <div
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center ${a.bg} transition-transform duration-200 group-hover:scale-110`}
+                    >
+                      <Icon className={`w-5 h-5 ${a.color}`} />
+                    </div>
+                    <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900 leading-tight transition-colors">
+                      {a.label}
+                    </span>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* ── Scoped Notes Grid ── */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-2">
+              <div className="flex items-center gap-2">
+                <StickyNote className="w-4 h-4 text-brand-blue" />
+                <h2 className="font-heading text-sm font-bold text-gray-800">Your Recent Notes</h2>
+              </div>
+              <Link to="/admin/notes" className="text-xs text-brand-blue hover:underline font-bold">
+                View All Notes
+              </Link>
+            </div>
+
+            {data?.recentNotes && data.recentNotes.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {data.recentNotes.map((note) => {
+                  const colors = {
+                    yellow: 'bg-yellow-50/60 border-yellow-200 text-yellow-800',
+                    blue: 'bg-blue-50/60 border-blue-200 text-blue-800',
+                    green: 'bg-green-50/60 border-green-200 text-green-800',
+                    pink: 'bg-pink-50/60 border-pink-200 text-pink-800',
+                    purple: 'bg-purple-50/60 border-purple-200 text-purple-800',
+                  }
+                  const colorCls = colors[note.color] || colors.yellow
+                  return (
+                    <div
+                      key={note.id}
+                      className={`p-4 rounded-xl border ${colorCls} shadow-sm space-y-2 flex flex-col justify-between`}
+                    >
+                      <div>
+                        {note.title && (
+                          <h3 className="font-heading font-extrabold text-xs uppercase tracking-wider mb-1.5">
+                            {note.title}
+                          </h3>
+                        )}
+                        <p className="text-xs whitespace-pre-wrap leading-relaxed">
+                          {note.content}
+                        </p>
+                      </div>
+                      <p className="text-[9px] text-gray-400 text-right pt-2 border-t border-black/5">
+                        {new Date(note.createdAt).toLocaleDateString('en-IN', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-400 text-xs">
+                You haven't created any sticky notes yet.
+              </div>
+            )}
+          </div>
+        </div>
+      </>
+    )
+  }
+
   return (
     <>
       <SEO title="Dashboard" noIndex />
