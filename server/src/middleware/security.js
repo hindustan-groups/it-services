@@ -77,14 +77,17 @@ export const corsOptions = cors({
     if (!origin) {
       return callback(null, true)
     }
-    if (allowedOrigins.includes(origin)) {
+    if (
+      allowedOrigins.includes(origin) ||
+      (origin.startsWith('https://') && origin.endsWith('vercel.app'))
+    ) {
       return callback(null, true)
     }
     callback(new Error(`CORS: Origin '${origin}' not allowed`))
   },
   credentials: true, // needed for httpOnly JWT cookies
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-integration-unlock-token'],
 })
 
 // Helper to log rate-limit-triggered blocks to console for Render dashboard logging
