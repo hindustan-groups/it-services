@@ -2,6 +2,7 @@
  * leads.controller.js — Admin: ContactLead management
  */
 import prisma from '../config/db.js'
+import { logActivity } from '../utils/activity.js'
 
 // ── GET /api/admin/leads ───────────────────────────────────────
 export const getLeads = async (req, res, next) => {
@@ -52,6 +53,7 @@ export const updateLeadStatus = async (req, res, next) => {
     }
 
     const lead = await prisma.contactLead.update({ where: { id }, data })
+    await logActivity(req, 'UPDATE', 'ContactLead', `Updated lead '${lead.name}' (status: ${lead.status})`)
     res.json({ status: 'ok', data: lead })
   } catch (err) {
     next(err)
@@ -61,7 +63,9 @@ export const updateLeadStatus = async (req, res, next) => {
 // ── DELETE /api/admin/leads/:id ────────────────────────────────
 export const deleteLead = async (req, res, next) => {
   try {
+    const lead = await prisma.contactLead.findUnique({ where: { id: req.params.id } })
     await prisma.contactLead.delete({ where: { id: req.params.id } })
+    await logActivity(req, 'DELETE', 'ContactLead', `Deleted lead '${lead?.name ?? req.params.id}'`)
     res.json({ status: 'ok', message: 'Lead deleted.' })
   } catch (err) {
     next(err)

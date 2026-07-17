@@ -1,5 +1,6 @@
 import prisma from '../config/db.js'
 import { getCache, setCache, deleteCacheByPrefix } from '../utils/cache.js'
+import { logActivity } from '../utils/activity.js'
 
 // GET /api/legal/:pageType
 export const getLegalPage = async (req, res, next) => {
@@ -101,7 +102,7 @@ export const updateLegalPage = async (req, res, next) => {
     })
 
     deleteCacheByPrefix('legal:')
-
+    await logActivity(req, 'UPDATE', 'LegalPage', `Updated legal page '${cleanType}'`)
     res.json({ status: 'ok', data: page })
   } catch (err) {
     next(err)

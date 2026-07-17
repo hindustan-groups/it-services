@@ -42,7 +42,7 @@ const NAV_GROUPS = [
     label: 'Overview',
     items: [
       { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-      { to: '/admin/leads', icon: MessageSquare, label: 'Leads', badge: 'new' },
+      { to: '/admin/leads', icon: MessageSquare, label: 'Leads', badge: 'new', roles: ['ADMIN', 'SUPER_ADMIN'] },
     ],
   },
   {
@@ -70,9 +70,9 @@ const NAV_GROUPS = [
     label: 'Work Management',
     items: [
       { to: '/admin/client-projects', icon: FolderKanban, label: 'Client Projects', roles: ['ADMIN', 'SUPER_ADMIN'] },
-      { to: '/admin/tasks', icon: CheckSquare, label: 'Tasks' },
-      { to: '/admin/notes', icon: StickyNote, label: 'Notes' },
-      { to: '/admin/calendar', icon: Calendar, label: 'Calendar' },
+      { to: '/admin/tasks', icon: CheckSquare, label: 'Tasks', roles: ['ADMIN', 'SUPER_ADMIN', 'STAFF'] },
+      { to: '/admin/notes', icon: StickyNote, label: 'Notes', roles: ['ADMIN', 'SUPER_ADMIN', 'STAFF'] },
+      { to: '/admin/calendar', icon: Calendar, label: 'Calendar', roles: ['ADMIN', 'SUPER_ADMIN', 'STAFF'] },
       { to: '/admin/activities', icon: History, label: 'Activity Log', roles: ['ADMIN', 'SUPER_ADMIN'] },
     ],
   },
@@ -84,12 +84,12 @@ const NAV_GROUPS = [
       { to: '/admin/integrations', icon: Plug, label: 'Integrations', badge: 'key', roles: ['SUPER_ADMIN'] },
       { to: '/admin/monitoring', icon: Activity, label: 'Monitoring', badge: 'live', roles: ['SUPER_ADMIN'] },
       { to: '/admin/backup', icon: Database, label: 'Data Backup', badge: 'dl', roles: ['SUPER_ADMIN'] },
-      { to: '/admin/settings', icon: Settings, label: 'Account' },
+      { to: '/admin/settings', icon: Settings, label: 'Account', roles: ['ADMIN', 'SUPER_ADMIN', 'STAFF'] },
     ],
   },
   {
     label: 'Support',
-    items: [{ to: '/admin/help', icon: BookOpen, label: 'Help / Guide' }],
+    items: [{ to: '/admin/help', icon: BookOpen, label: 'Help / Guide', roles: ['ADMIN', 'SUPER_ADMIN', 'STAFF'] }],
   },
 ]
 

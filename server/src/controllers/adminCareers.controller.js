@@ -3,6 +3,7 @@
  */
 import prisma from '../config/db.js'
 import { deleteCacheByPrefix } from '../utils/cache.js'
+import { logActivity } from '../utils/activity.js'
 
 // ── Job Postings CRUD ──────────────────────────────────────────
 
@@ -47,6 +48,7 @@ export const createJobPosting = async (req, res, next) => {
       },
     })
     deleteCacheByPrefix('jobs:')
+    await logActivity(req, 'CREATE', 'JobPosting', `Created job posting '${job.title}'`)
     res.status(201).json({ status: 'ok', data: job })
   } catch (err) {
     next(err)
@@ -85,6 +87,7 @@ export const updateJobPosting = async (req, res, next) => {
       },
     })
     deleteCacheByPrefix('jobs:')
+    await logActivity(req, 'UPDATE', 'JobPosting', `Updated job posting '${job.title}'`)
     res.json({ status: 'ok', data: job })
   } catch (err) {
     next(err)
@@ -94,10 +97,10 @@ export const updateJobPosting = async (req, res, next) => {
 export const deleteJobPosting = async (req, res, next) => {
   try {
     const { id } = req.params
-    await prisma.jobPosting.delete({
-      where: { id },
-    })
+    const job = await prisma.jobPosting.findUnique({ where: { id } })
+    await prisma.jobPosting.delete({ where: { id } })
     deleteCacheByPrefix('jobs:')
+    await logActivity(req, 'DELETE', 'JobPosting', `Deleted job posting '${job?.title ?? id}'`)
     res.json({ status: 'ok', message: 'Job posting deleted successfully' })
   } catch (err) {
     next(err)
@@ -142,6 +145,7 @@ export const updateApplicationStatus = async (req, res, next) => {
         },
       },
     })
+    await logActivity(req, 'UPDATE', 'JobApplication', `Updated application status to '${status}' for job '${application.jobPosting?.title ?? id}'`)
     res.json({ status: 'ok', data: application })
   } catch (err) {
     next(err)
@@ -151,9 +155,8 @@ export const updateApplicationStatus = async (req, res, next) => {
 export const deleteApplication = async (req, res, next) => {
   try {
     const { id } = req.params
-    await prisma.jobApplication.delete({
-      where: { id },
-    })
+    await prisma.jobApplication.delete({ where: { id } })
+    await logActivity(req, 'DELETE', 'JobApplication', `Deleted job application ID: ${id}`)
     res.json({ status: 'ok', message: 'Application deleted successfully' })
   } catch (err) {
     next(err)
