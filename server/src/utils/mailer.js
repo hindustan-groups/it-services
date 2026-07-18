@@ -595,3 +595,49 @@ export function dbBackupFailureTemplate({ error }) {
     text: `CRITICAL: Nightly database backup failed. Error: ${error}`,
   }
 }
+
+/**
+ * clientPaymentSuccessTemplate — sent to client and admin when a milestone is marked as PAID.
+ */
+export function clientPaymentSuccessTemplate({ clientName, projectName, milestoneTitle, amount, invoiceUrl }) {
+  return {
+    subject: `Receipt for your payment: ${milestoneTitle}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+        <div style="background: #1A3E8C; padding: 20px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 22px;">Payment Receipt</h1>
+          <p style="color: #93c5fd; margin: 4px 0 0; font-size: 14px;">Hindustan Projects billing system</p>
+        </div>
+
+        <p style="font-size: 16px; color: #1A1A1A;">Dear <strong>${clientName}</strong>,</p>
+
+        <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+          Thank you for your payment! We have successfully processed the payment for the milestone <strong>${milestoneTitle}</strong> under project <strong>${projectName}</strong>.
+        </p>
+
+        <div style="margin: 20px 0; padding: 16px; background: #f0f4ff; border-radius: 6px;">
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">💳 <strong>Milestone:</strong> ${milestoneTitle}</p>
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">💰 <strong>Amount Paid:</strong> ₹${amount.toLocaleString('en-IN')}</p>
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">✅ <strong>Status:</strong> PAID</p>
+          <p style="margin: 0; font-size: 14px; color: #1A1A1A;">📅 <strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+        </div>
+
+        ${invoiceUrl ? `
+        <div style="margin-top: 24px; text-align: center;">
+          <a href="${invoiceUrl}" target="_blank" style="display: inline-block; background: #E31E24; color: white; padding: 10px 24px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600;">Download Digital Invoice</a>
+        </div>
+        ` : ''}
+
+        <p style="font-size: 15px; color: #374151; line-height: 1.7; margin-top: 20px;">
+          Associated deliverables have been unlocked and are now available inside your Client Portal.
+        </p>
+
+        <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+          If you have any billing queries, please feel free to open a ticket in the Support Desk.
+        </p>
+      </div>
+    `,
+    text: `Dear ${clientName},\n\nThank you for your payment!\n\nWe have processed ₹${amount.toLocaleString('en-IN')} for milestone "${milestoneTitle}" under project "${projectName}".\n\nDownload Link: ${invoiceUrl}\n\nBest regards,\nHindustan Projects Billing Team`,
+  }
+}
+

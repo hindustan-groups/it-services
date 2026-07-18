@@ -107,6 +107,7 @@ const ClientDashboardPage = lazyWithRetry(() => import('@/pages/client/ClientDas
 const ClientProjectDetailPage = lazyWithRetry(() => import('@/pages/client/ClientProjectDetailPage'))
 const ClientTicketsPage = lazyWithRetry(() => import('@/pages/client/ClientTicketsPage'))
 const ClientBillingPage = lazyWithRetry(() => import('@/pages/client/ClientBillingPage'))
+const ClientInvoicePage = lazyWithRetry(() => import('@/pages/client/ClientInvoicePage'))
 
 
 export default function App() {
@@ -403,6 +404,14 @@ export default function App() {
             element={
               <Suspense fallback={<PageFallback />}>
                 <ClientBillingPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="invoices/:milestoneId"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <ClientInvoicePage />
               </Suspense>
             }
           />

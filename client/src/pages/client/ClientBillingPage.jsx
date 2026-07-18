@@ -1,6 +1,7 @@
 /**
  * ClientBillingPage.jsx — Client Portal Billing & Financial Milestones Page
  */
+import { Link } from 'react-router-dom'
 import { useClientBilling, useClientPayMilestone } from '@/hooks/useClientPortal'
 import { Landmark, Calendar, CheckCircle2, AlertCircle, FileText, Download, TrendingUp, CreditCard } from 'lucide-react'
 
@@ -216,15 +217,13 @@ export default function ClientBillingPage() {
                       </span>
 
                       {m.status === 'PAID' && m.invoiceUrl ? (
-                        <a
-                          href={m.invoiceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <Link
+                          to={m.invoiceUrl}
                           className="w-11 h-11 flex items-center justify-center text-gray-400 hover:text-brand-blue hover:bg-brand-blue/5 rounded-xl border border-gray-200 transition-all cursor-pointer shrink-0"
-                          title="Download Receipt / Invoice"
+                          title="View Invoice Receipt"
                         >
-                          <Download className="w-4 h-4" />
-                        </a>
+                          <FileText className="w-4 h-4 text-emerald-600" />
+                        </Link>
                       ) : m.status !== 'PAID' ? (
                         <button
                           onClick={() => handlePay(m.id)}

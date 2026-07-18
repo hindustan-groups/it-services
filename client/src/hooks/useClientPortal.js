@@ -133,3 +133,11 @@ export function useClientSubmitFeedback() {
   })
 }
 
+export function useClientInvoice(milestoneId) {
+  return useQuery({
+    queryKey: ['client-invoice', milestoneId],
+    queryFn: () => api.get(`/client/billing/milestones/${milestoneId}/invoice`).then((r) => r.data),
+    enabled: !!milestoneId,
+  })
+}
+

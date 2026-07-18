@@ -22,6 +22,7 @@ import {
 import {
   listClientMilestones,
   simulatePayment,
+  getMilestoneInvoice,
 } from '../controllers/billing.controller.js'
 import { verifyClientToken } from '../middleware/auth.js'
 
@@ -47,5 +48,6 @@ router.post('/tickets/:id/messages', verifyClientToken, replyToTicketFromClient)
 // Billing / Milestones routes
 router.get('/billing', verifyClientToken, listClientMilestones)
 router.post('/billing/:id/pay', verifyClientToken, simulatePayment)
+router.get('/billing/milestones/:id/invoice', verifyClientToken, getMilestoneInvoice)
 
 export default router

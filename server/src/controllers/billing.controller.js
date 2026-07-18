@@ -2,6 +2,7 @@
  * billing.controller.js — Project Billing and Financial Milestones controller
  */
 import prisma from '../config/db.js'
+import { sendEmail, clientPaymentSuccessTemplate } from '../utils/mailer.js'
 
 // ── CLIENT PORTAL ACTIONS ────────────────────────────────────────
 
@@ -45,6 +46,15 @@ export const simulatePayment = async (req, res, next) => {
           clientId,
         },
       },
+      include: {
+        clientProject: {
+          include: {
+            client: {
+              select: { name: true, email: true },
+            },
+          },
+        },
+      },
     })
 
     if (!milestone) {
@@ -60,9 +70,31 @@ export const simulatePayment = async (req, res, next) => {
       data: {
         status: 'PAID',
         paidAt: new Date(),
-        invoiceUrl: `https://it-services-hindustan-projects.vercel.app/invoices/INV-${id.slice(-6).toUpperCase()}.pdf`, // mock invoice URL
+        invoiceUrl: `/client/invoices/${id}`,
       },
     })
+
+    // Send email alert asynchronously
+    const clientEmail = milestone.clientProject?.client?.email
+    const clientName = milestone.clientProject?.client?.name || 'Client'
+    const projectName = milestone.clientProject?.projectTitle || 'Project'
+
+    if (clientEmail) {
+      const emailOptions = clientPaymentSuccessTemplate({
+        clientName,
+        projectName,
+        milestoneTitle: milestone.title,
+        amount: milestone.amount,
+        invoiceUrl: `https://it-services.hindustanprojects.in/client/invoices/${id}`,
+      })
+
+      sendEmail({
+        to: clientEmail,
+        subject: emailOptions.subject,
+        html: emailOptions.html,
+        text: emailOptions.text,
+      }).catch((err) => console.error('Payment email dispatch failed:', err.message))
+    }
 
     res.json({ status: 'ok', data: updated })
   } catch (err) {
@@ -148,7 +180,7 @@ export const updateBillingMilestone = async (req, res, next) => {
       data.status = status
       if (status === 'PAID' && milestone.status !== 'PAID') {
         data.paidAt = new Date()
-        data.invoiceUrl = `https://it-services-hindustan-projects.vercel.app/invoices/INV-${id.slice(-6).toUpperCase()}.pdf`
+        data.invoiceUrl = `/client/invoices/${id}`
       } else if (status !== 'PAID') {
         data.paidAt = null
         data.invoiceUrl = null
@@ -159,6 +191,40 @@ export const updateBillingMilestone = async (req, res, next) => {
       where: { id },
       data,
     })
+
+    // If marked as paid by admin, send notification email asynchronously
+    if (status === 'PAID' && milestone.status !== 'PAID') {
+      prisma.billingMilestone.findUnique({
+        where: { id },
+        include: {
+          clientProject: {
+            include: {
+              client: {
+                select: { name: true, email: true }
+              }
+            }
+          }
+        }
+      }).then((fullMilestone) => {
+        const clientEmail = fullMilestone?.clientProject?.client?.email
+        if (clientEmail) {
+          const emailOptions = clientPaymentSuccessTemplate({
+            clientName: fullMilestone.clientProject.client.name || 'Client',
+            projectName: fullMilestone.clientProject.projectTitle || 'Project',
+            milestoneTitle: fullMilestone.title,
+            amount: fullMilestone.amount,
+            invoiceUrl: `https://it-services.hindustanprojects.in/client/invoices/${id}`,
+          })
+
+          sendEmail({
+            to: clientEmail,
+            subject: emailOptions.subject,
+            html: emailOptions.html,
+            text: emailOptions.text,
+          }).catch((err) => console.error('Admin mark payment email dispatch failed:', err.message))
+        }
+      }).catch((err) => console.error('Failed to retrieve client details for email dispatch:', err.message))
+    }
 
     res.json({ status: 'ok', data: updated })
   } catch (err) {
@@ -184,6 +250,45 @@ export const deleteBillingMilestone = async (req, res, next) => {
     })
 
     res.json({ status: 'ok', message: 'Milestone deleted successfully' })
+  } catch (err) {
+    next(err)
+  }
+}
+
+// GET /api/client/billing/milestones/:id/invoice
+export const getMilestoneInvoice = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const clientId = req.client.id
+
+    // Fetch milestone with client and project details
+    const milestone = await prisma.billingMilestone.findFirst({
+      where: {
+        id,
+        clientProject: {
+          clientId,
+        },
+      },
+      include: {
+        clientProject: {
+          include: {
+            client: {
+              select: { name: true, email: true },
+            },
+          },
+        },
+      },
+    })
+
+    if (!milestone) {
+      return res.status(404).json({ status: 'error', message: 'Invoice not found' })
+    }
+
+    if (milestone.status !== 'PAID') {
+      return res.status(400).json({ status: 'error', message: 'Invoice is only available for paid milestones.' })
+    }
+
+    res.json({ status: 'ok', data: milestone })
   } catch (err) {
     next(err)
   }
