@@ -93,7 +93,7 @@ export const uploadToCloudinary = (buffer, folder = 'hindustan-projects', resour
     if (originalName) {
       const ext = originalName.split('.').pop().toLowerCase()
       const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.'))
-      const cleanName = nameWithoutExt.replace(/[^a-zA-Z0-9_\-]/g, '_')
+      const cleanName = nameWithoutExt.replace(/[^a-zA-Z0-9_-]/g, '_')
       // For raw files, we MUST append the extension to public_id so Cloudinary serves it with the extension
       if (resourceType === 'raw') {
         public_id = `${cleanName}_${Date.now()}.${ext}`
