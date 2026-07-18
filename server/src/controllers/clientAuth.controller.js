@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken'
 import prisma from '../config/db.js'
 import { env } from '../config/env.js'
 import { setClientCookie, clearClientCookies } from '../utils/authCookie.js'
-import { sendEmail } from '../utils/mailer.js'
+import { sendEmail, professionalEmailFooter, fetchEmailFooterSettings } from '../utils/mailer.js'
 
 // POST /api/client/login
 export const clientLogin = async (req, res, next) => {
@@ -138,6 +138,8 @@ export const setupClientPassword = async (req, res, next) => {
     const clientUrl = env.CLIENT_URL || 'https://it-services-hindustan-projects.vercel.app'
     const loginUrl = `${clientUrl}/client-login`
 
+    const settings = await fetchEmailFooterSettings(prisma)
+
     sendEmail({
       to: updatedClient.email,
       subject: 'Your Hindustan Projects Portal Account is Ready',
@@ -165,12 +167,10 @@ export const setupClientPassword = async (req, res, next) => {
             <a href="${loginUrl}" style="background-color: #1A3E8C; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 15px;">Go to My Dashboard</a>
           </p>
 
-          <p style="font-size: 13px; color: #6B7280; margin-top: 24px; border-top: 1px solid #e5e7eb; padding-top: 16px; text-align: center;">
-            &copy; ${new Date().getFullYear()} Hindustan Projects. All rights reserved.<br>Bhilwara, Rajasthan, India
-          </p>
+          ${professionalEmailFooter(settings)}
         </div>
       `,
-      text: `Hi ${updatedClient.name},\n\nYour client portal account is now active!\n\nLogin Details:\nEmail: ${updatedClient.email}\nPassword: The one you just set\nLogin URL: ${loginUrl}\n\nPlease save these details safely.\n\nHindustan Projects Team`,
+      text: `Hi ${updatedClient.name},\n\nYour client portal account is now active!\n\nLogin Details:\nEmail: ${updatedClient.email}\nPassword: The one you just set\nLogin URL: ${loginUrl}\n\nHindustan Projects\nPhone: ${settings.phone || '+91 99291 20431'}\nWeb: www.hindustanprojects.in\nBhilwara, Rajasthan, India`,
     }).catch((err) => {
       console.error('[welcome-email] Failed to send:', err.message)
     })
