@@ -66,7 +66,8 @@ export const createAdminUser = async (req, res, next) => {
     // Fetch site settings for footer
     const settings = await fetchEmailFooterSettings(prisma)
     const clientUrl = env.CLIENT_URL || 'https://it-services-hindustan-projects.vercel.app'
-    const loginPath = env.ADMIN_SECRET_PATH || 'admin-login'
+    const rawPath = env.ADMIN_SECRET_PATH || 'admin-login'
+    const loginPath = rawPath.startsWith('admin-') ? rawPath : `admin-${rawPath}`
     const loginUrl = `${clientUrl}/${loginPath}`
 
     // Send invitation email
@@ -200,7 +201,8 @@ export const updateAdminUser = async (req, res, next) => {
     if (password && password.trim()) {
       const settings = await fetchEmailFooterSettings(prisma)
       const clientUrl = env.CLIENT_URL || 'https://it-services-hindustan-projects.vercel.app'
-      const loginPath = env.ADMIN_SECRET_PATH || 'admin-login'
+      const rawPath = env.ADMIN_SECRET_PATH || 'admin-login'
+      const loginPath = rawPath.startsWith('admin-') ? rawPath : `admin-${rawPath}`
       const loginUrl = `${clientUrl}/${loginPath}`
 
       sendEmail({
