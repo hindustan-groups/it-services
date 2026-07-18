@@ -66,7 +66,7 @@ const PRIORITY_COLORS = {
 const inputCls =
   'w-full px-3 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/25 focus:border-brand-blue transition-all'
 
-function TaskForm({ initial, projects, onSave, onCancel, loading, onAttachmentChange }) {
+function TaskForm({ initial, projects, teamMembers = [], onSave, onCancel, loading, onAttachmentChange }) {
   const formatDateForInput = (dateStr) => {
     if (!dateStr) return ''
     const d = new Date(dateStr)
@@ -461,6 +461,7 @@ export default function AdminTasksPage() {
             {showForm ? (
               <TaskForm
                 projects={projects}
+                teamMembers={teamMembers}
                 onSave={(data) => createMutation.mutate(data)}
                 onCancel={() => setShowForm(false)}
                 loading={createMutation.isPending}
@@ -469,6 +470,7 @@ export default function AdminTasksPage() {
               <TaskForm
                 initial={editing}
                 projects={projects}
+                teamMembers={teamMembers}
                 onSave={(data) => updateMutation.mutate({ id: editing.id, ...data })}
                 onCancel={() => setEditing(null)}
                 loading={updateMutation.isPending}
