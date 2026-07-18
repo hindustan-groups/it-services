@@ -12,6 +12,7 @@ import {
   Newspaper,
   CheckCircle2,
   Search,
+  UserCheck,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 import { SEO } from '@/components/ui'
@@ -30,7 +31,7 @@ export default function AdminRecycleBinPage() {
   // Fetch deleted items
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['admin-recycle-bin'],
-    queryFn: () => api.get('/admin/recycle-bin').then((r) => r.data.data),
+    queryFn: () => api.get('/admin/recycle-bin').then((r) => r.data),
   })
 
   // Restore item mutation
@@ -79,7 +80,7 @@ export default function AdminRecycleBinPage() {
     }
   }
 
-  const items = data ?? { leads: [], projects: [], blog: [] }
+  const items = data ?? { leads: [], projects: [], blog: [], applications: [] }
 
   // Filter items based on active tab & search query
   const getFilteredItems = () => {
@@ -107,6 +108,15 @@ export default function AdminRecycleBinPage() {
           b.title?.toLowerCase().includes(q) ||
           b.category?.toLowerCase().includes(q) ||
           b.authorName?.toLowerCase().includes(q)
+      )
+    }
+    if (activeTab === 'applications') {
+      return (items.applications ?? []).filter(
+        (app) =>
+          app.fullName?.toLowerCase().includes(q) ||
+          app.email?.toLowerCase().includes(q) ||
+          app.phone?.toLowerCase().includes(q) ||
+          app.jobPosting?.title?.toLowerCase().includes(q)
       )
     }
     return []
@@ -194,6 +204,20 @@ export default function AdminRecycleBinPage() {
               <Newspaper className="w-3.5 h-3.5" />
               Blog Posts ({items.blog.length})
             </button>
+            <button
+              onClick={() => {
+                setActiveTab('applications')
+                setSearchTerm('')
+              }}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'applications'
+                  ? 'bg-white text-brand-blue shadow-sm'
+                  : 'text-gray-500 hover:text-gray-800'
+              }`}
+            >
+              <UserCheck className="w-3.5 h-3.5" />
+              Job Applications ({items.applications?.length ?? 0})
+            </button>
           </div>
 
           <div className="relative w-full md:w-64">
@@ -269,6 +293,13 @@ export default function AdminRecycleBinPage() {
                             <p className="text-gray-400 mt-0.5">Slug: {item.slug}</p>
                           </div>
                         )}
+                        {activeTab === 'applications' && (
+                          <div>
+                            <p className="font-bold text-gray-900 text-sm">{item.fullName}</p>
+                            <p className="text-gray-400 mt-0.5">{item.email}</p>
+                            {item.phone && <p className="text-gray-400">{item.phone}</p>}
+                          </div>
+                        )}
                       </td>
                       <td className="px-5 py-4">
                         {activeTab === 'leads' && (
@@ -291,6 +322,22 @@ export default function AdminRecycleBinPage() {
                             <p className="font-semibold text-gray-700">Category / Author:</p>
                             <p className="text-gray-500 mt-0.5">{item.category}</p>
                             <p className="text-gray-400 mt-0.5">By {item.authorName}</p>
+                          </div>
+                        )}
+                        {activeTab === 'applications' && (
+                          <div>
+                            <p className="font-semibold text-gray-700">Applied Job:</p>
+                            <p className="text-gray-500 mt-0.5">{item.jobPosting?.title || 'Unknown Role'}</p>
+                            {item.resumeUrl && (
+                              <a
+                                href={item.resumeUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-brand-blue hover:underline font-bold mt-1 inline-block"
+                              >
+                                View Resume
+                              </a>
+                            )}
                           </div>
                         )}
                       </td>
@@ -330,7 +377,9 @@ export default function AdminRecycleBinPage() {
                                   ? item.name
                                   : activeTab === 'projects'
                                     ? item.projectTitle
-                                    : item.title
+                                    : activeTab === 'blog'
+                                      ? item.title
+                                      : item.fullName
                               )
                             }
                             disabled={restoreMutation.isPending || permanentDeleteMutation.isPending}

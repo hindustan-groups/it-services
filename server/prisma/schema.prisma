@@ -265,8 +265,10 @@ model JobApplication {
   coverLetter  String?
   status       ApplicationStatus @default(NEW)
   createdAt    DateTime          @default(now())
+  deletedAt    DateTime?
 
   @@index([jobPostingId])
+  @@index([deletedAt])
   @@map("job_applications")
 }
 

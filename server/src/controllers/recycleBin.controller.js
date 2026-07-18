@@ -21,7 +21,7 @@ const deleteCloudinaryFile = async (publicId, fileType = '') => {
 // GET /api/admin/recycle-bin
 export const getDeletedItems = async (req, res, next) => {
   try {
-    const [leads, projects, blog] = await Promise.all([
+    const [leads, projects, blog, applications] = await Promise.all([
       prisma.contactLead.findMany({
         where: { deletedAt: { not: null } },
         orderBy: { deletedAt: 'desc' },
@@ -42,11 +42,18 @@ export const getDeletedItems = async (req, res, next) => {
           deletedAt: true,
         },
       }),
+      prisma.jobApplication.findMany({
+        where: { deletedAt: { not: null } },
+        orderBy: { deletedAt: 'desc' },
+        include: {
+          jobPosting: { select: { title: true } },
+        },
+      }),
     ])
 
     res.json({
       status: 'ok',
-      data: { leads, projects, blog },
+      data: { leads, projects, blog, applications },
     })
   } catch (err) {
     next(err)
@@ -83,6 +90,12 @@ export const restoreItem = async (req, res, next) => {
       })
       deleteCacheByPrefix('blog:')
       await logActivity(req, 'UPDATE', 'BlogPost', `Restored blog post '${restoredItem.title}'`)
+    } else if (type === 'application') {
+      restoredItem = await prisma.jobApplication.update({
+        where: { id },
+        data: { deletedAt: null },
+      })
+      await logActivity(req, 'UPDATE', 'JobApplication', `Restored job application of '${restoredItem.fullName}'`)
     } else {
       return res.status(400).json({ status: 'error', message: 'Invalid restore item type.' })
     }
@@ -181,6 +194,28 @@ export const permanentlyDeleteItem = async (req, res, next) => {
       await prisma.blogPost.delete({ where: { id } })
       deleteCacheByPrefix('blog:')
       await logActivity(req, 'DELETE', 'BlogPost', `Permanently deleted blog post '${post.title}'`)
+    } else if (type === 'application') {
+      const app = await prisma.jobApplication.findUnique({
+        where: { id },
+      })
+
+      if (!app) {
+        return res.status(404).json({ status: 'error', message: 'Application not found.' })
+      }
+
+      // Delete resume from Cloudinary
+      if (app.resumeUrl && app.resumeUrl.includes('cloudinary')) {
+        const parts = app.resumeUrl.split('/')
+        const fileNameWithExt = parts.pop()
+        const folderName = parts.pop()
+        if (folderName && fileNameWithExt) {
+          const publicId = `${folderName}/${fileNameWithExt.split('.')[0]}`
+          await deleteCloudinaryFile(publicId, 'raw')
+        }
+      }
+
+      await prisma.jobApplication.delete({ where: { id } })
+      await logActivity(req, 'DELETE', 'JobApplication', `Permanently deleted job application of '${app.fullName}'`)
     } else {
       return res.status(400).json({ status: 'error', message: 'Invalid item type for permanent delete.' })
     }

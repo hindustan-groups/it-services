@@ -112,7 +112,7 @@ export const deleteJobPosting = async (req, res, next) => {
 export const listApplications = async (req, res, next) => {
   try {
     const { jobPostingId, status } = req.query
-    const where = {}
+    const where = { deletedAt: null }
     if (jobPostingId) where.jobPostingId = jobPostingId
     if (status) where.status = status
 
@@ -155,9 +155,12 @@ export const updateApplicationStatus = async (req, res, next) => {
 export const deleteApplication = async (req, res, next) => {
   try {
     const { id } = req.params
-    await prisma.jobApplication.delete({ where: { id } })
-    await logActivity(req, 'DELETE', 'JobApplication', `Deleted job application ID: ${id}`)
-    res.json({ status: 'ok', message: 'Application deleted successfully' })
+    await prisma.jobApplication.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    })
+    await logActivity(req, 'DELETE', 'JobApplication', `Soft deleted job application ID: ${id}`)
+    res.json({ status: 'ok', message: 'Application soft deleted' })
   } catch (err) {
     next(err)
   }
