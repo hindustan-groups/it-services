@@ -8,6 +8,13 @@ import { verifyToken, requireRole } from '../middleware/auth.js'
 import { adminLoginLimiter, validateRequest } from '../middleware/security.js'
 import { getLeads, updateLeadStatus, deleteLead } from '../controllers/leads.controller.js'
 import { getDeletedItems, restoreItem, permanentlyDeleteItem } from '../controllers/recycleBin.controller.js'
+import { bulkImportLeads } from '../controllers/leadsImport.controller.js'
+import multer from 'multer'
+
+const uploadCsv = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 2 * 1024 * 1024 } // 2 MB
+})
 import {
   listServices,
   createService,
@@ -405,6 +412,13 @@ router.get('/stats', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), 
 router.get('/leads', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), getLeads)
 router.patch('/leads/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateLeadStatus)
 router.delete('/leads/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteLead)
+router.post(
+  '/leads/import',
+  verifyToken,
+  requireRole('ADMIN', 'SUPER_ADMIN'),
+  uploadCsv.single('file'),
+  bulkImportLeads
+)
 
 // ── Services ───────────────────────────────────────────────────
 router.get('/services', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listServices)

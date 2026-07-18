@@ -17,6 +17,7 @@ import {
   X,
   Calendar,
   Download,
+  Upload,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 import { SEO } from '@/components/ui'
@@ -36,7 +37,7 @@ const STATUS_CONFIG = {
   },
 }
 
-function PageHeader({ count, onExport }) {
+function PageHeader({ count, onExport, onImport }) {
   return (
     <div className="flex items-start justify-between flex-wrap gap-4">
       <div>
@@ -50,14 +51,24 @@ function PageHeader({ count, onExport }) {
           {count != null ? `${count} total submissions` : 'All form submissions from your website'}
         </p>
       </div>
-      {onExport && (
-        <button
-          onClick={onExport}
-          className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold hover:shadow-md transition-all shrink-0 cursor-pointer"
-        >
-          <Download className="w-3.5 h-3.5" /> Export to CSV
-        </button>
-      )}
+      <div className="flex items-center gap-2 shrink-0">
+        {onImport && (
+          <button
+            onClick={onImport}
+            className="flex items-center gap-1.5 bg-gray-150 hover:bg-gray-200 border border-gray-250 text-gray-700 px-4 py-2.5 rounded-xl text-xs font-semibold hover:shadow-md transition-all cursor-pointer"
+          >
+            <Upload className="w-3.5 h-3.5" /> Import CSV
+          </button>
+        )}
+        {onExport && (
+          <button
+            onClick={onExport}
+            className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold hover:shadow-md transition-all cursor-pointer"
+          >
+            <Download className="w-3.5 h-3.5" /> Export to CSV
+          </button>
+        )}
+      </div>
     </div>
   )
 }
@@ -65,6 +76,9 @@ function PageHeader({ count, onExport }) {
 export default function AdminLeadsPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [selectedLead, setSelectedLead] = useState(null)
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false)
+  const [csvFile, setCsvFile] = useState(null)
+  const [importStatus, setImportStatus] = useState(null)
   const qc = useQueryClient()
 
   const { data, isLoading, isError, refetch } = useQuery({
@@ -91,7 +105,40 @@ export default function AdminLeadsPage() {
     },
   })
 
+  const importMutation = useMutation({
+    mutationFn: (file) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      return api.post('/admin/leads/import', formData)
+    },
+    onSuccess: (res) => {
+      setImportStatus({ type: 'success', message: res.message || 'Leads imported successfully!' })
+      qc.invalidateQueries({ queryKey: ['admin-leads'] })
+      setCsvFile(null)
+    },
+    onError: (err) => {
+      setImportStatus({
+        type: 'error',
+        message: err.response?.data?.message || err.message || 'Failed to import leads.',
+      })
+    },
+  })
+
   const leads = data ?? []
+
+  const handleDownloadTemplate = () => {
+    const csvContent =
+      'data:text/csv;charset=utf-8,Name,Email,Phone,Message,Service Interested,Status,Notes,Estimated Budget\n' +
+      'John Doe,john@example.com,+919876543210,Hello interested in website design,Web Development,NEW,Bhilwara client,50000\n' +
+      'Jane Smith,jane@example.com,,Looking for branding services,Digital Marketing,CONTACTED,,30000\n'
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement('a')
+    link.setAttribute('href', encodedUri)
+    link.setAttribute('download', 'leads_import_template.csv')
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
 
   const handleExport = () => {
     if (!leads.length) return
@@ -128,6 +175,7 @@ export default function AdminLeadsPage() {
         <PageHeader
           count={isLoading ? null : leads.length}
           onExport={leads.length ? handleExport : null}
+          onImport={() => setIsImportModalOpen(true)}
         />
 
         {/* Info Banner for Careers */}
@@ -536,6 +584,110 @@ export default function AdminLeadsPage() {
                   className="px-4 py-2 text-xs font-semibold bg-brand-blue text-white hover:shadow-md rounded-xl transition-all"
                 >
                   Close View
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* CSV Import Modal */}
+        {isImportModalOpen && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-xl max-w-md w-full p-6 space-y-4">
+              <div className="flex items-center justify-between border-b border-gray-150 pb-3">
+                <h3 className="text-base font-bold text-gray-900 font-heading flex items-center gap-1.5">
+                  <Upload className="w-4 h-4 text-brand-blue" />
+                  Import Leads from CSV
+                </h3>
+                <button
+                  onClick={() => {
+                    setIsImportModalOpen(false)
+                    setCsvFile(null)
+                    setImportStatus(null)
+                  }}
+                  className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-all cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Status Notice */}
+              {importStatus && (
+                <div
+                  className={`p-3 rounded-xl text-xs border ${
+                    importStatus.type === 'success'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-150'
+                      : 'bg-red-50 text-red-700 border-red-150'
+                  }`}
+                >
+                  {importStatus.message}
+                </div>
+              )}
+
+              <div className="text-xs text-gray-500 space-y-2">
+                <p>
+                  Upload a CSV file containing your leads. The file must include a header row with at least <strong>Name</strong> or <strong>Email</strong> fields.
+                </p>
+                <button
+                  onClick={handleDownloadTemplate}
+                  className="text-brand-blue font-bold hover:underline inline-flex items-center gap-1"
+                >
+                  <Download className="w-3 h-3" /> Download CSV Template
+                </button>
+              </div>
+
+              {/* Drag n Drop area */}
+              <div className="border-2 border-dashed border-gray-250 hover:border-brand-blue rounded-xl p-6 text-center cursor-pointer transition-colors relative bg-gray-50/50">
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={(e) => {
+                    if (e.target.files?.[0]) {
+                      setCsvFile(e.target.files[0])
+                      setImportStatus(null)
+                    }
+                  }}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
+                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                {csvFile ? (
+                  <div>
+                    <p className="text-xs font-bold text-gray-800">{csvFile.name}</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">
+                      {(csvFile.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-xs font-semibold text-gray-650">
+                      Drag and drop your file here, or browse
+                    </p>
+                    <p className="text-[10px] text-gray-400 mt-1">Supports CSV files up to 2MB</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-gray-150">
+                <button
+                  onClick={() => {
+                    setIsImportModalOpen(false)
+                    setCsvFile(null)
+                    setImportStatus(null)
+                  }}
+                  className="px-4 py-2 border border-gray-255 text-gray-700 text-xs font-semibold rounded-xl hover:bg-gray-50 transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    if (csvFile) {
+                      importMutation.mutate(csvFile)
+                    }
+                  }}
+                  disabled={!csvFile || importMutation.isPending}
+                  className="px-4 py-2 bg-brand-blue hover:bg-blue-700 disabled:bg-gray-300 text-white text-xs font-semibold rounded-xl hover:shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  {importMutation.isPending ? 'Importing...' : 'Upload & Import'}
                 </button>
               </div>
             </div>
