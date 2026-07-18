@@ -13,6 +13,13 @@ export const listClientProjects = async (req, res, next) => {
         tasks: true,
         attachments: {
           orderBy: { createdAt: 'desc' }
+        },
+        client: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          }
         }
       },
     })
@@ -37,6 +44,7 @@ export const createClientProject = async (req, res, next) => {
       status,
       priority,
       progress,
+      clientId,
     } = req.body
     if (!clientName || !projectTitle || !startDate || !deadline) {
       return res.status(400).json({
@@ -58,10 +66,18 @@ export const createClientProject = async (req, res, next) => {
         status: status ?? 'PLANNING',
         priority: priority ?? 'MEDIUM',
         progress: progress ? parseInt(progress) : 0,
+        clientId: clientId || null,
       },
       include: {
         tasks: true,
-        attachments: true
+        attachments: true,
+        client: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          }
+        }
       }
     })
 
@@ -85,6 +101,9 @@ export const updateClientProject = async (req, res, next) => {
     if (data.startDate) data.startDate = new Date(data.startDate)
     if (data.deadline) data.deadline = new Date(data.deadline)
     if (data.progress !== undefined) data.progress = parseInt(data.progress)
+    if (data.clientId === '') {
+      data.clientId = null
+    }
 
     const project = await prisma.clientProject.update({
       where: { id },
@@ -93,6 +112,13 @@ export const updateClientProject = async (req, res, next) => {
         tasks: true,
         attachments: {
           orderBy: { createdAt: 'desc' }
+        },
+        client: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          }
         }
       }
     })
