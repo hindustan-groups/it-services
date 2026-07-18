@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Users,
   UserPlus,
+  User,
   Shield,
   ShieldCheck,
   ShieldAlert,
@@ -21,6 +22,8 @@ import {
   EyeOff,
   UserCheck,
   ChevronRight,
+  Copy,
+  ExternalLink,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 import { SEO } from '@/components/ui'
@@ -32,6 +35,9 @@ export default function AdminUsersPage() {
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('ALL')
+
+  // Tab State
+  const [activeTab, setActiveTab] = useState('internal') // 'internal' | 'clients'
   
   // Create User Form State
   const [showAddForm, setShowAddForm] = useState(false)
@@ -39,6 +45,10 @@ export default function AdminUsersPage() {
   const [password, setPassword] = useState('')
   const [role, setRole] = useState('STAFF')
   const [showPassword, setShowPassword] = useState(false)
+
+  // Create Client Form State
+  const [clientName, setClientName] = useState('')
+  const [clientEmail, setClientEmail] = useState('')
 
   // Reset Password State
   const [resetUserId, setResetUserId] = useState(null)
@@ -58,11 +68,18 @@ export default function AdminUsersPage() {
   const { data: users = [], isLoading, isError } = useQuery({
     queryKey: ['admin-users'],
     queryFn: () => api.get('/admin/users').then((r) => r.data),
+    enabled: activeTab === 'internal',
+  })
+
+  // Fetch Client Portal accounts
+  const { data: clients = [], isLoading: isClientsLoading, isError: isClientsError } = useQuery({
+    queryKey: ['admin-clients'],
+    queryFn: () => api.get('/admin/clients').then((r) => r.data),
+    enabled: activeTab === 'clients',
   })
 
   // Create User Mutation
   const createMutation = useMutation({
-    mutationFn: (newUser) => api.post('/admin/users', newUser),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] })
       setStatus('success')
@@ -74,7 +91,25 @@ export default function AdminUsersPage() {
     },
     onError: (err) => {
       setStatus('error')
-      setMsg(err.message || 'Failed to create user account.')
+      setMsg(err.response?.data?.message || err.message || 'Failed to create user account.')
+    },
+    mutationFn: (newUser) => api.post('/admin/users', newUser),
+  })
+
+  // Create Client Mutation
+  const createClientMutation = useMutation({
+    mutationFn: (newClient) => api.post('/admin/clients', newClient),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-clients'] })
+      setStatus('success')
+      setMsg('Client Portal account created successfully and invitation link generated!')
+      setShowAddForm(false)
+      setClientName('')
+      setClientEmail('')
+    },
+    onError: (err) => {
+      setStatus('error')
+      setMsg(err.response?.data?.message || err.message || 'Failed to create client account.')
     },
   })
 
@@ -90,7 +125,21 @@ export default function AdminUsersPage() {
     },
     onError: (err) => {
       setStatus('error')
-      setMsg(err.message || 'Failed to update user account.')
+      setMsg(err.response?.data?.message || err.message || 'Failed to update user account.')
+    },
+  })
+
+  // Update Client Mutation
+  const updateClientMutation = useMutation({
+    mutationFn: ({ id, updates }) => api.patch(`/admin/clients/${id}`, updates),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-clients'] })
+      setStatus('success')
+      setMsg(res.message || 'Client account updated successfully!')
+    },
+    onError: (err) => {
+      setStatus('error')
+      setMsg(err.response?.data?.message || err.message || 'Failed to update client account.')
     },
   })
 
@@ -104,7 +153,21 @@ export default function AdminUsersPage() {
     },
     onError: (err) => {
       setStatus('error')
-      setMsg(err.message || 'Failed to delete user account.')
+      setMsg(err.response?.data?.message || err.message || 'Failed to delete user account.')
+    },
+  })
+
+  // Delete Client Mutation
+  const deleteClientMutation = useMutation({
+    mutationFn: (id) => api.delete(`/admin/clients/${id}`),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-clients'] })
+      setStatus('success')
+      setMsg('Client account deleted successfully.')
+    },
+    onError: (err) => {
+      setStatus('error')
+      setMsg(err.response?.data?.message || err.message || 'Failed to delete client account.')
     },
   })
 
@@ -119,11 +182,30 @@ export default function AdminUsersPage() {
     createMutation.mutate({ email, password, role })
   }
 
+  const handleCreateClient = (e) => {
+    e.preventDefault()
+    clearAlert()
+    if (!clientName || !clientEmail) {
+      setStatus('error')
+      setMsg('Name and email are required.')
+      return
+    }
+    createClientMutation.mutate({ name: clientName, email: clientEmail })
+  }
+
   const handleToggleActive = (user) => {
     clearAlert()
     updateMutation.mutate({
       id: user.id,
       updates: { isActive: !user.isActive },
+    })
+  }
+
+  const handleToggleClientActive = (client) => {
+    clearAlert()
+    updateClientMutation.mutate({
+      id: client.id,
+      updates: { isActive: !client.isActive },
     })
   }
 
@@ -148,10 +230,24 @@ export default function AdminUsersPage() {
     }
   }
 
+  const handleDeleteClient = (client) => {
+    if (confirm(`Are you sure you want to permanently delete client account ${client.name} (${client.email})? This action cannot be undone.`)) {
+      clearAlert()
+      deleteClientMutation.mutate(client.id)
+    }
+  }
+
   const filteredUsers = users.filter((u) => {
     const matchesSearch = u.email.toLowerCase().includes(search.toLowerCase())
     const matchesRole = roleFilter === 'ALL' || u.role === roleFilter
     return matchesSearch && matchesRole
+  })
+
+  const filteredClients = clients.filter((c) => {
+    const matchesSearch =
+      c.email.toLowerCase().includes(search.toLowerCase()) ||
+      c.name.toLowerCase().includes(search.toLowerCase())
+    return matchesSearch
   })
 
   return (
@@ -165,8 +261,14 @@ export default function AdminUsersPage() {
               <Users className="w-5 h-5 text-brand-blue" />
             </div>
             <div>
-              <h1 className="font-heading text-2xl font-bold text-gray-900">Admins & Staff</h1>
-              <p className="text-sm text-gray-500 mt-0.5">Manage administrative and employee login credentials.</p>
+              <h1 className="font-heading text-2xl font-bold text-gray-900">
+                {activeTab === 'internal' ? 'Admins & Staff' : 'Client Portal Accounts'}
+              </h1>
+              <p className="text-sm text-gray-500 mt-0.5">
+                {activeTab === 'internal'
+                  ? 'Manage administrative and employee login credentials.'
+                  : 'Manage client portal access and linked projects.'}
+              </p>
             </div>
           </div>
 
@@ -179,7 +281,31 @@ export default function AdminUsersPage() {
             className="flex items-center gap-2 bg-brand-blue hover:bg-brand-blue-hover text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm hover:shadow transition-all cursor-pointer"
           >
             <UserPlus className="w-4 h-4" />
-            Create Account
+            {activeTab === 'internal' ? 'Create Account' : 'Add Client'}
+          </button>
+        </div>
+
+        {/* Tab Switcher */}
+        <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
+          <button
+            onClick={() => { setActiveTab('internal'); setShowAddForm(false); clearAlert() }}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
+              activeTab === 'internal'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Admins & Staff
+          </button>
+          <button
+            onClick={() => { setActiveTab('clients'); setShowAddForm(false); clearAlert() }}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
+              activeTab === 'clients'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Client Portal
           </button>
         </div>
 
@@ -203,8 +329,8 @@ export default function AdminUsersPage() {
           </div>
         )}
 
-        {/* Add User Form Drawer/Card */}
-        {showAddForm && (
+        {/* Add User Form (Internal Tab) */}
+        {showAddForm && activeTab === 'internal' && (
           <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
             <h2 className="font-heading text-base font-bold text-gray-800 flex items-center gap-2">
               <UserPlus className="w-4 h-4 text-brand-blue" />
@@ -275,6 +401,39 @@ export default function AdminUsersPage() {
                   className="px-4 py-2 bg-brand-blue hover:bg-brand-blue-hover text-white font-semibold rounded-xl text-xs shadow-sm transition-colors cursor-pointer disabled:opacity-60"
                 >
                   {createMutation.isPending ? 'Creating...' : 'Create Account'}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Add Client Form (Clients Tab) */}
+        {showAddForm && activeTab === 'clients' && (
+          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
+            <h2 className="font-heading text-base font-bold text-gray-800 flex items-center gap-2">
+              <UserPlus className="w-4 h-4 text-brand-blue" />
+              Add New Client Portal Account
+            </h2>
+            <p className="text-xs text-gray-500">An invite email with a password setup link will be sent to the client automatically.</p>
+            <form onSubmit={handleCreateClient} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-semibold text-gray-600 block mb-1.5">Client Full Name</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                  <input type="text" value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="e.g. Rahul Sharma" className={inputCls} required />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-gray-600 block mb-1.5">Client Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                  <input type="email" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} placeholder="e.g. rahul@company.com" className={inputCls} required />
+                </div>
+              </div>
+              <div className="sm:col-span-2 flex justify-end gap-2 pt-2 border-t border-gray-100">
+                <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2 border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold rounded-xl text-xs transition-colors cursor-pointer">Cancel</button>
+                <button type="submit" disabled={createClientMutation.isPending} className="px-4 py-2 bg-brand-blue hover:bg-brand-blue-hover text-white font-semibold rounded-xl text-xs shadow-sm transition-colors cursor-pointer disabled:opacity-60">
+                  {createClientMutation.isPending ? 'Sending Invite...' : 'Create & Send Invite'}
                 </button>
               </div>
             </form>
@@ -361,7 +520,8 @@ export default function AdminUsersPage() {
           </div>
         </div>
 
-        {/* Accounts Table */}
+        {/* ── INTERNAL USERS TABLE ── */}
+        {activeTab === 'internal' && (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
           {isLoading ? (
             <div className="p-8 text-center text-gray-400 flex flex-col items-center gap-3">
@@ -484,6 +644,109 @@ export default function AdminUsersPage() {
             </div>
           )}
         </div>
+        )}
+
+        {/* ── CLIENTS TABLE ── */}
+        {activeTab === 'clients' && (
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+            {isClientsLoading ? (
+              <div className="p-8 text-center text-gray-400 flex flex-col items-center gap-3">
+                <div className="w-8 h-8 border-2 border-brand-blue border-t-transparent rounded-full animate-spin" />
+                <p className="text-xs">Loading client accounts...</p>
+              </div>
+            ) : isClientsError ? (
+              <div className="p-8 text-center text-red-500 text-sm">Failed to load client accounts.</div>
+            ) : filteredClients.length === 0 ? (
+              <div className="p-8 text-center space-y-2">
+                <UserCheck className="w-10 h-10 text-gray-300 mx-auto" />
+                <p className="text-sm font-semibold text-gray-500">No client accounts yet.</p>
+                <p className="text-xs text-gray-400">Click "Add Client" to create a client portal account.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-sm">
+                  <thead>
+                    <tr className="bg-gray-50 border-b border-gray-200 text-gray-400 text-xs font-bold uppercase tracking-wider">
+                      <th className="px-5 py-3.5">Client</th>
+                      <th className="px-5 py-3.5">Email</th>
+                      <th className="px-5 py-3.5">Linked Projects</th>
+                      <th className="px-5 py-3.5">Portal Access</th>
+                      <th className="px-5 py-3.5">Status</th>
+                      <th className="px-5 py-3.5 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {filteredClients.map((c) => (
+                      <tr key={c.id} className="hover:bg-gray-50/50 transition-colors">
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                              {c.name[0]}
+                            </div>
+                            <p className="font-semibold text-gray-900">{c.name}</p>
+                          </div>
+                        </td>
+                        <td className="px-5 py-4 text-sm text-gray-500">{c.email}</td>
+                        <td className="px-5 py-4">
+                          {c.projects && c.projects.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {c.projects.map((p) => (
+                                <span key={p.id} className="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-full text-[10px] font-semibold">
+                                  {p.projectTitle}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-gray-400 italic">No projects linked</span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4">
+                          <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border ${
+                            c.passwordHash
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              : 'bg-amber-50 text-amber-700 border-amber-200'
+                          }`}>
+                            {c.passwordHash ? '✓ Password Set' : '⏳ Invite Pending'}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4">
+                          <span className={`inline-flex items-center gap-1 text-xs font-bold ${
+                            c.isActive ? 'text-green-600' : 'text-red-500'
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${c.isActive ? 'bg-green-500' : 'bg-red-400'}`} />
+                            {c.isActive ? 'Active' : 'Deactivated'}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => handleToggleClientActive(c)}
+                              className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
+                                c.isActive
+                                  ? 'border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-100'
+                                  : 'border-green-200 bg-green-50 text-green-600 hover:bg-green-100'
+                              }`}
+                              title={c.isActive ? 'Deactivate' : 'Reactivate'}
+                            >
+                              <Power className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClient(c)}
+                              className="p-1.5 border border-red-100 hover:bg-red-50 text-red-400 hover:text-red-600 rounded-lg transition-colors cursor-pointer"
+                              title="Delete Client Account"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </>
   )

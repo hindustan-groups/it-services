@@ -53,6 +53,11 @@ const inputCls =
   'w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/25 focus:border-brand-blue transition-all'
 
 function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange }) {
+  const { data: clients = [] } = useQuery({
+    queryKey: ['admin-clients-list-for-dropdown'],
+    queryFn: () => api.get('/admin/clients').then((r) => r.data),
+  })
+
   // Format dates for input type="date"
   const formatDateForInput = (dateStr) => {
     if (!dateStr) return ''
@@ -68,6 +73,7 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
           startDate: formatDateForInput(initial.startDate),
           deadline: formatDateForInput(initial.deadline),
           tags: initial.tags ? initial.tags.join(', ') : '',
+          clientId: initial.clientId || '',
         }
       : {
           clientName: '',
@@ -82,6 +88,7 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
           status: 'PLANNING',
           priority: 'MEDIUM',
           progress: 0,
+          clientId: '',
         },
   })
 
@@ -124,6 +131,19 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
               className={inputCls}
               placeholder="e.g. Ramesh Textiles, Bhilwara"
             />
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-600 block mb-1.5">
+              Link Client Portal Account (Optional)
+            </label>
+            <select {...register('clientId')} className={inputCls}>
+              <option value="">-- No Portal Account linked --</option>
+              {clients.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name} ({c.email})
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="text-xs font-semibold text-gray-600 block mb-1.5">
@@ -694,9 +714,14 @@ export default function AdminClientProjectsPage() {
                     <h3 className="font-bold font-heading text-gray-900 group-hover:text-brand-blue transition-colors text-base line-clamp-1">
                       {p.projectTitle}
                     </h3>
-                    <p className="text-xs text-gray-400 font-semibold mb-3 flex items-center gap-1">
+                    <p className="text-xs text-gray-400 font-semibold mb-3 flex items-center gap-1 flex-wrap">
                       <User className="w-3.5 h-3.5 text-gray-300" />
                       {p.clientName}
+                      {p.client && (
+                        <span className="text-[9px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-1.5 py-0.5 rounded font-bold ml-1" title={`Linked to client portal account: ${p.client.email}`}>
+                          Portal Linked
+                        </span>
+                      )}
                     </p>
 
                     {/* Progress Bar */}
