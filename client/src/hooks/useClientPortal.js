@@ -121,3 +121,15 @@ export function useClientPayMilestone() {
   })
 }
 
+export function useClientSubmitFeedback() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ projectId, rating, text, companyName, role }) =>
+      api.post(`/client/projects/${projectId}/feedback`, { rating, text, companyName, role }).then((r) => r.data),
+    onSuccess: (res, variables) => {
+      qc.invalidateQueries({ queryKey: ['client-projects'] })
+      qc.invalidateQueries({ queryKey: ['client-project', variables.projectId] })
+    },
+  })
+}
+

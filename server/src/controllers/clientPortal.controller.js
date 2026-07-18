@@ -71,3 +71,61 @@ export const getClientProjectById = async (req, res, next) => {
     next(err)
   }
 }
+
+// POST /api/client/projects/:id/feedback
+export const submitProjectFeedback = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const clientId = req.client.id
+    const { rating, text, companyName, role } = req.body
+
+    if (!rating || !text) {
+      return res.status(400).json({ status: 'error', message: 'Rating and feedback text are required' })
+    }
+
+    // Verify project belongs to client and is COMPLETED
+    const project = await prisma.clientProject.findFirst({
+      where: { id, clientId },
+      include: { client: true },
+    })
+
+    if (!project) {
+      return res.status(404).json({ status: 'error', message: 'Project not found.' })
+    }
+
+    if (project.status !== 'COMPLETED') {
+      return res.status(400).json({ status: 'error', message: 'Feedback can only be submitted for completed projects.' })
+    }
+
+    if (project.hasFeedback) {
+      return res.status(400).json({ status: 'error', message: 'Feedback has already been submitted for this project.' })
+    }
+
+    // Create testimonial and update project hasFeedback flag in transaction
+    const result = await prisma.$transaction(async (tx) => {
+      const testimonial = await tx.testimonial.create({
+        data: {
+          name: project.client?.name || project.clientName,
+          role: role || 'Client Partner',
+          company: companyName || 'Hindustan Projects Partner',
+          text,
+          rating: parseInt(rating),
+          avatarUrl: null, // default
+          isActive: false, // in review pipeline, requires admin approval
+          order: 0,
+        },
+      })
+
+      await tx.clientProject.update({
+        where: { id },
+        data: { hasFeedback: true },
+      })
+
+      return testimonial
+    })
+
+    res.status(201).json({ status: 'ok', data: result })
+  } catch (err) {
+    next(err)
+  }
+}

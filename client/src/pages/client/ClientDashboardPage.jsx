@@ -1,6 +1,7 @@
 /**
  * ClientDashboardPage.jsx — Client Portal Dashboard Overview
  */
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   FolderKanban,
@@ -10,8 +11,9 @@ import {
   ArrowRight,
   TrendingUp,
   MessageCircle,
+  Star,
 } from 'lucide-react'
-import { useClientProjects } from '@/hooks/useClientPortal'
+import { useClientProjects, useClientSubmitFeedback } from '@/hooks/useClientPortal'
 import { useSiteSettings } from '@/hooks/useContent'
 
 const STATUS_COLORS = {
@@ -33,6 +35,36 @@ const STATUS_LABELS = {
 export default function ClientDashboardPage() {
   const { data: projects = [], isLoading } = useClientProjects()
   const { data: settingsData } = useSiteSettings()
+
+  const [selectedProjectFeedback, setSelectedProjectFeedback] = useState(null)
+  const [feedbackText, setFeedbackText] = useState('')
+  const [feedbackRating, setFeedbackRating] = useState(5)
+  const [clientRole, setClientRole] = useState('')
+  const [clientCompany, setClientCompany] = useState('')
+
+  const submitFeedbackMutation = useClientSubmitFeedback()
+
+  const handleFeedbackSubmit = async (e) => {
+    e.preventDefault()
+    if (!feedbackText.trim()) return
+
+    try {
+      await submitFeedbackMutation.mutateAsync({
+        projectId: selectedProjectFeedback.id,
+        rating: feedbackRating,
+        text: feedbackText,
+        role: clientRole,
+        companyName: clientCompany,
+      })
+      setSelectedProjectFeedback(null)
+      setFeedbackText('')
+      setFeedbackRating(5)
+      setClientRole('')
+      setClientCompany('')
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -184,13 +216,25 @@ export default function ClientDashboardPage() {
                       </div>
                     </div>
                     
-                    <Link
-                      to={`/client/projects/${project.id}`}
-                      className="inline-flex items-center gap-1 text-sm font-bold text-brand-blue hover:text-brand-blue-hover transition-colors"
-                    >
-                      <span>Track</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
+                    <div className="flex items-center gap-3">
+                      {project.status === 'COMPLETED' && !project.hasFeedback && (
+                        <button
+                          onClick={() => setSelectedProjectFeedback(project)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100/50 font-bold rounded-xl text-xs transition-colors cursor-pointer shadow-sm"
+                        >
+                          <Star className="w-3.5 h-3.5 fill-emerald-500 text-emerald-600" />
+                          <span>Leave Feedback</span>
+                        </button>
+                      )}
+
+                      <Link
+                        to={`/client/projects/${project.id}`}
+                        className="inline-flex items-center gap-1 text-sm font-bold text-brand-blue hover:text-brand-blue-hover transition-colors"
+                      >
+                        <span>Track</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               )
@@ -198,6 +242,103 @@ export default function ClientDashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Testimonial Feedback Modal */}
+      {selectedProjectFeedback && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl border border-gray-150 shadow-xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-5 border-b border-gray-100 bg-gray-50/50">
+              <h3 className="font-heading font-bold text-gray-800 text-sm flex items-center gap-2">
+                <Star className="w-4 h-4 text-emerald-500 fill-emerald-100" />
+                <span>Submit Project Review</span>
+              </h3>
+              <p className="text-[10px] text-gray-400 mt-1">
+                Share your experience on project: <span className="font-bold text-gray-700">{selectedProjectFeedback.projectTitle}</span>
+              </p>
+            </div>
+
+            <form onSubmit={handleFeedbackSubmit} className="p-5 space-y-4">
+              {/* Star Rating Selector */}
+              <div>
+                <label className="text-[10px] font-bold text-gray-500 block mb-1.5 uppercase">Rating</label>
+                <div className="flex gap-1.5">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setFeedbackRating(star)}
+                      className="p-1 hover:scale-110 transition-transform cursor-pointer"
+                    >
+                      <Star
+                        className={`w-6 h-6 ${
+                          star <= feedbackRating
+                            ? 'fill-amber-400 text-amber-500'
+                            : 'text-gray-300 fill-transparent'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Optional Client Role & Company */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] font-bold text-gray-500 block mb-1 uppercase">Your Title / Role</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Managing Director"
+                    value={clientRole}
+                    onChange={(e) => setClientRole(e.target.value)}
+                    className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-blue/20 bg-gray-50 focus:bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-500 block mb-1 uppercase">Company Name</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Hindustan Groups"
+                    value={clientCompany}
+                    onChange={(e) => setClientCompany(e.target.value)}
+                    className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-blue/20 bg-gray-50 focus:bg-white"
+                  />
+                </div>
+              </div>
+
+              {/* Feedback text */}
+              <div>
+                <label className="text-[10px] font-bold text-gray-500 block mb-1 uppercase">Review Feedback</label>
+                <textarea
+                  required
+                  rows={4}
+                  value={feedbackText}
+                  onChange={(e) => setFeedbackText(e.target.value)}
+                  placeholder="Tell us about the project quality, team communication, and overall execution..."
+                  className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-blue/20 bg-gray-50 focus:bg-white resize-none"
+                />
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex gap-2 justify-end pt-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedProjectFeedback(null)}
+                  className="px-4 py-2 border border-gray-200 text-gray-500 rounded-xl text-xs font-bold bg-white hover:bg-gray-50 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitFeedbackMutation.isPending}
+                  className="px-4 py-2 bg-emerald-500 text-white rounded-xl text-xs font-bold hover:bg-emerald-600 cursor-pointer shadow-md disabled:opacity-50"
+                >
+                  Submit Review
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

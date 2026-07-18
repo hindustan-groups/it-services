@@ -334,6 +334,7 @@ model ClientProject {
   clientId          String?
   client            Client?            @relation(fields: [clientId], references: [id], onDelete: SetNull)
   attachments       Attachment[]
+  hasFeedback       Boolean            @default(false)
   deletedAt         DateTime?
 
   @@index([clientId])
