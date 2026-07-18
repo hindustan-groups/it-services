@@ -9,8 +9,9 @@ import {
   useClientReplyTicket,
   useClientProjects,
 } from '@/hooks/useClientPortal'
-import { MessageSquare, AlertCircle, Plus, Send, X, ArrowLeft, Clock, ShieldAlert } from 'lucide-react'
+import { MessageSquare, AlertCircle, Plus, Send, X, ArrowLeft, Clock, Paperclip, Trash2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
+import { api } from '@/utils/api'
 
 const TICKET_CATEGORIES = [
   { value: 'TECHNICAL', label: 'Technical Issue' },
@@ -37,6 +38,9 @@ export default function ClientTicketsPage() {
   const [selectedTicketId, setSelectedTicketId] = useState(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [replyText, setReplyText] = useState('')
+  const [replyFile, setReplyFile] = useState(null)
+  const [createFile, setCreateFile] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
 
   // Fetch individual ticket messages
   const { data: ticketDetail, isLoading: loadingDetail } = useClientTicket(selectedTicketId)
@@ -50,31 +54,70 @@ export default function ClientTicketsPage() {
     },
   })
 
+  const uploadFileToServer = async (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await api.post('/client/tickets/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return response.data.data
+  }
+
   const onCreateSubmit = async (data) => {
     try {
+      setIsUploading(true)
+      let fileUrl = null
+      let fileName = null
+
+      if (createFile) {
+        const uploadResult = await uploadFileToServer(createFile)
+        fileUrl = uploadResult.fileUrl
+        fileName = uploadResult.fileName
+      }
+
       await createMutation.mutateAsync({
         ...data,
         clientProjectId: data.clientProjectId || null,
+        fileUrl,
+        fileName,
       })
       setShowCreateModal(false)
+      setCreateFile(null)
       reset()
     } catch (err) {
       console.error(err)
+    } finally {
+      setIsUploading(false)
     }
   }
 
   const handleSendReply = async (e) => {
     e.preventDefault()
-    if (!replyText.trim()) return
+    if (!replyText.trim() && !replyFile) return
 
     try {
+      setIsUploading(true)
+      let fileUrl = null
+      let fileName = null
+
+      if (replyFile) {
+        const uploadResult = await uploadFileToServer(replyFile)
+        fileUrl = uploadResult.fileUrl
+        fileName = uploadResult.fileName
+      }
+
       await replyMutation.mutateAsync({
         ticketId: selectedTicketId,
         message: replyText,
+        fileUrl,
+        fileName,
       })
       setReplyText('')
+      setReplyFile(null)
     } catch (err) {
       console.error(err)
+    } finally {
+      setIsUploading(false)
     }
   }
 
@@ -201,7 +244,25 @@ export default function ClientTicketsPage() {
                               : 'bg-white border border-gray-150 text-gray-800 rounded-tl-none shadow-sm'
                           }`}
                         >
-                          {msg.message}
+                          <div>{msg.message}</div>
+                          {msg.fileUrl && (
+                            <div className={`mt-2 flex items-center gap-2 p-1.5 rounded-xl text-[10px] ${
+                              isSelf
+                                ? 'bg-white/10 border border-white/20 text-white'
+                                : 'bg-gray-50 border border-gray-150 text-gray-700'
+                            }`}>
+                              <Paperclip className="w-3 h-3 shrink-0" />
+                              <a
+                                href={msg.fileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-bold underline truncate max-w-[180px] hover:opacity-85"
+                                title={msg.fileName}
+                              >
+                                {msg.fileName || 'View Attachment'}
+                              </a>
+                            </div>
+                          )}
                         </div>
                         <span className="text-[8px] text-gray-400 mt-1">
                           {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -214,22 +275,67 @@ export default function ClientTicketsPage() {
 
               {/* Chat Reply Box */}
               {!loadingDetail && ticketDetail?.status !== 'RESOLVED' ? (
-                <form onSubmit={handleSendReply} className="p-3 border-t border-gray-100 flex gap-2 shrink-0">
-                  <input
-                    type="text"
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Write a message reply..."
-                    className="flex-1 px-4 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-blue/20 bg-gray-50 focus:bg-white"
-                  />
-                  <button
-                    type="submit"
-                    disabled={replyMutation.isPending}
-                    className="p-2.5 bg-brand-blue text-white rounded-xl hover:bg-blue-600 shadow-sm transition-all disabled:opacity-50 cursor-pointer"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                  </button>
-                </form>
+                <div className="p-3 border-t border-gray-100 flex flex-col gap-2 shrink-0">
+                  {replyFile && (
+                    <div className="flex items-center justify-between bg-blue-50/50 border border-blue-100 px-3 py-1.5 rounded-xl text-[10px] text-gray-700">
+                      <div className="flex items-center gap-1.5 truncate">
+                        <Paperclip className="w-3.5 h-3.5 text-brand-blue shrink-0" />
+                        <span className="font-semibold truncate">{replyFile.name}</span>
+                        <span className="text-gray-400">({Math.round(replyFile.size / 1024)} KB)</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setReplyFile(null)}
+                        className="text-gray-400 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+
+                  <form onSubmit={handleSendReply} className="flex gap-2 items-center">
+                    <input
+                      type="file"
+                      id="reply-file-upload"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) {
+                          setReplyFile(e.target.files[0])
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      disabled={isUploading}
+                      onClick={() => document.getElementById('reply-file-upload').click()}
+                      className="p-2.5 border border-gray-200 text-gray-500 rounded-xl hover:bg-gray-50 transition-all cursor-pointer"
+                      title="Attach file"
+                    >
+                      <Paperclip className="w-3.5 h-3.5" />
+                    </button>
+
+                    <input
+                      type="text"
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      placeholder={isUploading ? "Uploading attachment..." : "Write a message reply..."}
+                      disabled={isUploading}
+                      className="flex-1 px-4 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-blue/20 bg-gray-50 focus:bg-white disabled:opacity-50"
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={replyMutation.isPending || isUploading}
+                      className="p-2.5 bg-brand-blue text-white rounded-xl hover:bg-blue-600 shadow-sm transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center min-w-[38px]"
+                    >
+                      {isUploading ? (
+                        <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Send className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  </form>
+                </div>
               ) : ticketDetail?.status === 'RESOLVED' ? (
                 <div className="p-4 border-t border-gray-100 bg-emerald-50 text-emerald-800 text-center flex items-center justify-center gap-2 text-xs font-semibold">
                   <Clock className="w-4 h-4" />
@@ -320,20 +426,72 @@ export default function ClientTicketsPage() {
                 />
               </div>
 
+              <div>
+                <label className="text-xs font-semibold text-gray-600 block mb-1">Attachment (Optional)</label>
+                {createFile ? (
+                  <div className="flex items-center justify-between bg-gray-50 border border-gray-150 p-2.5 rounded-xl text-xs text-gray-700">
+                    <div className="flex items-center gap-1.5 truncate">
+                      <Paperclip className="w-4 h-4 text-brand-blue shrink-0" />
+                      <span className="font-semibold truncate">{createFile.name}</span>
+                      <span className="text-gray-400">({Math.round(createFile.size / 1024)} KB)</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCreateFile(null)}
+                      className="text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50 hover:bg-white transition-all">
+                    <input
+                      type="file"
+                      id="create-file-upload"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) {
+                          setCreateFile(e.target.files[0])
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => document.getElementById('create-file-upload').click()}
+                      className="flex items-center gap-1.5 text-xs text-brand-blue font-bold hover:underline cursor-pointer"
+                    >
+                      <Paperclip className="w-4 h-4" />
+                      <span>Choose a file (Image, PDF, Word, Excel, ZIP)</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 border border-gray-200 text-gray-500 rounded-xl hover:bg-gray-50 text-xs font-bold transition-all cursor-pointer"
+                  disabled={isUploading}
+                  onClick={() => {
+                    setShowCreateModal(false)
+                    setCreateFile(null)
+                  }}
+                  className="px-4 py-2 border border-gray-200 text-gray-500 rounded-xl hover:bg-gray-50 text-xs font-bold transition-all cursor-pointer disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={createMutation.isPending}
-                  className="px-4 py-2 bg-brand-blue text-white rounded-xl hover:bg-blue-600 text-xs font-bold shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+                  disabled={createMutation.isPending || isUploading}
+                  className="px-4 py-2 bg-brand-blue text-white rounded-xl hover:bg-blue-600 text-xs font-bold shadow-sm transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
                 >
-                  Submit Inquiry
+                  {isUploading ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Uploading File...</span>
+                    </>
+                  ) : (
+                    <span>Submit Inquiry</span>
+                  )}
                 </button>
               </div>
             </form>

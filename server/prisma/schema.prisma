@@ -608,6 +608,8 @@ model TicketMessage {
   senderName String
   senderId   String        // client id or admin id
   message    String
+  fileUrl    String?
+  fileName   String?
   createdAt  DateTime      @default(now())
 
   @@index([ticketId])

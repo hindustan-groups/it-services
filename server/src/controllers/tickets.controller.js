@@ -4,6 +4,7 @@
 import prisma from '../config/db.js'
 import { sendEmail, supportTicketCreatedTemplate, supportTicketReplyTemplate } from '../utils/mailer.js'
 import { env } from '../config/env.js'
+import { uploadToCloudinary } from '../utils/cloudinary.js'
 
 // ── CLIENT PORTAL ACTIONS ────────────────────────────────────────
 
@@ -11,7 +12,7 @@ import { env } from '../config/env.js'
 export const createTicket = async (req, res, next) => {
   try {
     const clientId = req.client.id
-    const { subject, category, clientProjectId, description } = req.body
+    const { subject, category, clientProjectId, description, fileUrl, fileName } = req.body
 
     if (!subject || !category || !description) {
       return res.status(400).json({ status: 'error', message: 'Subject, category, and initial description are required' })
@@ -41,6 +42,8 @@ export const createTicket = async (req, res, next) => {
           senderName: client?.name || 'Client',
           senderId: clientId,
           message: description,
+          fileUrl: fileUrl || null,
+          fileName: fileName || null,
         },
       })
 
@@ -140,7 +143,7 @@ export const replyToTicketFromClient = async (req, res, next) => {
   try {
     const { id } = req.params
     const clientId = req.client.id
-    const { message } = req.body
+    const { message, fileUrl, fileName } = req.body
 
     if (!message) {
       return res.status(400).json({ status: 'error', message: 'Message content is required' })
@@ -168,6 +171,8 @@ export const replyToTicketFromClient = async (req, res, next) => {
           senderName: client?.name || 'Client',
           senderId: clientId,
           message,
+          fileUrl: fileUrl || null,
+          fileName: fileName || null,
         },
       })
 
@@ -278,7 +283,7 @@ export const replyToTicketFromAdmin = async (req, res, next) => {
   try {
     const { id } = req.params
     const adminId = req.user.id
-    const { message } = req.body
+    const { message, fileUrl, fileName } = req.body
 
     if (!message) {
       return res.status(400).json({ status: 'error', message: 'Message content is required' })
@@ -286,6 +291,17 @@ export const replyToTicketFromAdmin = async (req, res, next) => {
 
     const ticket = await prisma.supportTicket.findUnique({
       where: { id },
+      include: {
+        client: {
+          select: { name: true, email: true },
+        },
+        clientProject: {
+          select: { projectTitle: true },
+        },
+        messages: {
+          orderBy: { createdAt: 'asc' },
+        },
+      },
     })
 
     if (!ticket) {
@@ -305,6 +321,8 @@ export const replyToTicketFromAdmin = async (req, res, next) => {
           senderName: `${admin?.role || 'Staff'} (${admin?.email || 'Admin'})`,
           senderId: adminId,
           message,
+          fileUrl: fileUrl || null,
+          fileName: fileName || null,
         },
       })
 
@@ -367,6 +385,35 @@ export const updateTicketStatus = async (req, res, next) => {
     })
 
     res.json({ status: 'ok', data: updated })
+  } catch (err) {
+    next(err)
+  }
+}
+
+// POST /api/client/tickets/upload
+export const uploadTicketAttachment = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ status: 'error', message: 'No file provided.' })
+    }
+
+    const isImage = req.file.mimetype.startsWith('image/')
+    const resourceType = isImage ? 'image' : 'raw'
+
+    const result = await uploadToCloudinary(
+      req.file.buffer,
+      'hindustan-projects-tickets',
+      resourceType,
+      req.file.originalname
+    )
+
+    res.status(201).json({
+      status: 'ok',
+      data: {
+        fileUrl: result.secure_url,
+        fileName: req.file.originalname,
+      },
+    })
   } catch (err) {
     next(err)
   }

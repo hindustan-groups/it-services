@@ -4,7 +4,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/utils/api'
-import { MessageSquare, AlertCircle, Send, ArrowLeft, CheckCircle2, User } from 'lucide-react'
+import { MessageSquare, Send, ArrowLeft, User, Paperclip } from 'lucide-react'
 
 const TICKET_CATEGORIES = {
   TECHNICAL: 'Technical Issue',
@@ -238,7 +238,25 @@ export default function AdminTicketsPage() {
                               : 'bg-white border border-gray-150 text-gray-800 rounded-tl-none shadow-sm'
                           }`}
                         >
-                          {msg.message}
+                          <div>{msg.message}</div>
+                          {msg.fileUrl && (
+                            <div className={`mt-2 flex items-center gap-2 p-1.5 rounded-xl text-[10px] ${
+                              isSelf
+                                ? 'bg-white/10 border border-white/20 text-white'
+                                : 'bg-gray-50 border border-gray-150 text-gray-700'
+                            }`}>
+                              <Paperclip className="w-3 h-3 shrink-0" />
+                              <a
+                                href={msg.fileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-bold underline truncate max-w-[180px] hover:opacity-85"
+                                title={msg.fileName}
+                              >
+                                {msg.fileName || 'View Attachment'}
+                              </a>
+                            </div>
+                          )}
                         </div>
                         <span className="text-[8px] text-gray-400 mt-1">
                           {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

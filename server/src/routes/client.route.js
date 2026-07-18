@@ -18,7 +18,9 @@ import {
   listClientTickets,
   getClientTicketById,
   replyToTicketFromClient,
+  uploadTicketAttachment,
 } from '../controllers/tickets.controller.js'
+import { uploadAttachment } from '../utils/cloudinary.js'
 import {
   listClientMilestones,
   simulatePayment,
@@ -44,6 +46,7 @@ router.get('/tickets', verifyClientToken, listClientTickets)
 router.post('/tickets', verifyClientToken, createTicket)
 router.get('/tickets/:id', verifyClientToken, getClientTicketById)
 router.post('/tickets/:id/messages', verifyClientToken, replyToTicketFromClient)
+router.post('/tickets/upload', verifyClientToken, uploadAttachment.single('file'), uploadTicketAttachment)
 
 // Billing / Milestones routes
 router.get('/billing', verifyClientToken, listClientMilestones)
