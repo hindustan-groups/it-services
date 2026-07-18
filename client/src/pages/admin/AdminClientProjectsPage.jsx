@@ -22,6 +22,7 @@ import { useForm } from 'react-hook-form'
 import { api } from '@/utils/api'
 import { SEO } from '@/components/ui'
 import AttachmentSection from '@/components/ui/AttachmentSection'
+import AdminBillingSection from '@/components/admin/AdminBillingSection'
 
 const STATUSES = ['PLANNING', 'IN_PROGRESS', 'REVIEW', 'COMPLETED', 'ON_HOLD']
 const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT']
@@ -415,6 +416,11 @@ export default function AdminClientProjectsPage() {
     queryFn: () => api.get('/admin/client-projects').then((r) => r.data),
   })
 
+  const { data: adminProfile } = useQuery({
+    queryKey: ['admin-profile'],
+    queryFn: () => api.get('/admin/me').then((res) => res.data),
+  })
+
   const createMutation = useMutation({
     mutationFn: (data) => api.post('/admin/client-projects', data),
     onSuccess: () => {
@@ -616,13 +622,22 @@ export default function AdminClientProjectsPage() {
                 loading={createMutation.isPending}
               />
             ) : (
-              <ProjectForm
-                initial={editing}
-                onSave={(data) => updateMutation.mutate({ id: editing.id, ...data })}
-                onCancel={() => setEditing(null)}
-                loading={updateMutation.isPending}
-                onAttachmentChange={handleAttachmentChange}
-              />
+              <div className="space-y-6">
+                <ProjectForm
+                  initial={editing}
+                  onSave={(data) => updateMutation.mutate({ id: editing.id, ...data })}
+                  onCancel={() => setEditing(null)}
+                  loading={updateMutation.isPending}
+                  onAttachmentChange={handleAttachmentChange}
+                />
+                
+                <hr className="border-gray-150" />
+                
+                <AdminBillingSection
+                  projectId={editing.id}
+                  currentRole={adminProfile?.role}
+                />
+              </div>
             )}
           </div>
         )}

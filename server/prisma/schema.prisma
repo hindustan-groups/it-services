@@ -313,26 +313,28 @@ enum ProjectPriority {
 }
 
 model ClientProject {
-  id            String          @id @default(cuid())
-  clientName    String
-  projectTitle  String
-  description   String?
-  status        ProjectStatus   @default(PLANNING)
-  priority      ProjectPriority @default(MEDIUM)
-  progress      Int             @default(0)
-  startDate     DateTime
-  deadline      DateTime
-  assignedTo    String?
-  budget        String?
-  tags          String[]
-  notes         String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  tasks         WorkTask[]
-  clientId      String?
-  client        Client?         @relation(fields: [clientId], references: [id], onDelete: SetNull)
-  attachments   Attachment[]
-  deletedAt     DateTime?
+  id                String             @id @default(cuid())
+  clientName        String
+  projectTitle      String
+  description       String?
+  status            ProjectStatus      @default(PLANNING)
+  priority          ProjectPriority    @default(MEDIUM)
+  progress          Int                @default(0)
+  startDate         DateTime
+  deadline          DateTime
+  assignedTo        String?
+  budget            String?
+  tags              String[]
+  notes             String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  tasks             WorkTask[]
+  tickets           SupportTicket[]
+  billingMilestones BillingMilestone[]
+  clientId          String?
+  client            Client?            @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  attachments       Attachment[]
+  deletedAt         DateTime?
 
   @@index([clientId])
   @@index([deletedAt])
@@ -545,6 +547,7 @@ model Client {
   inviteToken        String?         @unique
   inviteTokenExpires DateTime?
   projects           ClientProject[]
+  tickets            SupportTicket[]
   createdAt          DateTime        @default(now())
   updatedAt          DateTime        @updatedAt
 
@@ -574,5 +577,54 @@ model Attachment {
   @@index([taskId])
   @@index([clientProjectId])
   @@map("attachments")
+}
+
+model SupportTicket {
+  id              String          @id @default(cuid())
+  subject         String
+  category        String          // e.g. "TECHNICAL" | "BILLING" | "UPDATE" | "OTHER"
+  status          String          @default("OPEN") // "OPEN" | "IN_PROGRESS" | "RESOLVED"
+  clientId        String
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientProjectId String?
+  clientProject   ClientProject?  @relation(fields: [clientProjectId], references: [id], onDelete: Cascade)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  messages        TicketMessage[]
+
+  @@index([clientId])
+  @@index([clientProjectId])
+  @@map("support_tickets")
+}
+
+model TicketMessage {
+  id         String        @id @default(cuid())
+  ticketId   String
+  ticket     SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  senderType String        // "CLIENT" | "ADMIN"
+  senderName String
+  senderId   String        // client id or admin id
+  message    String
+  createdAt  DateTime      @default(now())
+
+  @@index([ticketId])
+  @@map("ticket_messages")
+}
+
+model BillingMilestone {
+  id              String        @id @default(cuid())
+  title           String
+  amount          Float
+  dueDate         DateTime?
+  status          String        @default("PENDING") // "PENDING" | "PAID" | "OVERDUE"
+  clientProjectId String
+  clientProject   ClientProject @relation(fields: [clientProjectId], references: [id], onDelete: Cascade)
+  paidAt          DateTime?
+  invoiceUrl      String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([clientProjectId])
+  @@map("billing_milestones")
 }
 
