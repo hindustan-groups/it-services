@@ -5,7 +5,7 @@ import prisma from '../config/db.js'
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import { logActivity } from '../utils/activity.js'
-import { sendEmail } from '../utils/mailer.js'
+import { sendEmail, professionalEmailFooter, fetchEmailFooterSettings } from '../utils/mailer.js'
 import { env } from '../config/env.js'
 
 export const listAdminUsers = async (req, res, next) => {
