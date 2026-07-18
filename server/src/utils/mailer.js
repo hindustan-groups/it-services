@@ -106,6 +106,76 @@ export async function sendEmail(options) {
   })
 }
 
+// ── Shared Professional Email Footer ───────────────────────────
+
+/**
+ * professionalEmailFooter() — Brand-consistent footer for all client emails.
+ * Based on Hindustan Projects Official Email Signature System (HP-BB-030).
+ */
+export function professionalEmailFooter() {
+  return `
+    <div style="margin-top: 32px; border-top: 2px solid #1A3E8C; padding-top: 20px;">
+
+      <!-- Brand + Contact -->
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="vertical-align: top; padding-right: 20px;">
+
+            <!-- Logo Text -->
+            <div style="margin-bottom: 12px;">
+              <span style="font-size: 22px; font-weight: 900; color: #1A3E8C; letter-spacing: -0.5px;">Hi</span><span style="font-size: 22px; font-weight: 900; color: #E31E24;">PRO</span>
+              <div style="font-size: 9px; font-weight: 700; color: #1A3E8C; letter-spacing: 2px; text-transform: uppercase; margin-top: 1px;">HINDUSTAN PROJECTS</div>
+              <div style="font-size: 8px; color: #6B7280; letter-spacing: 0.5px; margin-top: 2px;">Engineering &bull; Construction &bull; Infrastructure</div>
+            </div>
+
+            <!-- Contact Details -->
+            <table style="border-collapse: collapse; font-size: 12px; color: #374151;">
+              <tr>
+                <td style="padding: 2px 8px 2px 0; white-space: nowrap;">&#128222;</td>
+                <td style="padding: 2px 0;"><a href="tel:+919929120431" style="color: #1A3E8C; text-decoration: none;">+91 99291 20431</a></td>
+              </tr>
+              <tr>
+                <td style="padding: 2px 8px 2px 0; white-space: nowrap;">&#128241;</td>
+                <td style="padding: 2px 0;"><a href="https://wa.me/917014796047" style="color: #1A3E8C; text-decoration: none;">+91 70147 96047</a> <span style="color: #6B7280;">(WhatsApp)</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 2px 8px 2px 0; white-space: nowrap;">&#127760;</td>
+                <td style="padding: 2px 0;"><a href="https://www.hindustanprojects.in" style="color: #1A3E8C; text-decoration: none;">www.hindustanprojects.in</a></td>
+              </tr>
+              <tr>
+                <td style="padding: 2px 8px 2px 0; white-space: nowrap;">&#128205;</td>
+                <td style="padding: 2px 0; color: #374151;">Bhilwara &ndash; 311001, Rajasthan, India</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Social Media Links -->
+      <div style="margin-top: 16px;">
+        <span style="font-size: 11px; color: #6B7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Follow us:</span>
+        &nbsp;
+        <a href="https://www.linkedin.com/company/hindustan-projects" style="display: inline-block; background: #0A66C2; color: white; font-size: 11px; font-weight: bold; padding: 3px 9px; border-radius: 4px; text-decoration: none; margin: 2px;">in</a>
+        <a href="https://www.facebook.com/hindustanprojects" style="display: inline-block; background: #1877F2; color: white; font-size: 11px; font-weight: bold; padding: 3px 9px; border-radius: 4px; text-decoration: none; margin: 2px;">f</a>
+        <a href="https://www.instagram.com/hindustanprojects" style="display: inline-block; background: #E1306C; color: white; font-size: 11px; font-weight: bold; padding: 3px 9px; border-radius: 4px; text-decoration: none; margin: 2px;">&#9678;</a>
+        <a href="https://www.youtube.com/@hindustanprojects" style="display: inline-block; background: #FF0000; color: white; font-size: 11px; font-weight: bold; padding: 3px 9px; border-radius: 4px; text-decoration: none; margin: 2px;">&#9654;</a>
+      </div>
+
+      <!-- Confidentiality Notice -->
+      <div style="margin-top: 16px; padding: 10px 14px; background: #f9fafb; border-left: 3px solid #d1d5db; border-radius: 0 4px 4px 0;">
+        <p style="margin: 0; font-size: 10px; color: #9CA3AF; line-height: 1.6;">
+          <strong style="color: #6B7280;">CONFIDENTIALITY NOTICE:</strong> This email and any attachments are intended solely for the use of the addressee and may contain confidential information. If you are not the intended recipient, please notify the sender and delete this email immediately.
+        </p>
+      </div>
+
+      <!-- Copyright -->
+      <p style="margin: 12px 0 0; font-size: 10px; color: #9CA3AF; text-align: center;">
+        &copy; ${new Date().getFullYear()} Hindustan Projects. All rights reserved. &nbsp;|&nbsp; Bhilwara, Rajasthan, India
+      </p>
+    </div>
+  `
+}
+
 // ── Email templates ────────────────────────────────────────────
 
 /**

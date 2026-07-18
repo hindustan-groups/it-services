@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken'
 import prisma from '../config/db.js'
 import { env } from '../config/env.js'
 import { setClientCookie, clearClientCookies } from '../utils/authCookie.js'
+import { sendEmail, professionalEmailFooter } from '../utils/mailer.js'
 
 // POST /api/client/login
 export const clientLogin = async (req, res, next) => {
@@ -43,7 +44,6 @@ export const clientLogin = async (req, res, next) => {
       return res.status(401).json({ status: 'error', message: 'Invalid credentials.' })
     }
 
-    // Generate Client Access Token (expires in 24h)
     const token = jwt.sign(
       { id: client.id, email: client.email, role: 'CLIENT' },
       env.JWT_SECRET,
@@ -124,7 +124,6 @@ export const setupClientPassword = async (req, res, next) => {
       },
     })
 
-    // Log them in immediately
     const loginToken = jwt.sign(
       { id: updatedClient.id, email: updatedClient.email, role: 'CLIENT' },
       env.JWT_SECRET,
@@ -132,6 +131,45 @@ export const setupClientPassword = async (req, res, next) => {
     )
 
     setClientCookie(res, loginToken)
+
+    // Send welcome + login details email
+    const clientUrl = env.CLIENT_URL || 'https://it-services-hindustan-projects.vercel.app'
+    const loginUrl = `${clientUrl}/client-login`
+
+    sendEmail({
+      to: updatedClient.email,
+      subject: 'Your Hindustan Projects Portal Account is Ready',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+          <div style="background: #1A3E8C; padding: 20px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 22px;"><span style="color: #E31E24;">Hindustan</span> Projects</h1>
+            <p style="color: #93c5fd; margin: 6px 0 0; font-size: 14px;">Client Portal</p>
+          </div>
+
+          <p style="font-size: 16px; color: #1A1A1A;">Hi <strong>${updatedClient.name}</strong>,</p>
+
+          <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+            Your client portal account is now active! Here are your login details &mdash; please save them safely.
+          </p>
+
+          <div style="background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 16px 20px; margin: 20px 0;">
+            <p style="margin: 0 0 8px; font-size: 13px; color: #4B5563; text-transform: uppercase; letter-spacing: 0.05em; font-weight: bold;">Your Login Details</p>
+            <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;"><strong>Email:</strong> ${updatedClient.email}</p>
+            <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;"><strong>Password:</strong> The one you just set</p>
+            <p style="margin: 0; font-size: 14px; color: #1A1A1A;"><strong>Login URL:</strong> <a href="${loginUrl}" style="color: #1A3E8C;">${loginUrl}</a></p>
+          </div>
+
+          <p style="text-align: center; margin: 30px 0;">
+            <a href="${loginUrl}" style="background-color: #1A3E8C; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 15px;">Go to My Dashboard</a>
+          </p>
+
+          ${professionalEmailFooter()}
+        </div>
+      `,
+      text: `Hi ${updatedClient.name},\n\nYour client portal account is now active!\n\nLogin Details:\nEmail: ${updatedClient.email}\nPassword: The one you just set\nLogin URL: ${loginUrl}\n\nHindustan Projects\nPhone: +91 99291 20431\nWeb: www.hindustanprojects.in\nBhilwara, Rajasthan, India`,
+    }).catch((err) => {
+      console.error('[welcome-email] Failed to send:', err.message)
+    })
 
     res.json({
       status: 'ok',

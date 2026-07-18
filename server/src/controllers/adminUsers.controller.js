@@ -5,7 +5,7 @@ import prisma from '../config/db.js'
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import { logActivity } from '../utils/activity.js'
-import { sendEmail } from '../utils/mailer.js'
+import { sendEmail, professionalEmailFooter } from '../utils/mailer.js'
 import { env } from '../config/env.js'
 
 export const listAdminUsers = async (req, res, next) => {
@@ -254,17 +254,35 @@ export const createClientUser = async (req, res, next) => {
       subject: 'Welcome to Hindustan Projects Client Portal',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
-          <h2 style="color: #1A3E8C; margin-top: 0;">Welcome, ${client.name}!</h2>
-          <p>Your client portal account has been created for your projects with Hindustan Projects.</p>
-          <p>Please click the button below to set up your password and access your dashboard:</p>
-          <p style="text-align: center; margin: 30px 0;">
-            <a href="${inviteLink}" style="background-color: #E31E24; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Set Up Your Password</a>
+          <div style="background: #1A3E8C; padding: 20px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 22px;"><span style="color: #E31E24;">Hindustan</span> Projects</h1>
+            <p style="color: #93c5fd; margin: 6px 0 0; font-size: 14px;">Client Portal Invitation</p>
+          </div>
+
+          <p style="font-size: 16px; color: #1A1A1A;">Hi <strong>${client.name}</strong>,</p>
+
+          <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+            Your client portal account has been created at <strong>Hindustan Projects</strong>. You can now track your project progress, view deliverables, and download shared files.
           </p>
-          <p style="font-size: 12px; color: #6b7280; margin-top: 20px;">If the button doesn't work, copy and paste this link in your browser: <br/> <a href="${inviteLink}">${inviteLink}</a></p>
-          <p style="font-size: 12px; color: #9ca3af; margin-top: 10px;">This setup link will expire in 7 days.</p>
+
+          <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+            Click the button below to set up your password and access your personal dashboard:
+          </p>
+
+          <p style="text-align: center; margin: 30px 0;">
+            <a href="${inviteLink}" style="background-color: #E31E24; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 15px;">Set Up My Password</a>
+          </p>
+
+          <div style="background: #fff8f0; border: 1px solid #fed7aa; border-radius: 6px; padding: 12px 16px; margin: 20px 0;">
+            <p style="margin: 0; font-size: 13px; color: #92400e;">&#9888; This setup link will expire in <strong>7 days</strong>. Please set up your account before it expires.</p>
+          </div>
+
+          <p style="font-size: 12px; color: #6b7280; margin-top: 16px;">If the button doesn't work, copy and paste this link in your browser:<br/><a href="${inviteLink}" style="color: #1A3E8C; word-break: break-all;">${inviteLink}</a></p>
+
+          ${professionalEmailFooter()}
         </div>
       `,
-      text: `Welcome, ${client.name}!\n\nYour client portal account has been created. Set up your password using the link below:\n${inviteLink}\n\nThis setup link will expire in 7 days.`
+      text: `Hi ${client.name},\n\nYour Hindustan Projects client portal account has been created!\n\nSet up your password using the link below:\n${inviteLink}\n\nThis link expires in 7 days.\n\nHindustan Projects\nPhone: +91 99291 20431\nWeb: www.hindustanprojects.in\nBhilwara, Rajasthan, India`
     }).catch((err) => {
       console.error('[invite-email] Failed to send invite:', err.message)
     })
