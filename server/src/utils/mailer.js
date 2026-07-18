@@ -23,7 +23,13 @@ function getStrategy() {
 // ── Resend sender ──────────────────────────────────────────────
 async function sendViaResend({ to, subject, html, text, attachments }) {
   const resend = new Resend(env.RESEND_API_KEY)
-  const from = env.EMAIL_FROM || 'Hindustan Projects <info@hindustanprojects.in>'
+
+  // Ensure from always has a display name like "Hindustan Projects <email>"
+  // If EMAIL_FROM is just an email (no display name), wrap it properly
+  const rawFrom = env.EMAIL_FROM || 'info@hindustanprojects.in'
+  const from = rawFrom.includes('<')
+    ? rawFrom
+    : `Hindustan Projects <${rawFrom}>`
 
   const { data, error } = await resend.emails.send({ from, to, subject, html, text, attachments })
   if (error) throw new Error(error.message || 'Resend send failed')
