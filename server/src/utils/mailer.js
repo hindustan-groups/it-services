@@ -641,3 +641,77 @@ export function clientPaymentSuccessTemplate({ clientName, projectName, mileston
   }
 }
 
+/**
+ * supportTicketCreatedTemplate — sent to admin when a client raises a new support ticket.
+ */
+export function supportTicketCreatedTemplate({ clientName, ticketId, subject, category, message }) {
+  return {
+    subject: `[Support Ticket #${ticketId.slice(-6).toUpperCase()}] New Ticket: ${subject}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+        <div style="background: #1A3E8C; padding: 20px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 20px;">New Support Ticket</h1>
+          <p style="color: #93c5fd; margin: 4px 0 0; font-size: 14px;">Hindustan Projects Helpdesk</p>
+        </div>
+
+        <p style="font-size: 15px; color: #1A1A1A;">Hello Admin/Support Team,</p>
+
+        <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+          A new support ticket has been opened by client <strong>${clientName}</strong>:
+        </p>
+
+        <div style="margin: 20px 0; padding: 16px; background: #f9fafb; border-left: 4px solid #1A3E8C; border-radius: 4px;">
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">🏷️ <strong>Ticket ID:</strong> #${ticketId.slice(-6).toUpperCase()}</p>
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">📁 <strong>Category:</strong> ${category}</p>
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">📝 <strong>Subject:</strong> ${subject}</p>
+        </div>
+
+        <div style="margin-top: 16px; padding: 16px; background: #f3f4f6; border-radius: 6px;">
+          <p style="margin: 0 0 8px; color: #6B7280; font-size: 12px; text-transform: uppercase; font-weight: bold;">Initial Message Description</p>
+          <p style="margin: 0; color: #1A1A1A; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+        </div>
+
+        <p style="font-size: 14px; color: #4B5563; margin-top: 24px;">
+          Please login to the Admin Dashboard to assign and respond to this ticket.
+        </p>
+      </div>
+    `,
+    text: `Support Ticket #${ticketId.slice(-6).toUpperCase()}\n\nClient: ${clientName}\nCategory: ${category}\nSubject: ${subject}\n\nDescription:\n${message}`,
+  }
+}
+
+/**
+ * supportTicketReplyTemplate — sent to client or admin when a reply is posted.
+ */
+export function supportTicketReplyTemplate({ recipientName, ticketId, subject, senderName, message, portalUrl }) {
+  return {
+    subject: `[Support Ticket #${ticketId.slice(-6).toUpperCase()}] Reply from ${senderName}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+        <div style="background: #1A3E8C; padding: 20px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 20px;">Ticket Reply Received</h1>
+          <p style="color: #93c5fd; margin: 4px 0 0; font-size: 14px;">Hindustan Projects Helpdesk</p>
+        </div>
+
+        <p style="font-size: 15px; color: #1A1A1A;">Dear <strong>${recipientName}</strong>,</p>
+
+        <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+          A new response has been posted by <strong>${senderName}</strong> for support ticket: <strong>${subject}</strong> (ID: #${ticketId.slice(-6).toUpperCase()})
+        </p>
+
+        <div style="margin: 20px 0; padding: 16px; background: #f3f4f6; border-radius: 6px; border-left: 4px solid #E31E24;">
+          <p style="margin: 0 0 8px; color: #6B7280; font-size: 12px; text-transform: uppercase; font-weight: bold;">Message Response</p>
+          <p style="margin: 0; color: #1A1A1A; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+        </div>
+
+        ${portalUrl ? `
+        <div style="margin-top: 24px; text-align: center;">
+          <a href="${portalUrl}" target="_blank" style="display: inline-block; background: #1A3E8C; color: white; padding: 10px 24px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600;">View Ticket thread</a>
+        </div>
+        ` : ''}
+      </div>
+    `,
+    text: `Support Ticket #${ticketId.slice(-6).toUpperCase()}\n\nReply from: ${senderName}\n\nMessage:\n${message}`,
+  }
+}
+

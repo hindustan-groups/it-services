@@ -2,6 +2,8 @@
  * tickets.controller.js — Support Ticketing System controller
  */
 import prisma from '../config/db.js'
+import { sendEmail, supportTicketCreatedTemplate, supportTicketReplyTemplate } from '../utils/mailer.js'
+import { env } from '../config/env.js'
 
 // ── CLIENT PORTAL ACTIONS ────────────────────────────────────────
 
@@ -44,6 +46,28 @@ export const createTicket = async (req, res, next) => {
 
       return { ticket, initialMessage }
     })
+
+    // Send email alert to admin team asynchronously
+    prisma.client.findUnique({
+      where: { id: clientId },
+      select: { name: true }
+    }).then((client) => {
+      const emailOptions = supportTicketCreatedTemplate({
+        clientName: client?.name || 'Client',
+        ticketId: result.ticket.id,
+        subject: result.ticket.subject,
+        category: result.ticket.category,
+        message: description,
+      })
+
+      const adminEmail = env.EMAIL_USER || 'info@hindustanprojects.in'
+      sendEmail({
+        to: adminEmail,
+        subject: emailOptions.subject,
+        html: emailOptions.html,
+        text: emailOptions.text,
+      }).catch((err) => console.error('Admin ticket email dispatch failed:', err.message))
+    }).catch((err) => console.error('Failed to resolve client details for ticket email:', err.message))
 
     res.status(201).json({ status: 'ok', data: result.ticket })
   } catch (err) {
@@ -160,6 +184,24 @@ export const replyToTicketFromClient = async (req, res, next) => {
 
       return msg
     })
+
+    // Send email alert to admin team asynchronously
+    const emailOptions = supportTicketReplyTemplate({
+      recipientName: 'Admin Team',
+      ticketId: ticket.id,
+      subject: ticket.subject,
+      senderName: client?.name || 'Client',
+      message,
+      portalUrl: `https://it-services.hindustanprojects.in/admin/support/tickets/${ticket.id}`,
+    })
+
+    const adminEmail = env.EMAIL_USER || 'info@hindustanprojects.in'
+    sendEmail({
+      to: adminEmail,
+      subject: emailOptions.subject,
+      html: emailOptions.html,
+      text: emailOptions.text,
+    }).catch((err) => console.error('Admin ticket response email dispatch failed:', err.message))
 
     res.status(201).json({ status: 'ok', data: result })
   } catch (err) {
@@ -279,6 +321,26 @@ export const replyToTicketFromAdmin = async (req, res, next) => {
 
       return msg
     })
+
+    // Send email alert to client asynchronously
+    const clientEmail = ticket.client?.email
+    if (clientEmail) {
+      const emailOptions = supportTicketReplyTemplate({
+        recipientName: ticket.client?.name || 'Client',
+        ticketId: ticket.id,
+        subject: ticket.subject,
+        senderName: `${admin?.role || 'Staff Member'}`,
+        message,
+        portalUrl: `https://it-services.hindustanprojects.in/client/support`,
+      })
+
+      sendEmail({
+        to: clientEmail,
+        subject: emailOptions.subject,
+        html: emailOptions.html,
+        text: emailOptions.text,
+      }).catch((err) => console.error('Client ticket response email dispatch failed:', err.message))
+    }
 
     res.status(201).json({ status: 'ok', data: result })
   } catch (err) {
