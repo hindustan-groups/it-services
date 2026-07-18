@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { useClientMe, useClientLogout } from '@/hooks/useClientPortal'
+import { ClientMobileNavBar } from '@/components/ui'
 
 export default function ClientLayout() {
   const navigate = useNavigate()
@@ -148,9 +149,10 @@ export default function ClientLayout() {
         </header>
 
         {/* Dynamic Nested Content */}
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8 scrollbar-thin">
+        <main className="flex-1 overflow-y-auto p-6 lg:p-8 pb-24 lg:pb-8 scrollbar-thin">
           <Outlet />
         </main>
+        <ClientMobileNavBar />
       </div>
     </div>
   )

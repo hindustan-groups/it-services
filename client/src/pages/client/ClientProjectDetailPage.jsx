@@ -182,9 +182,9 @@ export default function ClientProjectDetailPage() {
                 const isDone = task.status === 'DONE'
 
                 return (
-                  <div key={task.id} className="p-5 flex items-start sm:items-center justify-between gap-4 hover:bg-gray-50/50 transition-colors">
+                  <div key={task.id} className="p-4 md:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 hover:bg-gray-50/50 transition-colors">
                     <div className="flex items-start gap-3">
-                      <div className="mt-0.5 sm:mt-0 shrink-0">
+                      <div className="mt-0.5 shrink-0">
                         {isDone ? (
                           <CheckCircle2 className="w-5.5 h-5.5 text-emerald-500 fill-emerald-50" />
                         ) : (
@@ -201,7 +201,7 @@ export default function ClientProjectDetailPage() {
                       </div>
                     </div>
 
-                    <span className={`px-2 py-0.5 text-[10px] font-bold rounded border uppercase tracking-wider shrink-0 ${TASK_STATUS_COLORS[task.status]}`}>
+                    <span className={`px-2 py-0.5 text-[10px] font-bold rounded border uppercase tracking-wider self-start sm:self-center shrink-0 ${TASK_STATUS_COLORS[task.status]}`}>
                       {TASK_STATUS_LABELS[task.status]}
                     </span>
                   </div>
@@ -259,7 +259,7 @@ export default function ClientProjectDetailPage() {
                     href={item.fileUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 text-gray-400 hover:text-brand-blue hover:bg-brand-blue/5 rounded-xl transition-all ml-4 shrink-0"
+                    className="w-11 h-11 flex items-center justify-center text-gray-400 hover:text-brand-blue hover:bg-brand-blue/5 rounded-xl transition-all ml-4 shrink-0 cursor-pointer"
                     title="Download File"
                   >
                     <Download className="w-4 h-4" />

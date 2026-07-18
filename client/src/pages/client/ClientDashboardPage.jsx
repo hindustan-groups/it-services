@@ -9,8 +9,10 @@ import {
   FileText,
   ArrowRight,
   TrendingUp,
+  MessageCircle,
 } from 'lucide-react'
 import { useClientProjects } from '@/hooks/useClientPortal'
+import { useSiteSettings } from '@/hooks/useContent'
 
 const STATUS_COLORS = {
   PLANNING: 'bg-gray-100 text-gray-700 border-gray-200',
@@ -30,6 +32,7 @@ const STATUS_LABELS = {
 
 export default function ClientDashboardPage() {
   const { data: projects = [], isLoading } = useClientProjects()
+  const { data: settingsData } = useSiteSettings()
 
   if (isLoading) {
     return (
@@ -65,6 +68,11 @@ export default function ClientDashboardPage() {
     },
   ]
 
+  const cfg = settingsData?.data || {}
+  const rawPhone = cfg.phone || '+91 99291 20431'
+  const cleanPhone = rawPhone.replace(/[^0-9]/g, '')
+  const whatsappUrl = `https://wa.me/${cleanPhone}?text=Hi%20Hindustan%20Projects%20Team`
+
   return (
     <div className="space-y-8">
       {/* Page Header */}
@@ -76,9 +84,9 @@ export default function ClientDashboardPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${stat.color}`}>
-              <stat.icon className="w-6 h-6" />
+          <div key={i} className="bg-white/80 border border-gray-150 backdrop-blur-md rounded-2xl p-5 md:p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-4 group">
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${stat.color}`}>
+              <stat.icon className="w-5.5 h-5.5" />
             </div>
             <div>
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{stat.label}</p>
@@ -86,6 +94,26 @@ export default function ClientDashboardPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Dynamic WhatsApp Support Banner */}
+      <div className="bg-gradient-to-r from-brand-blue to-blue-700 rounded-2xl p-5 md:p-6 text-white shadow-md relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="space-y-1 relative">
+          <h4 className="font-heading font-bold text-base md:text-lg">Need Immediate Assistance?</h4>
+          <p className="text-xs text-blue-100 max-w-xl">
+            Get in touch directly with our support team or your dedicated project lead on WhatsApp for quick updates, feedback, or any technical queries.
+          </p>
+        </div>
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-5 py-2.5 bg-white text-brand-blue hover:bg-blue-50 font-bold rounded-xl text-xs flex items-center gap-2 shadow-md hover:scale-[1.02] transition-all relative cursor-pointer shrink-0"
+        >
+          <MessageCircle className="w-4 h-4 text-emerald-500 fill-emerald-50" />
+          <span>Chat on WhatsApp</span>
+        </a>
       </div>
 
       {/* Projects Grid */}
@@ -108,7 +136,7 @@ export default function ClientDashboardPage() {
               })
 
               return (
-                <div key={project.id} className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                <div key={project.id} className="bg-white border border-gray-150 rounded-2xl p-5 md:p-6 shadow-sm hover:shadow-md hover:border-gray-250 transition-all duration-200 flex flex-col justify-between group">
                   <div>
                     {/* Title and Status */}
                     <div className="flex justify-between items-start gap-4">
