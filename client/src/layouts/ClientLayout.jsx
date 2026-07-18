@@ -11,6 +11,8 @@ import {
   ShieldCheck,
   Menu,
   X,
+  MessageSquare,
+  CreditCard,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useClientMe, useClientLogout } from '@/hooks/useClientPortal'
@@ -53,6 +55,8 @@ export default function ClientLayout() {
 
   const navigation = [
     { to: '/client/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { to: '/client/support', label: 'Support Desk', icon: MessageSquare },
+    { to: '/client/billing', label: 'Billing & Payments', icon: CreditCard },
   ]
 
   return (

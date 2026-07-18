@@ -62,3 +62,62 @@ export function useClientLogout() {
     },
   })
 }
+
+export function useClientTickets() {
+  return useQuery({
+    queryKey: ['client-tickets'],
+    queryFn: () => api.get('/client/tickets').then((r) => r.data),
+    staleTime: 1 * 60 * 1000,
+  })
+}
+
+export function useClientTicket(id) {
+  return useQuery({
+    queryKey: ['client-ticket', id],
+    queryFn: () => api.get(`/client/tickets/${id}`).then((r) => r.data),
+    enabled: !!id,
+    staleTime: 30 * 1000,
+  })
+}
+
+export function useClientCreateTicket() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data) => api.post('/client/tickets', data).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['client-tickets'] })
+    },
+  })
+}
+
+export function useClientReplyTicket() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ ticketId, message }) =>
+      api.post(`/client/tickets/${ticketId}/messages`, { message }).then((r) => r.data),
+    onSuccess: (res, variables) => {
+      qc.invalidateQueries({ queryKey: ['client-ticket', variables.ticketId] })
+      qc.invalidateQueries({ queryKey: ['client-tickets'] })
+    },
+  })
+}
+
+export function useClientBilling() {
+  return useQuery({
+    queryKey: ['client-billing'],
+    queryFn: () => api.get('/client/billing').then((r) => r.data),
+    staleTime: 2 * 60 * 1000,
+  })
+}
+
+export function useClientPayMilestone() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id) => api.post(`/client/billing/${id}/pay`).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['client-billing'] })
+      qc.invalidateQueries({ queryKey: ['client-projects'] })
+    },
+  })
+}
+

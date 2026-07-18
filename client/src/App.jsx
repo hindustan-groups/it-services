@@ -88,6 +88,7 @@ const AdminIntegrationPage = lazyWithRetry(() => import('@/pages/admin/AdminInte
 const AdminBackupPage = lazyWithRetry(() => import('@/pages/admin/AdminBackupPage'))
 const AdminClientProjectsPage = lazyWithRetry(() => import('@/pages/admin/AdminClientProjectsPage'))
 const AdminTasksPage = lazyWithRetry(() => import('@/pages/admin/AdminTasksPage'))
+const AdminTicketsPage = lazyWithRetry(() => import('@/pages/admin/AdminTicketsPage'))
 const AdminNotesPage = lazyWithRetry(() => import('@/pages/admin/AdminNotesPage'))
 const AdminCalendarPage = lazyWithRetry(() => import('@/pages/admin/AdminCalendarPage'))
 const AdminActivitiesPage = lazyWithRetry(() => import('@/pages/admin/AdminActivitiesPage'))
@@ -104,6 +105,8 @@ const ClientLayout = lazyWithRetry(() => import('@/layouts/ClientLayout'))
 const ClientLoginPage = lazyWithRetry(() => import('@/pages/client/ClientLoginPage'))
 const ClientDashboardPage = lazyWithRetry(() => import('@/pages/client/ClientDashboardPage'))
 const ClientProjectDetailPage = lazyWithRetry(() => import('@/pages/client/ClientProjectDetailPage'))
+const ClientTicketsPage = lazyWithRetry(() => import('@/pages/client/ClientTicketsPage'))
+const ClientBillingPage = lazyWithRetry(() => import('@/pages/client/ClientBillingPage'))
 
 
 export default function App() {
@@ -297,6 +300,14 @@ export default function App() {
             }
           />
           <Route
+            path="tickets"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <AdminTicketsPage />
+              </Suspense>
+            }
+          />
+          <Route
             path="notes"
             element={
               <Suspense fallback={<PageFallback />}>
@@ -376,6 +387,22 @@ export default function App() {
             element={
               <Suspense fallback={<PageFallback />}>
                 <ClientProjectDetailPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="support"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <ClientTicketsPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="billing"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <ClientBillingPage />
               </Suspense>
             }
           />
