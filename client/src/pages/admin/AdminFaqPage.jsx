@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Pencil, Trash2, X, Check, HelpCircle, ChevronDown, MessageCircle, CheckCircle2, AlertCircle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -286,18 +287,26 @@ export default function AdminFaqPage() {
             <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
               <MessageCircle className="w-5 h-5 text-indigo-600" />
             </div>
-            <div>
-              <h2 className="font-heading text-lg font-bold text-gray-900 flex items-center gap-2">
-                Chatbot Inquiries
-                {unansweredCount > 0 && (
-                  <span className="text-[11px] px-2 py-0.5 bg-red-100 text-red-600 font-bold rounded-full">
-                    {unansweredCount} unanswered
-                  </span>
-                )}
-              </h2>
-              <p className="text-sm text-gray-400">
-                Questions submitted by website visitors through the chatbot. Unanswered ones help you improve your FAQs.
-              </p>
+            <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h2 className="font-heading text-lg font-bold text-gray-900 flex items-center gap-2">
+                  Chatbot Inquiries
+                  {unansweredCount > 0 && (
+                    <span className="text-[11px] px-2 py-0.5 bg-red-100 text-red-600 font-bold rounded-full">
+                      {unansweredCount} unanswered
+                    </span>
+                  )}
+                </h2>
+                <p className="text-sm text-gray-400">
+                  Questions submitted by website visitors through the chatbot. Unanswered ones help you improve your FAQs.
+                </p>
+              </div>
+              <Link
+                to="/admin/chatbot-inquiries"
+                className="px-3.5 py-2 border border-gray-250 hover:bg-gray-50 text-gray-700 text-xs font-semibold rounded-xl transition-all cursor-pointer shadow-sm self-start sm:self-auto"
+              >
+                Open Full Manager →
+              </Link>
             </div>
           </div>
 

@@ -36,6 +36,8 @@ import {
   Search,
   Loader2,
   Trash2,
+  Bot,
+  Share2,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 import { useQuery } from '@tanstack/react-query'
@@ -46,6 +48,7 @@ const NAV_GROUPS = [
     items: [
       { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
       { to: '/admin/leads', icon: MessageSquare, label: 'Leads', badge: 'new', roles: ['ADMIN', 'SUPER_ADMIN'] },
+      { to: '/admin/chatbot-inquiries', icon: Bot, label: 'Chatbot Inquiries', roles: ['ADMIN', 'SUPER_ADMIN'] },
     ],
   },
   {
@@ -66,6 +69,7 @@ const NAV_GROUPS = [
     label: 'Blog',
     items: [
       { to: '/admin/blog', icon: Newspaper, label: 'Blog Posts', roles: ['ADMIN', 'SUPER_ADMIN'] },
+      { to: '/admin/social-drafts', icon: Share2, label: 'Social Drafts', roles: ['ADMIN', 'SUPER_ADMIN'] },
       { to: '/admin/blog-comments', icon: MessageSquare, label: 'Comments', badge: 'comments', roles: ['ADMIN', 'SUPER_ADMIN'] },
     ],
   },
@@ -124,6 +128,8 @@ const PAGE_TITLES = {
   '/admin/activities': 'Activity Log',
   '/admin/blog': 'Blog Posts',
   '/admin/blog-comments': 'Blog Comments',
+  '/admin/social-drafts': 'Social Post Drafts',
+  '/admin/chatbot-inquiries': 'Chatbot Inquiries',
 }
 
 export default function AdminLayout() {

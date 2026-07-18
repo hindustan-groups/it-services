@@ -3,6 +3,7 @@ import {
   listSocialDrafts,
   updateSocialDraftStatus,
   deleteSocialDraft,
+  createSocialDraft,
 } from '../controllers/social.controller.js'
 import { verifyToken, requireRole } from '../middleware/auth.js'
 
@@ -13,6 +14,7 @@ router.use(verifyToken)
 router.use(requireRole('ADMIN', 'SUPER_ADMIN'))
 
 router.get('/drafts', listSocialDrafts)
+router.post('/drafts', createSocialDraft)
 router.patch('/drafts/:id', updateSocialDraftStatus)
 router.delete('/drafts/:id', deleteSocialDraft)
 

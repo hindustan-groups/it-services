@@ -96,6 +96,8 @@ const AdminBlogPage = lazyWithRetry(() => import('@/pages/admin/AdminBlogPage'))
 const AdminBlogCommentsPage = lazyWithRetry(() => import('@/pages/admin/AdminBlogCommentsPage'))
 const AdminUsersPage = lazyWithRetry(() => import('@/pages/admin/AdminUsersPage'))
 const AdminRecycleBinPage = lazyWithRetry(() => import('@/pages/admin/AdminRecycleBinPage'))
+const AdminSocialDraftsPage = lazyWithRetry(() => import('@/pages/admin/AdminSocialDraftsPage'))
+const AdminChatbotInquiriesPage = lazyWithRetry(() => import('@/pages/admin/AdminChatbotInquiriesPage'))
 
 // ── Client Portal pages — lazy loaded ──────────────────────────
 const ClientLayout = lazyWithRetry(() => import('@/layouts/ClientLayout'))
@@ -179,6 +181,22 @@ export default function App() {
             element={
               <Suspense fallback={<PageFallback />}>
                 <AdminFaqPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="social-drafts"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <AdminSocialDraftsPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="chatbot-inquiries"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <AdminChatbotInquiriesPage />
               </Suspense>
             }
           />

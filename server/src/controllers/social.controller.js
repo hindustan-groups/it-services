@@ -44,3 +44,27 @@ export const deleteSocialDraft = async (req, res, next) => {
     next(err)
   }
 }
+
+export const createSocialDraft = async (req, res, next) => {
+  try {
+    const { projectId, text, status } = req.body
+    if (!projectId || !text) {
+      return res.status(400).json({ status: 'error', message: 'Project ID and text are required.' })
+    }
+    const draft = await prisma.socialPostDraft.create({
+      data: {
+        projectId,
+        text,
+        status: status || 'DRAFT'
+      },
+      include: {
+        project: {
+          select: { title: true, category: true, clientName: true }
+        }
+      }
+    })
+    res.json({ status: 'ok', data: draft })
+  } catch (err) {
+    next(err)
+  }
+}
