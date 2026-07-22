@@ -49,6 +49,7 @@ function StatCardSkeleton() {
 }
 
 export default function ClientDashboardPage() {
+  const { data: clientMe } = useClientMe()
   const { data: projects = [], isLoading: projectsLoading } = useClientProjects()
   const { data: statsData, isLoading: statsLoading } = useClientDashboardStats()
   const { data: settingsData } = useSiteSettings()
@@ -175,7 +176,6 @@ export default function ClientDashboardPage() {
   const cleanPhone = rawPhone.replace(/[^0-9]/g, '')
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=Hi%20Hindustan%20Projects%20Team`
 
-  const { data: clientMe } = useClientMe()
   const clientName = clientMe?.name || localStorage.getItem('hp_client_name') || 'Valued Client'
 
   return (
