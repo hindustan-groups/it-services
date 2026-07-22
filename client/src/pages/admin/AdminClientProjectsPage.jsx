@@ -155,7 +155,20 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
             <label className="text-xs font-bold text-gray-700 block mb-1.5">
               Link Client Portal Account (Optional)
             </label>
-            <select {...register('clientId')} className={inputCls}>
+            <select
+              {...register('clientId')}
+              className={inputCls}
+              onChange={(e) => {
+                const selectedId = e.target.value
+                setValue('clientId', selectedId)
+                if (selectedId) {
+                  const matchedClient = clients.find((c) => c.id === selectedId)
+                  if (matchedClient && !watch('clientName')) {
+                    setValue('clientName', matchedClient.name)
+                  }
+                }
+              }}
+            >
               <option value="">-- No Client Portal Account linked --</option>
               {clients.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -170,7 +183,11 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
             </label>
             <select
               className={inputCls}
-              value={watch('assignedTo') || ''}
+              value={
+                watch('assignedTo') && watch('assignedToEmail')
+                  ? `${watch('assignedTo')}||${watch('assignedToEmail')}`
+                  : watch('assignedTo') || ''
+              }
               onChange={(e) => {
                 const selectedVal = e.target.value
                 // selectedVal is in format "Name||email"
@@ -185,8 +202,9 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
               {assignableTeam.map((m) => {
                 const displayName = m.name || m.email.split('@')[0].toUpperCase()
                 const roleLabel = m.role === 'SUPER_ADMIN' ? 'Super Admin' : m.role === 'ADMIN' ? 'Admin' : 'Staff'
+                const optValue = `${displayName}||${m.email}`
                 return (
-                  <option key={m.id} value={`${displayName}||${m.email}`}>
+                  <option key={m.id} value={optValue}>
                     👤 {displayName} ({m.email}) — [{roleLabel}]
                   </option>
                 )

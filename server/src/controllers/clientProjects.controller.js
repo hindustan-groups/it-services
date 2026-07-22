@@ -64,6 +64,21 @@ export const createClientProject = async (req, res, next) => {
         message: 'Client name, project title, start date, and deadline are required.',
       })
     }
+    let finalClientId = clientId || null
+    if (!finalClientId && clientName) {
+      const existingClient = await prisma.client.findFirst({
+        where: {
+          OR: [
+            { name: { equals: clientName, mode: 'insensitive' } },
+            { email: { equals: clientName.trim(), mode: 'insensitive' } },
+          ],
+        },
+      })
+      if (existingClient) {
+        finalClientId = existingClient.id
+      }
+    }
+
     const project = await prisma.clientProject.create({
       data: {
         clientName,
@@ -79,7 +94,7 @@ export const createClientProject = async (req, res, next) => {
         status: status ?? 'PLANNING',
         priority: priority ?? 'MEDIUM',
         progress: progress ? parseInt(progress) : 0,
-        clientId: clientId || null,
+        clientId: finalClientId,
       },
       include: {
         tasks: true,
@@ -180,6 +195,20 @@ export const updateClientProject = async (req, res, next) => {
     if (updateData.progress !== undefined) updateData.progress = parseInt(updateData.progress)
     if (updateData.clientId === '') {
       updateData.clientId = null
+    }
+
+    if (!updateData.clientId && updateData.clientName) {
+      const existingClient = await prisma.client.findFirst({
+        where: {
+          OR: [
+            { name: { equals: updateData.clientName, mode: 'insensitive' } },
+            { email: { equals: updateData.clientName.trim(), mode: 'insensitive' } },
+          ],
+        },
+      })
+      if (existingClient) {
+        updateData.clientId = existingClient.id
+      }
     }
 
     const project = await prisma.clientProject.update({
