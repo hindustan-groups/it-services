@@ -391,7 +391,22 @@ export default function AdminClientProjectsPage() {
   const [editing, setEditing] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('ALL')
+  const [priorityFilter, setPriorityFilter] = useState('ALL')
+  const [portalLinkFilter, setPortalLinkFilter] = useState('ALL')
   const qc = useQueryClient()
+
+  const hasActiveFilters =
+    searchTerm !== '' ||
+    statusFilter !== 'ALL' ||
+    priorityFilter !== 'ALL' ||
+    portalLinkFilter !== 'ALL'
+
+  const resetFilters = () => {
+    setSearchTerm('')
+    setStatusFilter('ALL')
+    setPriorityFilter('ALL')
+    setPortalLinkFilter('ALL')
+  }
 
   const handleExportCSV = () => {
     if (!projects.length) return
@@ -633,8 +648,13 @@ export default function AdminClientProjectsPage() {
       p.tags?.some((t) => t.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const matchesStatus = statusFilter === 'ALL' || p.status === statusFilter
+    const matchesPriority = priorityFilter === 'ALL' || p.priority === priorityFilter
+    const matchesPortalLink =
+      portalLinkFilter === 'ALL' ||
+      (portalLinkFilter === 'LINKED' && p.client) ||
+      (portalLinkFilter === 'UNLINKED' && !p.client)
 
-    return matchesSearch && matchesStatus
+    return matchesSearch && matchesStatus && matchesPriority && matchesPortalLink
   })
 
   // Quick statistics
@@ -778,8 +798,8 @@ export default function AdminClientProjectsPage() {
           </div>
         )}
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        {/* Filters Bar */}
+        <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
           {/* Search bar */}
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -792,31 +812,67 @@ export default function AdminClientProjectsPage() {
             />
           </div>
 
-          {/* Status Tabs */}
-          <div className="flex overflow-x-auto gap-1 bg-gray-100 p-1 rounded-xl border border-gray-150 shrink-0">
-            <button
-              onClick={() => setStatusFilter('ALL')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                statusFilter === 'ALL'
-                  ? 'bg-white text-gray-800 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-800'
-              }`}
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Priority Select */}
+            <select
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+              className="px-3 py-2 text-xs border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/25 font-medium"
             >
-              All
-            </button>
-            {STATUSES.map((s) => (
+              <option value="ALL">Priority: All</option>
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+              <option value="URGENT">Urgent</option>
+            </select>
+
+            {/* Portal Link Select */}
+            <select
+              value={portalLinkFilter}
+              onChange={(e) => setPortalLinkFilter(e.target.value)}
+              className="px-3 py-2 text-xs border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/25 font-medium"
+            >
+              <option value="ALL">Portal Link: All</option>
+              <option value="LINKED">Linked Only</option>
+              <option value="UNLINKED">Unlinked Only</option>
+            </select>
+
+            {/* Reset Filters */}
+            {hasActiveFilters && (
               <button
-                key={s}
-                onClick={() => setStatusFilter(s)}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
-                  statusFilter === s
+                onClick={resetFilters}
+                className="px-3 py-2 text-xs font-bold text-brand-blue hover:text-blue-700 bg-blue-50 border border-blue-100 rounded-xl transition-all cursor-pointer"
+              >
+                Reset Filters
+              </button>
+            )}
+
+            {/* Status Tabs */}
+            <div className="flex overflow-x-auto gap-1 bg-gray-100 p-1 rounded-xl border border-gray-150 shrink-0">
+              <button
+                onClick={() => setStatusFilter('ALL')}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+                  statusFilter === 'ALL'
                     ? 'bg-white text-gray-800 shadow-sm'
                     : 'text-gray-500 hover:text-gray-800'
                 }`}
               >
-                {STATUS_LABELS[s]}
+                All
               </button>
-            ))}
+              {STATUSES.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setStatusFilter(s)}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                    statusFilter === s
+                      ? 'bg-white text-gray-800 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-800'
+                  }`}
+                >
+                  {STATUS_LABELS[s]}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
