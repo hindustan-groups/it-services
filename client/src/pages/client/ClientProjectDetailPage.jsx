@@ -345,10 +345,24 @@ export default function ClientProjectDetailPage() {
         )}
       </div>
 
-      {/* Shared Files & Documents */}
+      {/* Shared Files & Documents — Project Vault */}
       {project.attachments && project.attachments.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-lg font-bold text-gray-900 font-heading">Shared Files & Documents</h3>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 font-heading flex items-center gap-2">
+                <FileCheck className="w-5 h-5 text-brand-blue" />
+                Project File Vault & Asset Drive
+              </h3>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Access and download your official project deliverables, source code zips, and contracts.
+              </p>
+            </div>
+            <span className="text-xs font-semibold px-2.5 py-1 bg-blue-50 text-brand-blue border border-blue-100 rounded-full">
+              {project.attachments.length} Verified Files
+            </span>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {project.attachments.map((item) => {
               const mime = item.fileType.toLowerCase()
@@ -356,34 +370,34 @@ export default function ClientProjectDetailPage() {
               if (mime.startsWith('image/')) iconColor = 'text-blue-500 bg-blue-50'
               else if (mime === 'application/pdf') iconColor = 'text-red-500 bg-red-50'
               else if (mime.includes('word') || mime.includes('msword')) iconColor = 'text-indigo-500 bg-indigo-50'
-              else if (mime.includes('excel') || mime.includes('spreadsheet') || mime.includes('sheet')) iconColor = 'text-emerald-500 bg-emerald-50'
-              else if (mime.includes('zip') || mime.includes('compressed')) iconColor = 'text-purple-500 bg-purple-50'
+              else if (mime.includes('excel') || mime.includes('sheet')) iconColor = 'text-emerald-500 bg-emerald-50'
+              else if (mime.includes('zip') || mime.includes('compressed') || mime.includes('tar')) iconColor = 'text-purple-500 bg-purple-50'
 
               return (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between p-3 border border-gray-200 rounded-2xl bg-white shadow-sm"
+                  className="flex items-center justify-between p-3.5 border border-gray-200 rounded-2xl bg-white shadow-sm hover:border-brand-blue/30 hover:shadow-md transition-all group"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className={`p-2.5 rounded-xl ${iconColor} shrink-0`}>
+                    <div className={`p-3 rounded-xl ${iconColor} shrink-0 group-hover:scale-105 transition-transform`}>
                       {mime.startsWith('image/') ? (
                         <FileImage className="w-4 h-4" />
                       ) : mime === 'application/pdf' ? (
                         <FileText className="w-4 h-4" />
                       ) : mime.includes('excel') || mime.includes('sheet') ? (
                         <FileSpreadsheet className="w-4 h-4" />
-                      ) : mime.includes('zip') ? (
+                      ) : mime.includes('zip') || mime.includes('compressed') ? (
                         <FileArchive className="w-4 h-4" />
                       ) : (
                         <File className="w-4 h-4" />
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-gray-800 truncate" title={item.fileName}>
+                      <p className="text-xs font-bold text-gray-900 truncate" title={item.fileName}>
                         {item.fileName}
                       </p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">
-                        {item.fileSize ? `${(item.fileSize / (1024 * 1024)).toFixed(2)} MB` : ''}
+                      <p className="text-[10px] text-gray-400 mt-0.5 font-medium">
+                        {item.fileSize ? `${(item.fileSize / (1024 * 1024)).toFixed(2)} MB` : 'Secure File'}
                       </p>
                     </div>
                   </div>
@@ -392,7 +406,7 @@ export default function ClientProjectDetailPage() {
                     href={item.fileUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-11 h-11 flex items-center justify-center text-gray-400 hover:text-brand-blue hover:bg-brand-blue/5 rounded-xl transition-all ml-4 shrink-0 cursor-pointer"
+                    className="w-10 h-10 flex items-center justify-center bg-gray-50 hover:bg-brand-blue text-gray-600 hover:text-white rounded-xl transition-all ml-3 shrink-0 cursor-pointer shadow-xs"
                     title="Download File"
                   >
                     <Download className="w-4 h-4" />

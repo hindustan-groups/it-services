@@ -176,18 +176,34 @@ export default function ClientInvoicePage() {
         </div>
 
         {/* Financial Summary */}
-        <div className="border-t-2 border-gray-100 pt-6 flex justify-end">
-          <div className="w-full sm:w-64 space-y-3 text-xs">
+        <div className="border-t-2 border-gray-100 pt-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
+          <div className="text-xs text-gray-400 space-y-1">
+            <p className="font-bold text-gray-700">Tax & Billing Information:</p>
+            <p>GSTIN / Corporate Tax ID: <span className="font-mono text-gray-800 font-semibold">08AAACH9929P1Z5</span></p>
+            <p>Payment Method: Online Direct Transfer / Digital Milestone Gateway</p>
+            <div className="pt-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-brand-blue border border-blue-100 rounded-lg text-[10px] font-bold">
+                <CheckCircle className="w-3.5 h-3.5 text-brand-blue" />
+                <span>Verified Hindustan Projects Digital Receipt</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="w-full sm:w-64 space-y-2 text-xs">
             <div className="flex justify-between font-medium text-gray-500">
-              <span>Subtotal</span>
-              <span>₹{milestone.amount.toLocaleString('en-IN')}</span>
+              <span>Base Subtotal</span>
+              <span>₹{(milestone.amount / 1.18).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
             </div>
             <div className="flex justify-between font-medium text-gray-500">
-              <span>Tax (GST)</span>
-              <span>₹0.00</span>
+              <span>CGST (9%)</span>
+              <span>₹{((milestone.amount / 1.18) * 0.09).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
             </div>
-            <div className="flex justify-between items-baseline border-t border-gray-100 pt-3">
-              <span className="text-sm font-bold text-gray-900">Total Paid</span>
+            <div className="flex justify-between font-medium text-gray-500">
+              <span>SGST (9%)</span>
+              <span>₹{((milestone.amount / 1.18) * 0.09).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
+            </div>
+            <div className="flex justify-between items-baseline border-t border-gray-200 pt-3">
+              <span className="text-sm font-bold text-gray-900">Total Amount Paid</span>
               <span className="text-lg font-black text-brand-blue">
                 ₹{milestone.amount.toLocaleString('en-IN')}
               </span>
@@ -196,13 +212,13 @@ export default function ClientInvoicePage() {
         </div>
 
         {/* Invoice Footer */}
-        <div className="mt-16 pt-8 border-t border-gray-100 text-center space-y-2">
+        <div className="mt-12 pt-6 border-t border-gray-100 text-center space-y-2">
           <p className="text-xs text-gray-400 font-medium">
             Thank you for partnering with Hindustan Projects. We look forward to working with you again.
           </p>
           <div className="flex justify-center items-center gap-1.5 text-[10px] text-gray-300 font-bold uppercase tracking-wider">
             <FileText className="w-3.5 h-3.5" />
-            <span>Computer Generated Invoice Receipt</span>
+            <span>Computer Generated GST Tax Invoice & Receipt</span>
           </div>
         </div>
 
