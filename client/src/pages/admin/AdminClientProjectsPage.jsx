@@ -115,8 +115,13 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
     })
   }
 
+  const onFormError = (errors) => {
+    const errorFields = Object.keys(errors).join(', ')
+    alert(`Please fill in all required fields: ${errorFields}`)
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit, onFormError)} className="space-y-6">
       {/* Section 1: Core Client & Project Identification */}
       <div className="bg-gray-50/60 p-5 rounded-2xl border border-gray-200/80 space-y-4">
         <p className="text-xs font-bold text-brand-blue uppercase tracking-wider flex items-center gap-2">
@@ -509,6 +514,10 @@ export default function AdminClientProjectsPage() {
       qc.invalidateQueries({ queryKey: ['admin-client-projects'] })
       qc.invalidateQueries({ queryKey: ['admin-stats'] })
       setShowForm(false)
+      alert('Client Project created successfully!')
+    },
+    onError: (err) => {
+      alert(err.response?.data?.message || err.message || 'Failed to create client project.')
     },
   })
 
@@ -518,6 +527,10 @@ export default function AdminClientProjectsPage() {
       qc.invalidateQueries({ queryKey: ['admin-client-projects'] })
       qc.invalidateQueries({ queryKey: ['admin-stats'] })
       setEditing(null)
+      alert('Client Project updated successfully!')
+    },
+    onError: (err) => {
+      alert(err.response?.data?.message || err.message || 'Failed to update client project.')
     },
   })
 
@@ -637,8 +650,11 @@ export default function AdminClientProjectsPage() {
             )}
             {!showForm && !editing && (
               <button
-                onClick={() => setShowForm(true)}
-                className="inline-flex items-center gap-2 bg-brand-blue text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-md shadow-brand-blue/10 hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 transition-all"
+                onClick={() => {
+                  setShowForm(true)
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+                className="inline-flex items-center gap-2 bg-brand-blue text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-md shadow-brand-blue/10 hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-0.5 transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4" /> Add Project
               </button>
