@@ -13,6 +13,9 @@ import {
   X,
   MessageSquare,
   CreditCard,
+  FileText,
+  HelpCircle,
+  CheckCircle2,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useClientMe, useClientLogout, useClientTickets } from '@/hooks/useClientPortal'
@@ -22,6 +25,7 @@ export default function ClientLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [showTermsModal, setShowTermsModal] = useState(false)
   const { data: client, isLoading, isError } = useClientMe()
   const logoutMutation = useClientLogout()
   const { data: tickets = [] } = useClientTickets()
@@ -126,13 +130,20 @@ export default function ClientLayout() {
           })}
         </nav>
 
-        {/* Logout Section */}
-        <div className="p-4 border-t border-white/10 shrink-0">
+        {/* Portal Rules & Terms Section */}
+        <div className="p-4 border-t border-white/10 shrink-0 space-y-1">
+          <button
+            onClick={() => setShowTermsModal(true)}
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+          >
+            <FileText className="w-4 h-4 text-blue-300" />
+            <span>Portal Terms & SLA Rules</span>
+          </button>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/60 hover:bg-white/8 hover:text-white transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-white/60 hover:bg-white/10 hover:text-white transition-colors"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-4 h-4 text-rose-300" />
             <span>Sign Out</span>
           </button>
         </div>
@@ -156,6 +167,13 @@ export default function ClientLayout() {
           </div>
 
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => setShowTermsModal(true)}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold transition-all"
+            >
+              <FileText className="w-3.5 h-3.5 text-brand-blue" />
+              <span>SLA Rules & Terms</span>
+            </button>
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-100">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Authorized Client</span>
@@ -169,6 +187,86 @@ export default function ClientLayout() {
         </main>
         <ClientMobileNavBar />
       </div>
+
+      {/* Client Portal SLA Rules & Terms Modal */}
+      {showTermsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto border border-gray-200">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-blue-50 text-brand-blue rounded-2xl">
+                  <FileText className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold font-heading text-gray-900">
+                    Client Portal SLA Rules & Terms
+                  </h3>
+                  <p className="text-xs text-gray-400">
+                    Hindustan Projects official client engagement guidelines & policies
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowTermsModal(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-5 text-sm text-gray-600 leading-relaxed">
+              <div className="bg-blue-50/50 border border-blue-100 p-4 rounded-2xl space-y-2">
+                <h4 className="font-bold text-brand-blue flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="w-4 h-4 text-brand-blue" />
+                  1. Service Level Agreement (SLA) & Support SLA
+                </h4>
+                <p className="text-xs text-gray-600">
+                  Support Desk tickets submitted via the portal receive a initial technical response within <strong>2 to 4 business hours</strong>. Urgent production issues are assigned directly to dedicated project leads.
+                </p>
+              </div>
+
+              <div className="bg-emerald-50/50 border border-emerald-100 p-4 rounded-2xl space-y-2">
+                <h4 className="font-bold text-emerald-800 flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  2. Intellectual Property (IP) & Source Code Transfer
+                </h4>
+                <p className="text-xs text-gray-600">
+                  Full ownership rights, custom source code zips, and Figma assets are transferred into your <strong>Project File Vault</strong> immediately upon 100% completion of milestone payments.
+                </p>
+              </div>
+
+              <div className="bg-amber-50/50 border border-amber-100 p-4 rounded-2xl space-y-2">
+                <h4 className="font-bold text-amber-800 flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="w-4 h-4 text-amber-600" />
+                  3. Milestone Billing & GST Tax Invoice Compliance
+                </h4>
+                <p className="text-xs text-gray-600">
+                  All billing milestones are subject to standard 18% GST itemized billing. Official verified tax receipts with GSTIN <strong>08AAACH9929P1Z5</strong> can be printed or saved as PDF directly from the Billing tab.
+                </p>
+              </div>
+
+              <div className="bg-purple-50/50 border border-purple-100 p-4 rounded-2xl space-y-2">
+                <h4 className="font-bold text-purple-900 flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="w-4 h-4 text-purple-600" />
+                  4. Project Asset Upload Guidelines
+                </h4>
+                <p className="text-xs text-gray-600">
+                  Clients can upload project logos, Figma references, and zip files up to 10MB per file into their File Vault. All uploaded assets are securely stored and encrypted in Cloudinary CDN.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gray-100 flex justify-end">
+              <button
+                onClick={() => setShowTermsModal(false)}
+                className="px-6 py-2.5 bg-brand-blue hover:bg-blue-600 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
+              >
+                I Understand & Agree
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
