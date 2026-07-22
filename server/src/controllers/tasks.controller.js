@@ -36,7 +36,7 @@ export const listTasks = async (req, res, next) => {
 
 export const createTask = async (req, res, next) => {
   try {
-    const { title, description, status, priority, dueDate, assignedTo, clientProjectId, tags } =
+    const { title, description, status, priority, dueDate, assignedTo, clientProjectId, tags, estimatedHours, loggedHours, subtasks } =
       req.body
     if (!title) {
       return res.status(400).json({ status: 'error', message: 'Task title is required.' })
@@ -62,6 +62,9 @@ export const createTask = async (req, res, next) => {
         assignedTo,
         clientProjectId: clientProjectId || null,
         tags: tags ?? [],
+        estimatedHours: estimatedHours ? parseFloat(estimatedHours) : null,
+        loggedHours: loggedHours ? parseFloat(loggedHours) : 0,
+        subtasks: subtasks || null,
         creatorId: req.admin.id,
         assignedToAdminId,
       },
@@ -103,6 +106,8 @@ export const updateTask = async (req, res, next) => {
     }
 
     if (data.dueDate) data.dueDate = new Date(data.dueDate)
+    if (data.estimatedHours !== undefined) data.estimatedHours = data.estimatedHours ? parseFloat(data.estimatedHours) : null
+    if (data.loggedHours !== undefined) data.loggedHours = data.loggedHours ? parseFloat(data.loggedHours) : 0
 
     if (data.assignedTo !== undefined) {
       let assignedToAdminId = null

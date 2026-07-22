@@ -112,13 +112,34 @@ export async function sendEmail(options) {
   })
 }
 
+
 // ── Shared Professional Email Footer ───────────────────────────
 
 /**
- * professionalEmailFooter() — Brand-consistent footer for all client emails.
+ * professionalEmailFooter(settings) — Brand-consistent footer for all client emails.
  * Based on Hindustan Projects Official Email Signature System (HP-BB-030).
+ * Accepts settings object from SiteSetting DB so values stay updated from admin panel.
  */
-export function professionalEmailFooter() {
+export function professionalEmailFooter(settings = {}) {
+  const phone    = settings.phone    || '+91 99291 20431'
+  const whatsapp = settings.whatsapp || '+91 70147 96047'
+  const address  = settings.address  || 'Bhilwara – 311001, Rajasthan, India'
+  const linkedin  = settings.linkedin  || null
+  const facebook  = settings.facebook  || null
+  const instagram = settings.instagram || null
+  const youtube   = settings.youtube   || null
+
+  // Clean whatsapp number for wa.me link (remove spaces, dashes, +)
+  const waNumber = whatsapp.replace(/[\s\-+]/g, '')
+  const waLink   = `https://wa.me/${waNumber}`
+
+  const socialButtons = [
+    linkedin  && `<a href="${linkedin}" style="display:inline-block;background:#0A66C2;color:white;font-size:11px;font-weight:bold;padding:3px 9px;border-radius:4px;text-decoration:none;margin:2px;">in</a>`,
+    facebook  && `<a href="${facebook}" style="display:inline-block;background:#1877F2;color:white;font-size:11px;font-weight:bold;padding:3px 9px;border-radius:4px;text-decoration:none;margin:2px;">f</a>`,
+    instagram && `<a href="${instagram}" style="display:inline-block;background:#E1306C;color:white;font-size:11px;font-weight:bold;padding:3px 9px;border-radius:4px;text-decoration:none;margin:2px;">&#9678;</a>`,
+    youtube   && `<a href="${youtube}" style="display:inline-block;background:#FF0000;color:white;font-size:11px;font-weight:bold;padding:3px 9px;border-radius:4px;text-decoration:none;margin:2px;">&#9654;</a>`,
+  ].filter(Boolean).join('\n        ')
+
   return `
     <div style="margin-top: 32px; border-top: 2px solid #1A3E8C; padding-top: 20px;">
 
@@ -138,19 +159,19 @@ export function professionalEmailFooter() {
             <table style="border-collapse: collapse; font-size: 12px; color: #374151;">
               <tr>
                 <td style="padding: 2px 8px 2px 0; white-space: nowrap;">&#128222;</td>
-                <td style="padding: 2px 0;"><a href="tel:+919929120431" style="color: #1A3E8C; text-decoration: none;">+91 99291 20431</a></td>
+                <td style="padding: 2px 0;"><a href="tel:${phone.replace(/\s/g, '')}" style="color: #1A3E8C; text-decoration: none;">${phone}</a></td>
               </tr>
               <tr>
                 <td style="padding: 2px 8px 2px 0; white-space: nowrap;">&#128241;</td>
-                <td style="padding: 2px 0;"><a href="https://wa.me/917014796047" style="color: #1A3E8C; text-decoration: none;">+91 70147 96047</a> <span style="color: #6B7280;">(WhatsApp)</span></td>
+                <td style="padding: 2px 0;"><a href="${waLink}" style="color: #1A3E8C; text-decoration: none;">${whatsapp}</a> <span style="color: #6B7280;">(WhatsApp)</span></td>
               </tr>
               <tr>
                 <td style="padding: 2px 8px 2px 0; white-space: nowrap;">&#127760;</td>
-                <td style="padding: 2px 0;"><a href="https://www.hindustanprojects.in" style="color: #1A3E8C; text-decoration: none;">www.hindustanprojects.in</a></td>
+                <td style="padding: 2px 0;"><a href="https://www.itservices.hindustanprojects.in" style="color: #1A3E8C; text-decoration: none;">www.itservices.hindustanprojects.in</a></td>
               </tr>
               <tr>
                 <td style="padding: 2px 8px 2px 0; white-space: nowrap;">&#128205;</td>
-                <td style="padding: 2px 0; color: #374151;">Bhilwara &ndash; 311001, Rajasthan, India</td>
+                <td style="padding: 2px 0; color: #374151;">${address}</td>
               </tr>
             </table>
           </td>
@@ -158,14 +179,12 @@ export function professionalEmailFooter() {
       </table>
 
       <!-- Social Media Links -->
+      ${socialButtons ? `
       <div style="margin-top: 16px;">
         <span style="font-size: 11px; color: #6B7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Follow us:</span>
         &nbsp;
-        <a href="https://www.linkedin.com/company/hindustan-projects" style="display: inline-block; background: #0A66C2; color: white; font-size: 11px; font-weight: bold; padding: 3px 9px; border-radius: 4px; text-decoration: none; margin: 2px;">in</a>
-        <a href="https://www.facebook.com/hindustanprojects" style="display: inline-block; background: #1877F2; color: white; font-size: 11px; font-weight: bold; padding: 3px 9px; border-radius: 4px; text-decoration: none; margin: 2px;">f</a>
-        <a href="https://www.instagram.com/hindustanprojects" style="display: inline-block; background: #E1306C; color: white; font-size: 11px; font-weight: bold; padding: 3px 9px; border-radius: 4px; text-decoration: none; margin: 2px;">&#9678;</a>
-        <a href="https://www.youtube.com/@hindustanprojects" style="display: inline-block; background: #FF0000; color: white; font-size: 11px; font-weight: bold; padding: 3px 9px; border-radius: 4px; text-decoration: none; margin: 2px;">&#9654;</a>
-      </div>
+        ${socialButtons}
+      </div>` : ''}
 
       <!-- Confidentiality Notice -->
       <div style="margin-top: 16px; padding: 10px 14px; background: #f9fafb; border-left: 3px solid #d1d5db; border-radius: 0 4px 4px 0;">
@@ -182,7 +201,24 @@ export function professionalEmailFooter() {
   `
 }
 
+/**
+ * fetchEmailFooterSettings() — Fetch site settings from DB for use in email footer.
+ * Call this before generating any client-facing email.
+ */
+export async function fetchEmailFooterSettings(prisma) {
+  try {
+    const keys = ['phone', 'whatsapp', 'address', 'linkedin', 'facebook', 'instagram', 'youtube']
+    const rows = await prisma.siteSetting.findMany({ where: { key: { in: keys } } })
+    const settings = {}
+    for (const row of rows) settings[row.key] = row.value
+    return settings
+  } catch {
+    return {}
+  }
+}
+
 // ── Email templates ────────────────────────────────────────────
+
 
 /**
  * Admin notification email — sent to the company when a lead comes in.
@@ -559,3 +595,164 @@ export function dbBackupFailureTemplate({ error }) {
     text: `CRITICAL: Nightly database backup failed. Error: ${error}`,
   }
 }
+
+/**
+ * clientPaymentSuccessTemplate — sent to client and admin when a milestone is marked as PAID.
+ */
+export function clientPaymentSuccessTemplate({ clientName, projectName, milestoneTitle, amount, invoiceUrl }) {
+  return {
+    subject: `Receipt for your payment: ${milestoneTitle}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+        <div style="background: #1A3E8C; padding: 20px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 22px;">Payment Receipt</h1>
+          <p style="color: #93c5fd; margin: 4px 0 0; font-size: 14px;">Hindustan Projects billing system</p>
+        </div>
+
+        <p style="font-size: 16px; color: #1A1A1A;">Dear <strong>${clientName}</strong>,</p>
+
+        <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+          Thank you for your payment! We have successfully processed the payment for the milestone <strong>${milestoneTitle}</strong> under project <strong>${projectName}</strong>.
+        </p>
+
+        <div style="margin: 20px 0; padding: 16px; background: #f0f4ff; border-radius: 6px;">
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">💳 <strong>Milestone:</strong> ${milestoneTitle}</p>
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">💰 <strong>Amount Paid:</strong> ₹${amount.toLocaleString('en-IN')}</p>
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">✅ <strong>Status:</strong> PAID</p>
+          <p style="margin: 0; font-size: 14px; color: #1A1A1A;">📅 <strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+        </div>
+
+        ${invoiceUrl ? `
+        <div style="margin-top: 24px; text-align: center;">
+          <a href="${invoiceUrl}" target="_blank" style="display: inline-block; background: #E31E24; color: white; padding: 10px 24px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600;">Download Digital Invoice</a>
+        </div>
+        ` : ''}
+
+        <p style="font-size: 15px; color: #374151; line-height: 1.7; margin-top: 20px;">
+          Associated deliverables have been unlocked and are now available inside your Client Portal.
+        </p>
+
+        <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+          If you have any billing queries, please feel free to open a ticket in the Support Desk.
+        </p>
+      </div>
+    `,
+    text: `Dear ${clientName},\n\nThank you for your payment!\n\nWe have processed ₹${amount.toLocaleString('en-IN')} for milestone "${milestoneTitle}" under project "${projectName}".\n\nDownload Link: ${invoiceUrl}\n\nBest regards,\nHindustan Projects Billing Team`,
+  }
+}
+
+/**
+ * supportTicketCreatedTemplate — sent to admin when a client raises a new support ticket.
+ */
+export function supportTicketCreatedTemplate({ clientName, ticketId, subject, category, message }) {
+  return {
+    subject: `[Support Ticket #${ticketId.slice(-6).toUpperCase()}] New Ticket: ${subject}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+        <div style="background: #1A3E8C; padding: 20px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 20px;">New Support Ticket</h1>
+          <p style="color: #93c5fd; margin: 4px 0 0; font-size: 14px;">Hindustan Projects Helpdesk</p>
+        </div>
+
+        <p style="font-size: 15px; color: #1A1A1A;">Hello Admin/Support Team,</p>
+
+        <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+          A new support ticket has been opened by client <strong>${clientName}</strong>:
+        </p>
+
+        <div style="margin: 20px 0; padding: 16px; background: #f9fafb; border-left: 4px solid #1A3E8C; border-radius: 4px;">
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">🏷️ <strong>Ticket ID:</strong> #${ticketId.slice(-6).toUpperCase()}</p>
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">📁 <strong>Category:</strong> ${category}</p>
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">📝 <strong>Subject:</strong> ${subject}</p>
+        </div>
+
+        <div style="margin-top: 16px; padding: 16px; background: #f3f4f6; border-radius: 6px;">
+          <p style="margin: 0 0 8px; color: #6B7280; font-size: 12px; text-transform: uppercase; font-weight: bold;">Initial Message Description</p>
+          <p style="margin: 0; color: #1A1A1A; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+        </div>
+
+        <p style="font-size: 14px; color: #4B5563; margin-top: 24px;">
+          Please login to the Admin Dashboard to assign and respond to this ticket.
+        </p>
+      </div>
+    `,
+    text: `Support Ticket #${ticketId.slice(-6).toUpperCase()}\n\nClient: ${clientName}\nCategory: ${category}\nSubject: ${subject}\n\nDescription:\n${message}`,
+  }
+}
+
+/**
+ * ticketAssignmentTemplate — sent to the assigned staff/admin when a ticket is assigned to them.
+ */
+export function ticketAssignmentTemplate({ adminEmail, ticketId, subject, category, clientName, assignedByRole, portalUrl }) {
+  return {
+    subject: `[Assigned To You] Support Ticket #${ticketId.slice(-6).toUpperCase()}: ${subject}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+        <div style="background: linear-gradient(135deg, #1A3E8C, #1e4db7); padding: 20px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 20px;">Ticket Assigned to You</h1>
+          <p style="color: #93c5fd; margin: 4px 0 0; font-size: 14px;">Hindustan Projects Support Desk</p>
+        </div>
+
+        <p style="font-size: 15px; color: #1A1A1A;">Hello <strong>${adminEmail}</strong>,</p>
+
+        <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+          A support ticket has been assigned to you by <strong>${assignedByRole || 'Admin'}</strong>. Please review and respond at your earliest convenience.
+        </p>
+
+        <div style="margin: 20px 0; padding: 16px; background: #f0f4ff; border-left: 4px solid #1A3E8C; border-radius: 4px;">
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">🏷️ <strong>Ticket ID:</strong> #${ticketId.slice(-6).toUpperCase()}</p>
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">👤 <strong>Client:</strong> ${clientName}</p>
+          <p style="margin: 0 0 8px; font-size: 14px; color: #1A1A1A;">📁 <strong>Category:</strong> ${category}</p>
+          <p style="margin: 0; font-size: 14px; color: #1A1A1A;">📝 <strong>Subject:</strong> ${subject}</p>
+        </div>
+
+        <p style="font-size: 14px; color: #4B5563; margin-top: 16px;">
+          Please log in to the Admin Dashboard to review the ticket thread and provide a timely response.
+        </p>
+
+        ${portalUrl ? `
+        <div style="margin-top: 24px; text-align: center;">
+          <a href="${portalUrl}" target="_blank" style="display: inline-block; background: #1A3E8C; color: white; padding: 10px 24px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600;">View Assigned Ticket</a>
+        </div>
+        ` : ''}
+      </div>
+    `,
+    text: `Ticket Assigned to You\n\nTicket ID: #${ticketId.slice(-6).toUpperCase()}\nClient: ${clientName}\nCategory: ${category}\nSubject: ${subject}\n\nPlease log in to the Admin Dashboard to respond.`,
+  }
+}
+
+/**
+ * supportTicketReplyTemplate — sent to client or admin when a reply is posted.
+ */
+export function supportTicketReplyTemplate({ recipientName, ticketId, subject, senderName, message, portalUrl }) {
+  return {
+    subject: `[Support Ticket #${ticketId.slice(-6).toUpperCase()}] Reply from ${senderName}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+        <div style="background: #1A3E8C; padding: 20px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 20px;">Ticket Reply Received</h1>
+          <p style="color: #93c5fd; margin: 4px 0 0; font-size: 14px;">Hindustan Projects Helpdesk</p>
+        </div>
+
+        <p style="font-size: 15px; color: #1A1A1A;">Dear <strong>${recipientName}</strong>,</p>
+
+        <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+          A new response has been posted by <strong>${senderName}</strong> for support ticket: <strong>${subject}</strong> (ID: #${ticketId.slice(-6).toUpperCase()})
+        </p>
+
+        <div style="margin: 20px 0; padding: 16px; background: #f3f4f6; border-radius: 6px; border-left: 4px solid #E31E24;">
+          <p style="margin: 0 0 8px; color: #6B7280; font-size: 12px; text-transform: uppercase; font-weight: bold;">Message Response</p>
+          <p style="margin: 0; color: #1A1A1A; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+        </div>
+
+        ${portalUrl ? `
+        <div style="margin-top: 24px; text-align: center;">
+          <a href="${portalUrl}" target="_blank" style="display: inline-block; background: #1A3E8C; color: white; padding: 10px 24px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600;">View Ticket thread</a>
+        </div>
+        ` : ''}
+      </div>
+    `,
+    text: `Support Ticket #${ticketId.slice(-6).toUpperCase()}\n\nReply from: ${senderName}\n\nMessage:\n${message}`,
+  }
+}
+

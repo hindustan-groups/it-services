@@ -42,9 +42,7 @@ app.use(enforceHttps)
 app.use(requestLogger)
 
 // ── 0. Health check — BEFORE CORS so monitoring tools can ping it ─
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() })
-})
+app.use('/api/health', healthRouter)
 
 // ── 1. Request Timeout (10 seconds) ───────────────────────────
 app.use(requestTimeout)

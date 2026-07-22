@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken'
 import prisma from '../config/db.js'
 import { env } from '../config/env.js'
 import { setClientCookie, clearClientCookies } from '../utils/authCookie.js'
-import { sendEmail, professionalEmailFooter } from '../utils/mailer.js'
+import { sendEmail, professionalEmailFooter, fetchEmailFooterSettings } from '../utils/mailer.js'
 
 // POST /api/client/login
 export const clientLogin = async (req, res, next) => {
@@ -44,6 +44,7 @@ export const clientLogin = async (req, res, next) => {
       return res.status(401).json({ status: 'error', message: 'Invalid credentials.' })
     }
 
+    // Generate Client Access Token (expires in 24h)
     const token = jwt.sign(
       { id: client.id, email: client.email, role: 'CLIENT' },
       env.JWT_SECRET,
@@ -124,6 +125,7 @@ export const setupClientPassword = async (req, res, next) => {
       },
     })
 
+    // Log them in immediately
     const loginToken = jwt.sign(
       { id: updatedClient.id, email: updatedClient.email, role: 'CLIENT' },
       env.JWT_SECRET,
@@ -132,9 +134,11 @@ export const setupClientPassword = async (req, res, next) => {
 
     setClientCookie(res, loginToken)
 
-    // Send welcome + login details email
+    // Send welcome + login details email with CORRECT login URL (/client-login not /client/login)
     const clientUrl = env.CLIENT_URL || 'https://it-services-hindustan-projects.vercel.app'
     const loginUrl = `${clientUrl}/client-login`
+
+    const settings = await fetchEmailFooterSettings(prisma)
 
     sendEmail({
       to: updatedClient.email,
@@ -163,10 +167,10 @@ export const setupClientPassword = async (req, res, next) => {
             <a href="${loginUrl}" style="background-color: #1A3E8C; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 15px;">Go to My Dashboard</a>
           </p>
 
-          ${professionalEmailFooter()}
+          ${professionalEmailFooter(settings)}
         </div>
       `,
-      text: `Hi ${updatedClient.name},\n\nYour client portal account is now active!\n\nLogin Details:\nEmail: ${updatedClient.email}\nPassword: The one you just set\nLogin URL: ${loginUrl}\n\nHindustan Projects\nPhone: +91 99291 20431\nWeb: www.hindustanprojects.in\nBhilwara, Rajasthan, India`,
+      text: `Hi ${updatedClient.name},\n\nYour client portal account is now active!\n\nLogin Details:\nEmail: ${updatedClient.email}\nPassword: The one you just set\nLogin URL: ${loginUrl}\n\nHindustan Projects\nPhone: ${settings.phone || '+91 99291 20431'}\nWeb: www.hindustanprojects.in\nBhilwara, Rajasthan, India`,
     }).catch((err) => {
       console.error('[welcome-email] Failed to send:', err.message)
     })

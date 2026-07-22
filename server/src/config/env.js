@@ -25,6 +25,7 @@ export const env = {
   ADMIN_WHATSAPP_TO: process.env.ADMIN_WHATSAPP_TO,
   SENTRY_DSN: process.env.SENTRY_DSN,
   GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID,
+  ADMIN_SECRET_PATH: process.env.ADMIN_SECRET_PATH || 'admin-login',
 }
 
 // Validate required env vars at startup

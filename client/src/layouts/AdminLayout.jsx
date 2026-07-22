@@ -78,9 +78,10 @@ const NAV_GROUPS = [
     items: [
       { to: '/admin/client-projects', icon: FolderKanban, label: 'Client Projects', roles: ['ADMIN', 'SUPER_ADMIN'] },
       { to: '/admin/tasks', icon: CheckSquare, label: 'Tasks', roles: ['ADMIN', 'SUPER_ADMIN', 'STAFF'] },
+      { to: '/admin/tickets', icon: MessageSquare, label: 'Support Tickets', badge: 'tickets', roles: ['ADMIN', 'SUPER_ADMIN', 'STAFF'] },
       { to: '/admin/notes', icon: StickyNote, label: 'Notes', roles: ['ADMIN', 'SUPER_ADMIN', 'STAFF'] },
       { to: '/admin/calendar', icon: Calendar, label: 'Calendar', roles: ['ADMIN', 'SUPER_ADMIN', 'STAFF'] },
-      { to: '/admin/activities', icon: History, label: 'Activity Log', roles: ['ADMIN', 'SUPER_ADMIN'] },
+      { to: '/admin/activities', icon: History, label: 'Activity Log', roles: ['SUPER_ADMIN'] },
     ],
   },
   {
@@ -234,6 +235,17 @@ export default function AdminLayout() {
     refetchInterval: 60000,
   })
   const pendingBlogCommentsCount = Array.isArray(pendingCommentsRaw) ? pendingCommentsRaw.length : 0
+
+  // Unread admin support tickets
+  const { data: adminTicketsRaw = [] } = useQuery({
+    queryKey: ['admin-tickets-badge'],
+    queryFn: () => api.get('/admin/tickets').then((res) => res.data),
+    enabled: !!admin,
+    refetchInterval: 30000,
+  })
+  const unreadTicketsCount = Array.isArray(adminTicketsRaw)
+    ? adminTicketsRaw.filter((t) => t.adminHasUnread).length
+    : 0
 
   // Format notifications
   const newLeads = leads.filter((l) => l.status === 'NEW')
@@ -394,6 +406,11 @@ export default function AdminLayout() {
                           {badge === 'comments' && pendingBlogCommentsCount > 0 && (
                             <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-400/30 text-amber-200 border border-amber-400/30 shrink-0">
                               {pendingBlogCommentsCount}
+                            </span>
+                          )}
+                          {badge === 'tickets' && unreadTicketsCount > 0 && (
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-red-500 text-white shrink-0 animate-pulse">
+                              {unreadTicketsCount}
                             </span>
                           )}
                         </>

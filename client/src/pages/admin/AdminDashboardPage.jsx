@@ -26,6 +26,9 @@ import {
   Calendar,
   Newspaper,
   Check,
+  X,
+  History,
+  Eye,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 import { SEO } from '@/components/ui'
@@ -202,9 +205,16 @@ function useClock() {
 
 export default function AdminDashboardPage() {
   const now = useClock()
+  const [selectedActivity, setSelectedActivity] = useState(null)
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: () => api.get('/admin/stats').then((r) => r.data),
+  })
+
+  const { data: activities = [], isLoading: activitiesLoading } = useQuery({
+    queryKey: ['admin-activities-dashboard'],
+    queryFn: () => api.get('/admin/activities').then((r) => r.data),
   })
 
   const checklistItems = [
@@ -307,7 +317,8 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* ── Stats grid ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* ── Stats grid ── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <StatCard
               icon={CheckSquare}
               label="Assigned Tasks"
@@ -318,6 +329,14 @@ export default function AdminDashboardPage() {
             />
             <StatCard
               icon={AlertCircle}
+              label="Urgent Tasks"
+              bg="bg-red-100"
+              color="text-red-600"
+              to="/admin/tasks"
+              value={isLoading ? '…' : data?.urgentTasksCount}
+            />
+            <StatCard
+              icon={Calendar}
               label="Due Today"
               bg="bg-amber-100"
               color="text-amber-600"
@@ -341,6 +360,70 @@ export default function AdminDashboardPage() {
               value={isLoading ? '…' : data?.completedTasks}
             />
           </div>
+
+          {/* ── Hours Tracker Banner ── */}
+          {(data?.totalEstimatedHours > 0 || data?.totalLoggedHours > 0) && (
+            <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm flex items-center justify-between gap-4 flex-wrap">
+              <div>
+                <h3 className="font-heading text-sm font-bold text-gray-800 flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-brand-blue" />
+                  Task Workload & Logged Hours Tracker
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  You have logged <span className="font-bold text-gray-900">{data?.totalLoggedHours || 0} hrs</span> out of <span className="font-bold text-gray-900">{data?.totalEstimatedHours || 0} hrs</span> estimated.
+                </p>
+              </div>
+              <div className="w-full sm:w-64">
+                <div className="flex justify-between text-xs text-gray-500 mb-1">
+                  <span>Progress</span>
+                  <span className="font-bold">
+                    {data?.totalEstimatedHours > 0
+                      ? `${Math.min(100, Math.round((data.totalLoggedHours / data.totalEstimatedHours) * 100))}%`
+                      : '0%'}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                  <div
+                    className="bg-brand-blue h-2.5 rounded-full transition-all duration-300"
+                    style={{
+                      width: `${data?.totalEstimatedHours > 0 ? Math.min(100, (data.totalLoggedHours / data.totalEstimatedHours) * 100) : 0}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Assigned Tickets Section ── */}
+          {data?.myAssignedTickets && data.myAssignedTickets.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-brand-red" />
+                  <h2 className="font-heading text-sm font-bold text-gray-800">Support Tickets Assigned to You</h2>
+                </div>
+                <Link to="/admin/tickets" className="text-xs text-brand-blue hover:underline font-bold">
+                  View All Tickets
+                </Link>
+              </div>
+              <div className="divide-y divide-gray-100">
+                {data.myAssignedTickets.map((ticket) => (
+                  <div key={ticket.id} className="py-3 flex items-center justify-between gap-3 text-xs">
+                    <div>
+                      <p className="font-semibold text-gray-900">{ticket.subject}</p>
+                      <p className="text-gray-400 mt-0.5">Project: {ticket.clientProject?.name || 'General'}</p>
+                    </div>
+                    <span className={`px-2 py-1 rounded-full text-[11px] font-semibold ${
+                      ticket.status === 'OPEN' ? 'bg-red-50 text-red-700' :
+                      ticket.status === 'IN_PROGRESS' ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700'
+                    }`}>
+                      {ticket.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* ── Quick actions ── */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -953,9 +1036,171 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
+        {/* Recent System Activity Widget (Phase 1) */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+            <div className="flex items-center gap-2">
+              <History className="w-4 h-4 text-brand-blue" />
+              <h2 className="font-heading text-base font-bold text-gray-800">
+                Recent System Activity Log
+              </h2>
+            </div>
+            <Link
+              to="/admin/activities"
+              className="text-xs font-bold text-brand-blue hover:underline flex items-center gap-1"
+            >
+              <span>View Full Log</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {activitiesLoading ? (
+            <div className="space-y-3 py-2">
+              {[1, 2, 3].map((n) => (
+                <div key={n} className="flex gap-4 items-start animate-pulse">
+                  <div className="w-2.5 h-2.5 rounded-full bg-gray-200 mt-2" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3.5 bg-gray-100 rounded w-1/3" />
+                    <div className="h-3 bg-gray-100 rounded w-2/3" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : activities.length === 0 ? (
+            <p className="text-xs text-gray-400 italic text-center py-4">No recent activity logged.</p>
+          ) : (
+            <div className="relative border-l border-gray-150 pl-4 ml-2 space-y-5 my-2">
+              {activities.slice(0, 5).map((act) => {
+                const colors = {
+                  CREATE: 'bg-emerald-500',
+                  UPDATE: 'bg-blue-500',
+                  DELETE: 'bg-rose-500',
+                }
+                const dotColor = colors[act.action] || 'bg-gray-400'
+                const formattedDate = new Date(act.createdAt).toLocaleDateString('en-IN', {
+                  day: 'numeric',
+                  month: 'short',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true,
+                })
+
+                return (
+                  <div key={act.id} className="relative group/item flex justify-between items-start gap-4">
+                    {/* Timeline Dot */}
+                    <span className={`absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full ring-4 ring-white ${dotColor}`} />
+                    
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded uppercase tracking-wider text-white ${dotColor}`}>
+                          {act.action}
+                        </span>
+                        <span className="text-xs font-bold text-gray-800">{act.entity}</span>
+                        <span className="text-[10px] text-gray-400 font-medium">·</span>
+                        <span className="text-[10px] text-gray-400 font-medium">{formattedDate}</span>
+                      </div>
+                      <p className="text-xs text-gray-500 font-medium leading-relaxed mt-0.5">
+                        {act.details}
+                      </p>
+                      <p className="text-[10px] text-gray-450 mt-0.5">
+                        Performed by: <span className="font-semibold text-gray-600">{act.adminEmail}</span>
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => setSelectedActivity(act)}
+                      className="p-1.5 text-gray-400 hover:text-brand-blue hover:bg-gray-50 rounded-lg opacity-0 group-hover/item:opacity-100 transition-all cursor-pointer shrink-0 self-center"
+                      title="View Details JSON"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
         {/* Automated Social Media Drafts */}
         <SocialDraftsSection />
       </div>
+
+      {/* Activity Details Modal (Phase 1) */}
+      {selectedActivity && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-gray-150 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex justify-between items-center pb-4 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <History className="w-4.5 h-4.5 text-brand-blue" />
+                <h3 className="text-base font-bold text-gray-900 font-heading">Activity Log Detail</h3>
+              </div>
+              <button
+                onClick={() => setSelectedActivity(null)}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="mt-4 space-y-3.5">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Action Type</p>
+                  <span className={`inline-block px-2 py-0.5 text-xs font-bold rounded uppercase tracking-wider text-white mt-1 ${
+                    selectedActivity.action === 'CREATE' ? 'bg-emerald-500' :
+                    selectedActivity.action === 'UPDATE' ? 'bg-blue-500' : 'bg-rose-500'
+                  }`}>
+                    {selectedActivity.action}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Database Entity</p>
+                  <p className="text-sm font-bold text-gray-800 mt-1">{selectedActivity.entity}</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Details</p>
+                <p className="text-xs text-gray-700 font-medium leading-relaxed bg-gray-50 border border-gray-100 p-3 rounded-xl mt-1">
+                  {selectedActivity.details}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Administrator</p>
+                  <p className="text-xs font-semibold text-gray-600 mt-1">{selectedActivity.adminEmail}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Timestamp</p>
+                  <p className="text-xs font-semibold text-gray-600 mt-1">
+                    {new Date(selectedActivity.createdAt).toLocaleString('en-IN', {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                    })}
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Full Log JSON Data</p>
+                <pre className="text-[10px] font-mono bg-gray-900 text-gray-200 p-3.5 rounded-xl overflow-x-auto max-h-40 leading-relaxed shadow-inner">
+                  {JSON.stringify(selectedActivity, null, 2)}
+                </pre>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2.5 pt-4 border-t border-gray-100 mt-5">
+              <button
+                onClick={() => setSelectedActivity(null)}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

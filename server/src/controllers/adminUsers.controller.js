@@ -5,7 +5,7 @@ import prisma from '../config/db.js'
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import { logActivity } from '../utils/activity.js'
-import { sendEmail, professionalEmailFooter } from '../utils/mailer.js'
+import { sendEmail, professionalEmailFooter, fetchEmailFooterSettings } from '../utils/mailer.js'
 import { env } from '../config/env.js'
 
 export const listAdminUsers = async (req, res, next) => {
@@ -61,6 +61,49 @@ export const createAdminUser = async (req, res, next) => {
         isActive: true,
         createdAt: true,
       },
+    })
+
+    // Fetch site settings for footer
+    const settings = await fetchEmailFooterSettings(prisma)
+    const clientUrl = env.CLIENT_URL || 'https://it-services-hindustan-projects.vercel.app'
+    const rawPath = env.ADMIN_SECRET_PATH || 'admin-login'
+    const loginPath = rawPath.startsWith('admin-') ? rawPath : `admin-${rawPath}`
+    const loginUrl = `${clientUrl}/${loginPath}`
+
+    // Send invitation email
+    sendEmail({
+      to: user.email,
+      subject: `Your Hindustan Projects ${role} Account is Ready`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+          <div style="background: #1A3E8C; padding: 20px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 22px;"><span style="color: #E31E24;">Hindustan</span> Projects</h1>
+            <p style="color: #93c5fd; margin: 6px 0 0; font-size: 14px;">Staff Portal Account Setup</p>
+          </div>
+
+          <p style="font-size: 16px; color: #1A1A1A;">Hello,</p>
+
+          <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+            A new account has been created for you as a <strong>${role}</strong> member at <strong>Hindustan Projects</strong>. You can now log in to the administrative portal to manage website details, projects, leads, and clients.
+          </p>
+
+          <div style="background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 16px 20px; margin: 20px 0;">
+            <p style="margin: 0 0 8px; font-size: 13px; color: #4B5563; text-transform: uppercase; letter-spacing: 0.05em; font-weight: bold;">Your Administrative Credentials</p>
+            <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">📧 <strong>Email:</strong> ${user.email}</p>
+            <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">🔑 <strong>Password:</strong> ${password}</p>
+            <p style="margin: 0; font-size: 14px; color: #1A1A1A;">🌐 <strong>Portal URL:</strong> <a href="${loginUrl}" style="color: #1A3E8C;">${loginUrl}</a></p>
+          </div>
+
+          <p style="text-align: center; margin: 30px 0;">
+            <a href="${loginUrl}" style="background-color: #1A3E8C; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 15px;">Login to Admin Portal</a>
+          </p>
+
+          ${professionalEmailFooter(settings)}
+        </div>
+      `,
+      text: `Hello,\n\nA new administrative account has been created for you as a ${role} member at Hindustan Projects.\n\nCredentials:\nEmail: ${user.email}\nPassword: ${password}\nPortal URL: ${loginUrl}\n\nPlease keep these details secure.\n\nHindustan Projects Team`
+    }).catch((err) => {
+      console.error('[staff-email] Failed to send credentials email:', err.message)
     })
 
     await logActivity(req, 'CREATE', 'AdminUser', `Created ${role} account: '${user.email}'`)
@@ -153,6 +196,50 @@ export const updateAdminUser = async (req, res, next) => {
         createdAt: true,
       },
     })
+
+    // If password was changed, send email notification
+    if (password && password.trim()) {
+      const settings = await fetchEmailFooterSettings(prisma)
+      const clientUrl = env.CLIENT_URL || 'https://it-services-hindustan-projects.vercel.app'
+      const rawPath = env.ADMIN_SECRET_PATH || 'admin-login'
+      const loginPath = rawPath.startsWith('admin-') ? rawPath : `admin-${rawPath}`
+      const loginUrl = `${clientUrl}/${loginPath}`
+
+      sendEmail({
+        to: user.email,
+        subject: 'Your Hindustan Projects Staff Password Has Been Reset',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+            <div style="background: #1A3E8C; padding: 20px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 22px;"><span style="color: #E31E24;">Hindustan</span> Projects</h1>
+              <p style="color: #93c5fd; margin: 6px 0 0; font-size: 14px;">Staff Portal Security Update</p>
+            </div>
+
+            <p style="font-size: 16px; color: #1A1A1A;">Hello,</p>
+
+            <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+              An administrator has reset the password for your <strong>${user.role}</strong> account at <strong>Hindustan Projects</strong>.
+            </p>
+
+            <div style="background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 16px 20px; margin: 20px 0;">
+              <p style="margin: 0 0 8px; font-size: 13px; color: #4B5563; text-transform: uppercase; letter-spacing: 0.05em; font-weight: bold;">Your Updated Administrative Credentials</p>
+              <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">📧 <strong>Email:</strong> ${user.email}</p>
+              <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">🔑 <strong>Password:</strong> ${password}</p>
+              <p style="margin: 0; font-size: 14px; color: #1A1A1A;">🌐 <strong>Portal URL:</strong> <a href="${loginUrl}" style="color: #1A3E8C;">${loginUrl}</a></p>
+            </div>
+
+            <p style="text-align: center; margin: 30px 0;">
+              <a href="${loginUrl}" style="background-color: #1A3E8C; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 15px;">Login to Admin Portal</a>
+            </p>
+
+            ${professionalEmailFooter(settings)}
+          </div>
+        `,
+        text: `Hello,\n\nYour Hindustan Projects staff account password has been reset by an administrator.\n\nUpdated Credentials:\nEmail: ${user.email}\nPassword: ${password}\nPortal URL: ${loginUrl}\n\nPlease keep these details secure.\n\nHindustan Projects Team`
+      }).catch((err) => {
+        console.error('[staff-email] Failed to send password reset email:', err.message)
+      })
+    }
 
     await logActivity(
       req,
@@ -249,6 +336,8 @@ export const createClientUser = async (req, res, next) => {
     const clientUrl = env.CLIENT_URL || 'https://it-services-hindustan-projects.vercel.app'
     const inviteLink = `${clientUrl}/client/setup-password?token=${inviteToken}`
 
+    const settings = await fetchEmailFooterSettings(prisma)
+
     await sendEmail({
       to: client.email,
       subject: 'Welcome to Hindustan Projects Client Portal',
@@ -274,15 +363,15 @@ export const createClientUser = async (req, res, next) => {
           </p>
 
           <div style="background: #fff8f0; border: 1px solid #fed7aa; border-radius: 6px; padding: 12px 16px; margin: 20px 0;">
-            <p style="margin: 0; font-size: 13px; color: #92400e;">&#9888; This setup link will expire in <strong>7 days</strong>. Please set up your account before it expires.</p>
+            <p style="margin: 0; font-size: 13px; color: #92400e;">⚠️ This setup link will expire in <strong>7 days</strong>. Please set up your account before it expires.</p>
           </div>
 
           <p style="font-size: 12px; color: #6b7280; margin-top: 16px;">If the button doesn't work, copy and paste this link in your browser:<br/><a href="${inviteLink}" style="color: #1A3E8C; word-break: break-all;">${inviteLink}</a></p>
 
-          ${professionalEmailFooter()}
+          ${professionalEmailFooter(settings)}
         </div>
       `,
-      text: `Hi ${client.name},\n\nYour Hindustan Projects client portal account has been created!\n\nSet up your password using the link below:\n${inviteLink}\n\nThis link expires in 7 days.\n\nHindustan Projects\nPhone: +91 99291 20431\nWeb: www.hindustanprojects.in\nBhilwara, Rajasthan, India`
+      text: `Hi ${client.name},\n\nYour Hindustan Projects client portal account has been created!\n\nSet up your password using the link below:\n${inviteLink}\n\nThis link expires in 7 days.\n\nHindustan Projects\nPhone: ${settings.phone || '+91 99291 20431'}\nWeb: www.itservices.hindustanprojects.in\nBhilwara, Rajasthan, India`
     }).catch((err) => {
       console.error('[invite-email] Failed to send invite:', err.message)
     })
@@ -349,22 +438,42 @@ export const updateClientUser = async (req, res, next) => {
       const clientUrl = env.CLIENT_URL || 'https://it-services-hindustan-projects.vercel.app'
       const inviteLink = `${clientUrl}/client/setup-password?token=${client.inviteToken}`
 
+      const settings = await fetchEmailFooterSettings(prisma)
+
       await sendEmail({
         to: client.email,
         subject: 'Set Up Your Hindustan Projects Client Portal Password',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
-            <h2 style="color: #1A3E8C; margin-top: 0;">Hello, ${client.name}!</h2>
-            <p>An administrator has requested to reset or set up your client portal password.</p>
-            <p>Please click the button below to set up your password and access your dashboard:</p>
-            <p style="text-align: center; margin: 30px 0;">
-              <a href="${inviteLink}" style="background-color: #E31E24; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Set Up Your Password</a>
+            <div style="background: #1A3E8C; padding: 20px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 22px;"><span style="color: #E31E24;">Hindustan</span> Projects</h1>
+              <p style="color: #93c5fd; margin: 6px 0 0; font-size: 14px;">Client Portal Setup</p>
+            </div>
+
+            <p style="font-size: 16px; color: #1A1A1A;">Hi <strong>${client.name}</strong>,</p>
+
+            <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+              An administrator has requested to set up or reset your client portal password for your account at <strong>Hindustan Projects</strong>.
             </p>
-            <p style="font-size: 12px; color: #6b7280; margin-top: 20px;">If the button doesn't work, copy and paste this link in your browser: <br/> <a href="${inviteLink}">${inviteLink}</a></p>
-            <p style="font-size: 12px; color: #9ca3af; margin-top: 10px;">This setup link will expire in 7 days.</p>
+
+            <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+              Click the button below to set up your password and access your dashboard:
+            </p>
+
+            <p style="text-align: center; margin: 30px 0;">
+              <a href="${inviteLink}" style="background-color: #E31E24; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 15px;">Set Up My Password</a>
+            </p>
+
+            <div style="background: #fff8f0; border: 1px solid #fed7aa; border-radius: 6px; padding: 12px 16px; margin: 20px 0;">
+              <p style="margin: 0; font-size: 13px; color: #92400e;">⚠️ This setup link will expire in <strong>7 days</strong>. Please set up your account before it expires.</p>
+            </div>
+
+            <p style="font-size: 12px; color: #6b7280; margin-top: 16px;">If the button doesn't work, copy and paste this link in your browser:<br/><a href="${inviteLink}" style="color: #1A3E8C; word-break: break-all;">${inviteLink}</a></p>
+
+            ${professionalEmailFooter(settings)}
           </div>
         `,
-        text: `Hello, ${client.name}!\n\nAn administrator has requested to reset or set up your client portal password. Set up your password using the link below:\n${inviteLink}\n\nThis setup link will expire in 7 days.`
+        text: `Hi ${client.name},\n\nAn administrator has requested to set up or reset your client portal password. Set up your password using the link below:\n${inviteLink}\n\nThis link expires in 7 days.\n\nHindustan Projects\nPhone: ${settings.phone || '+91 99291 20431'}\nWeb: www.itservices.hindustanprojects.in\nBhilwara, Rajasthan, India`
       }).catch((err) => {
         console.error('[invite-email] Failed to send setup link:', err.message)
       })

@@ -74,6 +74,20 @@ import { listTasks, createTask, updateTask, deleteTask } from '../controllers/ta
 import { listNotes, createNote, updateNote, deleteNote } from '../controllers/notes.controller.js'
 import { listActivities } from '../controllers/activities.controller.js'
 import {
+  listAllTickets,
+  getAdminTicketById,
+  replyToTicketFromAdmin,
+  updateTicketStatus,
+  assignTicket,
+  listAssignableAdmins,
+} from '../controllers/tickets.controller.js'
+import {
+  listProjectBillingMilestones,
+  createBillingMilestone,
+  updateBillingMilestone,
+  deleteBillingMilestone,
+} from '../controllers/billing.controller.js'
+import {
   adminListPosts,
   adminGetPost,
   adminCreatePost,
@@ -524,7 +538,7 @@ router.delete('/faqs/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteFaq)
 router.patch('/settings', verifyToken, requireRole('SUPER_ADMIN'), updateSettings)
 
 // ── Admin & Staff User Management ──────────────────────────────
-router.get('/users', verifyToken, requireRole('SUPER_ADMIN'), listAdminUsers)
+router.get('/users', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), listAdminUsers)
 router.post('/users', verifyToken, requireRole('SUPER_ADMIN'), createAdminUser)
 router.patch('/users/:id', verifyToken, requireRole('SUPER_ADMIN'), updateAdminUser)
 router.delete('/users/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteAdminUser)
@@ -619,7 +633,7 @@ router.delete('/client-projects/:id', verifyToken, requireRole('SUPER_ADMIN'), d
 router.get('/tasks', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), listTasks)
 router.post('/tasks', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), createTask)
 router.patch('/tasks/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), updateTask)
-router.delete('/tasks/:id', verifyToken, requireRole('SUPER_ADMIN', 'STAFF'), deleteTask)
+router.delete('/tasks/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), deleteTask)
 
 // ── Quick Notes ────────────────────────────────────────────────
 router.get('/notes', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), listNotes)
@@ -628,7 +642,21 @@ router.patch('/notes/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STA
 router.delete('/notes/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), deleteNote)
 
 // ── Activity Logs ──────────────────────────────────────────────
-router.get('/activities', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), listActivities)
+router.get('/activities', verifyToken, requireRole('SUPER_ADMIN'), listActivities)
+
+// ── Support Tickets ────────────────────────────────────────────
+router.get('/tickets', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), listAllTickets)
+router.get('/tickets/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), getAdminTicketById)
+router.post('/tickets/:id/messages', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), replyToTicketFromAdmin)
+router.patch('/tickets/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), updateTicketStatus)
+router.patch('/tickets/:id/assign', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), assignTicket)
+router.get('/users/list-assignable', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), listAssignableAdmins)
+
+// ── Project Billing Milestones ─────────────────────────────────
+router.get('/client-projects/:id/billing', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN', 'STAFF'), listProjectBillingMilestones)
+router.post('/client-projects/:id/billing', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), createBillingMilestone)
+router.patch('/billing/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), updateBillingMilestone)
+router.delete('/billing/:id', verifyToken, requireRole('SUPER_ADMIN'), deleteBillingMilestone)
 
 // ── Blog Posts ─────────────────────────────────────────────────
 router.get('/blog', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), adminListPosts)

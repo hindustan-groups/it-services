@@ -4,7 +4,7 @@ import speakeasy from 'speakeasy'
 import QRCode from 'qrcode'
 import prisma from '../config/db.js'
 import { env } from '../config/env.js'
-import { setAdminCookie, setAdminRefreshTokenCookie, clearAdminCookies, clearAdminCookie } from '../utils/authCookie.js'
+import { setAdminCookie, setAdminRefreshTokenCookie, clearAdminCookies } from '../utils/authCookie.js'
 import { verifyMasterKey, resolveMasterKey } from '../utils/masterKey.js'
 import { sendEmail } from '../utils/mailer.js'
 
@@ -250,7 +250,7 @@ export const adminRefreshToken = async (req, res, next) => {
     let decoded
     try {
       decoded = jwt.verify(token, env.JWT_SECRET)
-    } catch (err) {
+    } catch (_err) {
       return res.status(401).json({ status: 'error', message: 'Invalid or expired refresh token' })
     }
 
@@ -385,7 +385,7 @@ export const login2FA = async (req, res, next) => {
     let decoded
     try {
       decoded = jwt.verify(tempToken, env.JWT_SECRET)
-    } catch (err) {
+    } catch (_err) {
       return res.status(401).json({ status: 'error', message: 'Temporary session expired. Please log in again.' })
     }
 
@@ -610,7 +610,7 @@ export const getDashboardStats = async (req, res, next) => {
   try {
     const isStaff = req.admin.role === 'STAFF'
     if (isStaff) {
-      const [myTasks, myRecentNotes] = await Promise.all([
+      const [myTasks, myTickets, myRecentNotes] = await Promise.all([
         prisma.workTask.findMany({
           where: {
             OR: [
@@ -619,6 +619,16 @@ export const getDashboardStats = async (req, res, next) => {
               { assignedTo: req.admin.email },
             ],
           },
+          include: {
+            clientProject: { select: { id: true, name: true, clientName: true } },
+          },
+          orderBy: { updatedAt: 'desc' },
+        }),
+        prisma.supportTicket.findMany({
+          where: { assignedAdminId: req.admin.id },
+          include: { clientProject: { select: { id: true, name: true } } },
+          orderBy: { updatedAt: 'desc' },
+          take: 5,
         }),
         prisma.quickNote.findMany({
           where: { creatorId: req.admin.id },
@@ -631,6 +641,10 @@ export const getDashboardStats = async (req, res, next) => {
       const todoTasks = myTasks.filter((t) => t.status === 'TODO').length
       const inProgressTasks = myTasks.filter((t) => t.status === 'IN_PROGRESS').length
       const completedTasks = myTasks.filter((t) => t.status === 'DONE').length
+      const urgentTasksCount = myTasks.filter((t) => t.priority === 'URGENT' && t.status !== 'DONE').length
+
+      const totalEstimatedHours = myTasks.reduce((sum, t) => sum + (t.estimatedHours || 0), 0)
+      const totalLoggedHours = myTasks.reduce((sum, t) => sum + (t.loggedHours || 0), 0)
 
       const todayStart = new Date()
       todayStart.setHours(0, 0, 0, 0)
@@ -650,7 +664,12 @@ export const getDashboardStats = async (req, res, next) => {
           todoTasks,
           inProgressTasks,
           completedTasks,
+          urgentTasksCount,
           dueTodayTasksCount,
+          totalEstimatedHours,
+          totalLoggedHours,
+          myAssignedTickets: myTickets,
+          recentTasks: myTasks.slice(0, 5),
           recentNotes: myRecentNotes,
         },
       })
@@ -661,6 +680,14 @@ export const getDashboardStats = async (req, res, next) => {
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5)
     sixMonthsAgo.setDate(1)
     sixMonthsAgo.setHours(0, 0, 0, 0)
+
+    const safeQuery = async (queryFn, fallbackValue) => {
+      try {
+        return await queryFn()
+      } catch (_err) {
+        return fallbackValue
+      }
+    }
 
     const [
       totalLeads,
@@ -681,41 +708,53 @@ export const getDashboardStats = async (req, res, next) => {
       recentLeads,
       recentProjects,
     ] = await Promise.all([
-      prisma.contactLead.count({ where: { deletedAt: null } }),
-      prisma.contactLead.count({ where: { status: 'NEW', deletedAt: null } }),
-      prisma.contactLead.count({ where: { status: 'CONTACTED', deletedAt: null } }),
-      prisma.contactLead.count({ where: { status: 'CLOSED', deletedAt: null } }),
-      prisma.project.count(), // public projects
-      prisma.service.count({ where: { isActive: true } }),
-      prisma.teamMember.count(),
-      prisma.jobApplication.count({ where: { deletedAt: null } }),
-      prisma.jobPosting.count({ where: { isActive: true } }),
-      prisma.clientProject.findMany({ where: { deletedAt: null } }),
-      prisma.workTask.findMany(),
-      prisma.blogPost.count({ where: { status: 'PUBLISHED', deletedAt: null } }),
-      prisma.blogComment.count({ where: { isApproved: false } }),
-      prisma.testimonial.count({ where: { isActive: true } }),
-      prisma.siteSetting.findMany({
-        where: {
-          key: {
-            in: ['phone', 'email', 'address', 'linkedin', 'instagram', 'facebook'],
-          },
-        },
-      }),
-      prisma.contactLead.findMany({
-        where: { createdAt: { gte: sixMonthsAgo }, deletedAt: null },
-        select: { createdAt: true },
-      }),
-      prisma.clientProject.findMany({
-        where: { createdAt: { gte: sixMonthsAgo }, deletedAt: null },
-        select: { createdAt: true },
-      }),
+      safeQuery(() => prisma.contactLead.count({ where: { deletedAt: null } }), 0),
+      safeQuery(() => prisma.contactLead.count({ where: { status: 'NEW', deletedAt: null } }), 0),
+      safeQuery(() => prisma.contactLead.count({ where: { status: 'CONTACTED', deletedAt: null } }), 0),
+      safeQuery(() => prisma.contactLead.count({ where: { status: 'CLOSED', deletedAt: null } }), 0),
+      safeQuery(() => prisma.project.count(), 0),
+      safeQuery(() => prisma.service.count({ where: { isActive: true } }), 0),
+      safeQuery(() => prisma.teamMember.count(), 0),
+      safeQuery(() => prisma.jobApplication.count({ where: { deletedAt: null } }), 0),
+      safeQuery(() => prisma.jobPosting.count({ where: { isActive: true } }), 0),
+      safeQuery(() => prisma.clientProject.findMany({ where: { deletedAt: null } }), []),
+      safeQuery(() => prisma.workTask.findMany(), []),
+      safeQuery(() => prisma.blogPost.count({ where: { status: 'PUBLISHED', deletedAt: null } }), 0),
+      safeQuery(() => prisma.blogComment.count({ where: { isApproved: false } }), 0),
+      safeQuery(() => prisma.testimonial.count({ where: { isActive: true } }), 0),
+      safeQuery(
+        () =>
+          prisma.siteSetting.findMany({
+            where: {
+              key: {
+                in: ['phone', 'email', 'address', 'linkedin', 'instagram', 'facebook'],
+              },
+            },
+          }),
+        []
+      ),
+      safeQuery(
+        () =>
+          prisma.contactLead.findMany({
+            where: { createdAt: { gte: sixMonthsAgo }, deletedAt: null },
+            select: { createdAt: true },
+          }),
+        []
+      ),
+      safeQuery(
+        () =>
+          prisma.clientProject.findMany({
+            where: { createdAt: { gte: sixMonthsAgo }, deletedAt: null },
+            select: { createdAt: true },
+          }),
+        []
+      ),
     ])
 
-    const activeProjectsCount = clientProjects.filter((p) => p.status !== 'COMPLETED').length
+    const activeProjectsCount = (clientProjects || []).filter((p) => p.status !== 'COMPLETED').length
     const now = new Date()
-    const overdueProjectsCount = clientProjects.filter(
-      (p) => p.status !== 'COMPLETED' && new Date(p.deadline) < now
+    const overdueProjectsCount = (clientProjects || []).filter(
+      (p) => p.status !== 'COMPLETED' && p.deadline && new Date(p.deadline) < now
     ).length
 
     const todayStart = new Date()

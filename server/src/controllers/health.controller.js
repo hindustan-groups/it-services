@@ -9,7 +9,7 @@ export const healthCheck = async (_req, res) => {
   try {
     // Fast database query check
     await prisma.$queryRaw`SELECT 1`
-  } catch (err) {
+  } catch (_err) {
     dbStatus = 'unhealthy'
   }
 
