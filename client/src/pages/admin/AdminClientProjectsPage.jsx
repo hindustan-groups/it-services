@@ -74,7 +74,7 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
     return d.toISOString().split('T')[0]
   }
 
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, watch } = useForm({
     defaultValues: initial
       ? {
           ...initial,
@@ -100,6 +100,8 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
         },
   })
 
+  const watchedProgress = watch('progress') || 0
+
   const onSubmit = (data) => {
     onSave({
       ...data,
@@ -114,38 +116,39 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-      <div>
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-          Project details
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* Section 1: Core Client & Project Identification */}
+      <div className="bg-gray-50/60 p-5 rounded-2xl border border-gray-200/80 space-y-4">
+        <p className="text-xs font-bold text-brand-blue uppercase tracking-wider flex items-center gap-2">
+          <span>📋</span> 1. Core Identification & Client Account
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-semibold text-gray-600 block mb-1.5">
+            <label className="text-xs font-bold text-gray-700 block mb-1.5">
               Project Title *
             </label>
             <input
               {...register('projectTitle', { required: true })}
               className={inputCls}
-              placeholder="e.g. E-Commerce Development"
+              placeholder="e.g. E-Commerce Website & Mobile App"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-600 block mb-1.5">
-              Client Name *
+            <label className="text-xs font-bold text-gray-700 block mb-1.5">
+              Client Business / Name *
             </label>
             <input
               {...register('clientName', { required: true })}
               className={inputCls}
-              placeholder="e.g. Ramesh Textiles, Bhilwara"
+              placeholder="e.g. Ramesh Textiles Pvt Ltd"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-600 block mb-1.5">
+            <label className="text-xs font-bold text-gray-700 block mb-1.5">
               Link Client Portal Account (Optional)
             </label>
             <select {...register('clientId')} className={inputCls}>
-              <option value="">-- No Portal Account linked --</option>
+              <option value="">-- No Client Portal Account linked --</option>
               {clients.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name} ({c.email})
@@ -154,7 +157,7 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
             </select>
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-600 block mb-1.5">
+            <label className="text-xs font-bold text-gray-700 block mb-1.5">
               Assigned To (Team Lead / Staff)
             </label>
             <select {...register('assignedTo')} className={inputCls}>
@@ -166,12 +169,21 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
               ))}
             </select>
           </div>
+        </div>
+      </div>
+
+      {/* Section 2: Budget & Schedule */}
+      <div className="bg-gray-50/60 p-5 rounded-2xl border border-gray-200/80 space-y-4">
+        <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-2">
+          <span>💵</span> 2. Financial Budget & Project Schedule
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <label className="text-xs font-semibold text-gray-600 block mb-1.5">Budget</label>
-            <input {...register('budget')} className={inputCls} placeholder="e.g. ₹50,000" />
+            <label className="text-xs font-bold text-gray-700 block mb-1.5">Budget (₹)</label>
+            <input {...register('budget')} className={inputCls} placeholder="e.g. ₹75,000" />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-600 block mb-1.5">Start Date *</label>
+            <label className="text-xs font-bold text-gray-700 block mb-1.5">Start Date *</label>
             <input
               type="date"
               {...register('startDate', { required: true })}
@@ -179,11 +191,30 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-600 block mb-1.5">Deadline *</label>
+            <label className="text-xs font-bold text-gray-700 block mb-1.5">Deadline *</label>
             <input type="date" {...register('deadline', { required: true })} className={inputCls} />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-600 block mb-1.5">Status</label>
+            <label className="text-xs font-bold text-gray-700 block mb-1.5">Priority Level</label>
+            <select {...register('priority')} className={inputCls}>
+              {PRIORITIES.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Section 3: Status, Completion Progress & Tagging */}
+      <div className="bg-gray-50/60 p-5 rounded-2xl border border-gray-200/80 space-y-4">
+        <p className="text-xs font-bold text-purple-700 uppercase tracking-wider flex items-center gap-2">
+          <span>📈</span> 3. Lifecycle Status & Completion Progress
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="text-xs font-bold text-gray-700 block mb-1.5">Lifecycle Status</label>
             <select {...register('status')} className={inputCls}>
               {STATUSES.map((s) => (
                 <option key={s} value={s}>
@@ -193,86 +224,92 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
             </select>
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-600 block mb-1.5">Priority</label>
-            <select {...register('priority')} className={inputCls}>
-              {PRIORITIES.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="sm:col-span-2">
-            <label className="text-xs font-semibold text-gray-600 block mb-1.5">
-              Progress ({`0-100`})%
+            <label className="text-xs font-bold text-gray-700 block mb-1.5">
+              Tags (Comma Separated)
             </label>
-            <div className="flex items-center gap-3">
-              <input
-                type="range"
-                min="0"
-                max="100"
-                {...register('progress')}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-blue"
-              />
+            <input {...register('tags')} className={inputCls} placeholder="Web, React, E-Commerce, SEO" />
+          </div>
+          <div className="sm:col-span-2 bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-2">
+            <div className="flex justify-between items-center text-xs font-bold text-gray-800">
+              <span>Completion Progress Tracker</span>
+              <span className="px-2.5 py-0.5 rounded-full bg-brand-blue text-white font-mono font-bold text-[11px]">
+                {watchedProgress}% Completed
+              </span>
             </div>
-          </div>
-          <div className="sm:col-span-2">
-            <label className="text-xs font-semibold text-gray-600 block mb-1.5">
-              Tags (comma separated)
-            </label>
-            <input {...register('tags')} className={inputCls} placeholder="Web, React, SEO" />
+            <input
+              type="range"
+              min="0"
+              max="100"
+              {...register('progress')}
+              className="w-full h-2.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-blue"
+            />
           </div>
         </div>
       </div>
 
-      <div className="border-t border-gray-100 pt-4">
-        <label className="text-xs font-semibold text-gray-600 block mb-1.5">
-          Project Description
-        </label>
-        <textarea
-          rows={2.5}
-          {...register('description')}
-          className={`${inputCls} resize-none`}
-          placeholder="Short description about project..."
-        />
+      {/* Section 4: Brief Description & Confidential Notes */}
+      <div className="bg-gray-50/60 p-5 rounded-2xl border border-gray-200/80 space-y-4">
+        <p className="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-2">
+          <span>📝</span> 4. Project Brief & Confidential Internal Notes
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="text-xs font-bold text-gray-700 block mb-1.5">
+              Client Visible Project Brief
+            </label>
+            <textarea
+              rows={3}
+              {...register('description')}
+              className={`${inputCls} resize-none`}
+              placeholder="Overview of project deliverables, features, tech stack..."
+            />
+          </div>
+          <div>
+            <label className="text-xs font-bold text-gray-700 block mb-1.5">
+              Confidential Internal Admin Notes
+            </label>
+            <textarea
+              rows={3}
+              {...register('notes')}
+              className={`${inputCls} resize-none bg-amber-50/30 border-amber-200/60 focus:bg-white`}
+              placeholder="Internal credentials, payment agreements, team notes..."
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="border-t border-gray-100 pt-4">
-        <label className="text-xs font-semibold text-gray-600 block mb-1.5">Internal Notes</label>
-        <textarea
-          rows={2.5}
-          {...register('notes')}
-          className={`${inputCls} resize-none`}
-          placeholder="Internal details, payment steps, links..."
-        />
-      </div>
-
-      <div className="flex gap-2.5 pt-2 border-t border-gray-100">
-        <button
-          type="submit"
-          disabled={loading}
-          className="flex items-center gap-1.5 bg-brand-blue text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:shadow-md transition-all disabled:opacity-60"
-        >
-          <Check className="w-4 h-4" /> Save Project
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="flex items-center gap-1.5 bg-gray-100 text-gray-600 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-200 transition-all"
-        >
-          <X className="w-4 h-4" /> Cancel
-        </button>
-      </div>
-
+      {/* Section 5: Attachment File Vault (If Editing Existing Project) */}
       {initial && (
-        <div className="border-t border-gray-100 pt-4 mt-4">
+        <div className="bg-gray-50/60 p-5 rounded-2xl border border-gray-200/80 space-y-4">
+          <p className="text-xs font-bold text-blue-800 uppercase tracking-wider flex items-center gap-2">
+            <span>📎</span> 5. Project Vault File Attachments & Assets
+          </p>
           <AttachmentSection
-            attachments={initial.attachments || []}
+            attachments={initial.attachments}
             clientProjectId={initial.id}
             onUploadSuccess={onAttachmentChange}
           />
         </div>
       )}
+
+      {/* Form Submit & Cancel Controls */}
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition-all"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex items-center gap-2 bg-brand-blue hover:bg-blue-600 text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-brand-blue/20 hover:-translate-y-0.5 transition-all disabled:opacity-60 cursor-pointer"
+        >
+          <Check className="w-4 h-4" />
+          <span>{loading ? 'Saving Changes...' : 'Save & Publish Project'}</span>
+        </button>
+      </div>
     </form>
   )
 }
