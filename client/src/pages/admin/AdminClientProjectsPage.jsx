@@ -17,6 +17,9 @@ import {
   Clock,
   FolderOpen,
   Download,
+  Eye,
+  CheckCircle2,
+  FileCheck,
 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { api } from '@/utils/api'
@@ -411,6 +414,8 @@ export default function AdminClientProjectsPage() {
     printWindow.document.close()
   }
 
+  const [quickViewProject, setQuickViewProject] = useState(null)
+
   const { data: projects = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-client-projects'],
     queryFn: () => api.get('/admin/client-projects').then((r) => r.data),
@@ -713,11 +718,18 @@ export default function AdminClientProjectsPage() {
                   <div>
                     {/* Status & Priority tags */}
                     <div className="flex items-center justify-between mb-3.5">
-                      <span
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${STATUS_COLORS[p.status]}`}
+                      <select
+                        value={p.status}
+                        onChange={(e) => updateMutation.mutate({ id: p.id, status: e.target.value })}
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border cursor-pointer focus:outline-none ${STATUS_COLORS[p.status]}`}
+                        title="Click to quick update project status"
                       >
-                        {STATUS_LABELS[p.status]}
-                      </span>
+                        {STATUSES.map((s) => (
+                          <option key={s} value={s}>
+                            {STATUS_LABELS[s]}
+                          </option>
+                        ))}
+                      </select>
                       <span
                         className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${PRIORITY_COLORS[p.priority]}`}
                       >
@@ -867,6 +879,13 @@ export default function AdminClientProjectsPage() {
                         </button>
                       )}
                       <button
+                        onClick={() => setQuickViewProject(p)}
+                        className="text-gray-400 hover:text-brand-blue p-1.5 hover:bg-gray-50 rounded-lg transition-all"
+                        title="360° Quick View Project Intelligence"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button
                         onClick={() => {
                           setEditing(p)
                           window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -891,6 +910,115 @@ export default function AdminClientProjectsPage() {
           </div>
         )}
       </div>
+
+      {/* 360° Project Intelligence Quick View Drawer Modal */}
+      {quickViewProject && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto border border-gray-200">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-brand-blue/10 text-brand-blue rounded-2xl">
+                  <FolderOpen className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-xl font-bold font-heading text-gray-900">
+                      {quickViewProject.projectTitle}
+                    </h3>
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${STATUS_COLORS[quickViewProject.status]}`}>
+                      {STATUS_LABELS[quickViewProject.status]}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-gray-400" />
+                    Client: <strong>{quickViewProject.clientName}</strong>
+                    {quickViewProject.client && (
+                      <span className="text-[9px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-1.5 py-0.2 rounded font-bold">
+                        Portal Account Linked
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setQuickViewProject(null)}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                <p className="text-[10px] font-bold text-gray-400 uppercase">Total Budget</p>
+                <p className="text-xl font-black text-gray-900 mt-1">{quickViewProject.budget || '₹ Custom'}</p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                <p className="text-[10px] font-bold text-gray-400 uppercase">Current Progress</p>
+                <p className="text-xl font-black text-brand-blue mt-1">{quickViewProject.progress}%</p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                <p className="text-[10px] font-bold text-gray-400 uppercase">Assigned Lead</p>
+                <p className="text-base font-bold text-gray-800 mt-1 truncate">{quickViewProject.assignedTo || 'Unassigned'}</p>
+              </div>
+            </div>
+
+            {quickViewProject.description && (
+              <div className="bg-gray-50/70 p-4 rounded-2xl border border-gray-200 space-y-1">
+                <p className="text-xs font-bold text-gray-700">Project Overview:</p>
+                <p className="text-xs text-gray-600 leading-relaxed">{quickViewProject.description}</p>
+              </div>
+            )}
+
+            {/* File Vault Assets */}
+            <div className="space-y-3">
+              <h4 className="font-bold text-sm text-gray-900 flex items-center gap-2">
+                <FileCheck className="w-4 h-4 text-brand-blue" />
+                Project Vault Files ({quickViewProject.attachments?.length || 0})
+              </h4>
+              {(!quickViewProject.attachments || quickViewProject.attachments.length === 0) ? (
+                <p className="text-xs text-gray-400 bg-gray-50 p-3 rounded-xl border border-gray-200 text-center">
+                  No files uploaded in project vault yet.
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {quickViewProject.attachments.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-xl bg-white text-xs">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-gray-800 truncate">{item.fileName}</p>
+                        <p className="text-[10px] text-gray-400">{item.fileSize ? `${(item.fileSize / (1024 * 1024)).toFixed(2)} MB` : 'Secure File'}</p>
+                      </div>
+                      <a href={item.fileUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 text-brand-blue hover:bg-blue-50 rounded-lg ml-2">
+                        <Download className="w-4 h-4" />
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+              <button
+                onClick={() => {
+                  setEditing(quickViewProject)
+                  setQuickViewProject(null)
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+                className="px-4 py-2 bg-brand-blue text-white text-xs font-bold rounded-xl hover:bg-blue-600 transition-all flex items-center gap-1.5"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+                Edit Full Project & Milestones
+              </button>
+              <button
+                onClick={() => setQuickViewProject(null)}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-xl transition-all"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
