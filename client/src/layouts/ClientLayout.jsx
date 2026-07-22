@@ -16,6 +16,7 @@ import {
   FileText,
   HelpCircle,
   CheckCircle2,
+  Bell,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useClientMe, useClientLogout, useClientTickets } from '@/hooks/useClientPortal'
@@ -166,13 +167,27 @@ export default function ClientLayout() {
             </h1>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            {/* Notification Bell */}
+            <button
+              onClick={() => window.location.href = '/client/support'}
+              className="relative p-2 rounded-xl hover:bg-gray-100 transition-all"
+              title={unreadTicketsCount > 0 ? `${unreadTicketsCount} unread ticket update(s)` : 'No new notifications'}
+            >
+              <Bell className={`w-4 h-4 ${unreadTicketsCount > 0 ? 'text-brand-red animate-pulse' : 'text-gray-400'}`} />
+              {unreadTicketsCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 text-[9px] font-bold bg-red-500 text-white rounded-full flex items-center justify-center animate-bounce">
+                  {unreadTicketsCount > 9 ? '9+' : unreadTicketsCount}
+                </span>
+              )}
+            </button>
+
             <button
               onClick={() => setShowTermsModal(true)}
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold transition-all"
             >
               <FileText className="w-3.5 h-3.5 text-brand-blue" />
-              <span>SLA Rules & Terms</span>
+              <span>SLA Rules &amp; Terms</span>
             </button>
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-100">
               <ShieldCheck className="w-3.5 h-3.5" />

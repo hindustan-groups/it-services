@@ -526,11 +526,12 @@ export default function AdminClientProjectsPage() {
 
   const createMutation = useMutation({
     mutationFn: (data) => api.post('/admin/client-projects', data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['admin-client-projects'] })
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: ['admin-client-projects'] })
       qc.invalidateQueries({ queryKey: ['admin-stats'] })
       setShowForm(false)
-      alert('Client Project created successfully!')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      alert('✅ Project created! Client & assigned staff have been notified via email.')
     },
     onError: (err) => {
       alert(err.response?.data?.message || err.message || 'Failed to create client project.')
@@ -539,11 +540,12 @@ export default function AdminClientProjectsPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, ...data }) => api.patch(`/admin/client-projects/${id}`, data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['admin-client-projects'] })
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: ['admin-client-projects'] })
       qc.invalidateQueries({ queryKey: ['admin-stats'] })
       setEditing(null)
-      alert('Client Project updated successfully!')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      alert('✅ Project updated successfully! Notifications sent to client & assigned staff.')
     },
     onError: (err) => {
       alert(err.response?.data?.message || err.message || 'Failed to update client project.')
@@ -552,7 +554,9 @@ export default function AdminClientProjectsPage() {
 
   const handleAttachmentChange = async () => {
     const updated = await refetch()
-    const found = updated.data?.find((p) => p.id === editing?.id)
+    // refetch returns { data: [...projects] } since queryFn returns r.data (the array)
+    const list = Array.isArray(updated.data) ? updated.data : []
+    const found = list.find((p) => p.id === editing?.id)
     if (found) {
       setEditing(found)
     }
