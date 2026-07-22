@@ -610,7 +610,7 @@ export const getDashboardStats = async (req, res, next) => {
   try {
     const isStaff = req.admin.role === 'STAFF'
     if (isStaff) {
-      const [myTasks, myRecentNotes] = await Promise.all([
+      const [myTasks, myTickets, myRecentNotes] = await Promise.all([
         prisma.workTask.findMany({
           where: {
             OR: [
@@ -619,6 +619,16 @@ export const getDashboardStats = async (req, res, next) => {
               { assignedTo: req.admin.email },
             ],
           },
+          include: {
+            clientProject: { select: { id: true, name: true, clientName: true } },
+          },
+          orderBy: { updatedAt: 'desc' },
+        }),
+        prisma.supportTicket.findMany({
+          where: { assignedAdminId: req.admin.id },
+          include: { clientProject: { select: { id: true, name: true } } },
+          orderBy: { updatedAt: 'desc' },
+          take: 5,
         }),
         prisma.quickNote.findMany({
           where: { creatorId: req.admin.id },
@@ -631,6 +641,10 @@ export const getDashboardStats = async (req, res, next) => {
       const todoTasks = myTasks.filter((t) => t.status === 'TODO').length
       const inProgressTasks = myTasks.filter((t) => t.status === 'IN_PROGRESS').length
       const completedTasks = myTasks.filter((t) => t.status === 'DONE').length
+      const urgentTasksCount = myTasks.filter((t) => t.priority === 'URGENT' && t.status !== 'DONE').length
+
+      const totalEstimatedHours = myTasks.reduce((sum, t) => sum + (t.estimatedHours || 0), 0)
+      const totalLoggedHours = myTasks.reduce((sum, t) => sum + (t.loggedHours || 0), 0)
 
       const todayStart = new Date()
       todayStart.setHours(0, 0, 0, 0)
@@ -650,7 +664,12 @@ export const getDashboardStats = async (req, res, next) => {
           todoTasks,
           inProgressTasks,
           completedTasks,
+          urgentTasksCount,
           dueTodayTasksCount,
+          totalEstimatedHours,
+          totalLoggedHours,
+          myAssignedTickets: myTickets,
+          recentTasks: myTasks.slice(0, 5),
           recentNotes: myRecentNotes,
         },
       })

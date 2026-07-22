@@ -162,6 +162,28 @@ function TaskForm({ initial, projects, teamMembers = [], onSave, onCancel, loadi
             ))}
           </select>
         </div>
+        <div>
+          <label className="text-xs font-semibold text-gray-600 block mb-1">Est. Hours</label>
+          <input
+            type="number"
+            step="0.5"
+            min="0"
+            {...register('estimatedHours')}
+            className={inputCls}
+            placeholder="e.g. 8"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-semibold text-gray-600 block mb-1">Logged Hours</label>
+          <input
+            type="number"
+            step="0.5"
+            min="0"
+            {...register('loggedHours')}
+            className={inputCls}
+            placeholder="e.g. 3.5"
+          />
+        </div>
         <div className="sm:col-span-2">
           <label className="text-xs font-semibold text-gray-600 block mb-1">
             Tags (comma separated)

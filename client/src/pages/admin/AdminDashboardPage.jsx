@@ -317,7 +317,8 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* ── Stats grid ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* ── Stats grid ── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <StatCard
               icon={CheckSquare}
               label="Assigned Tasks"
@@ -328,6 +329,14 @@ export default function AdminDashboardPage() {
             />
             <StatCard
               icon={AlertCircle}
+              label="Urgent Tasks"
+              bg="bg-red-100"
+              color="text-red-600"
+              to="/admin/tasks"
+              value={isLoading ? '…' : data?.urgentTasksCount}
+            />
+            <StatCard
+              icon={Calendar}
               label="Due Today"
               bg="bg-amber-100"
               color="text-amber-600"
@@ -351,6 +360,70 @@ export default function AdminDashboardPage() {
               value={isLoading ? '…' : data?.completedTasks}
             />
           </div>
+
+          {/* ── Hours Tracker Banner ── */}
+          {(data?.totalEstimatedHours > 0 || data?.totalLoggedHours > 0) && (
+            <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm flex items-center justify-between gap-4 flex-wrap">
+              <div>
+                <h3 className="font-heading text-sm font-bold text-gray-800 flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-brand-blue" />
+                  Task Workload & Logged Hours Tracker
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  You have logged <span className="font-bold text-gray-900">{data?.totalLoggedHours || 0} hrs</span> out of <span className="font-bold text-gray-900">{data?.totalEstimatedHours || 0} hrs</span> estimated.
+                </p>
+              </div>
+              <div className="w-full sm:w-64">
+                <div className="flex justify-between text-xs text-gray-500 mb-1">
+                  <span>Progress</span>
+                  <span className="font-bold">
+                    {data?.totalEstimatedHours > 0
+                      ? `${Math.min(100, Math.round((data.totalLoggedHours / data.totalEstimatedHours) * 100))}%`
+                      : '0%'}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                  <div
+                    className="bg-brand-blue h-2.5 rounded-full transition-all duration-300"
+                    style={{
+                      width: `${data?.totalEstimatedHours > 0 ? Math.min(100, (data.totalLoggedHours / data.totalEstimatedHours) * 100) : 0}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Assigned Tickets Section ── */}
+          {data?.myAssignedTickets && data.myAssignedTickets.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-brand-red" />
+                  <h2 className="font-heading text-sm font-bold text-gray-800">Support Tickets Assigned to You</h2>
+                </div>
+                <Link to="/admin/tickets" className="text-xs text-brand-blue hover:underline font-bold">
+                  View All Tickets
+                </Link>
+              </div>
+              <div className="divide-y divide-gray-100">
+                {data.myAssignedTickets.map((ticket) => (
+                  <div key={ticket.id} className="py-3 flex items-center justify-between gap-3 text-xs">
+                    <div>
+                      <p className="font-semibold text-gray-900">{ticket.subject}</p>
+                      <p className="text-gray-400 mt-0.5">Project: {ticket.clientProject?.name || 'General'}</p>
+                    </div>
+                    <span className={`px-2 py-1 rounded-full text-[11px] font-semibold ${
+                      ticket.status === 'OPEN' ? 'bg-red-50 text-red-700' :
+                      ticket.status === 'IN_PROGRESS' ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700'
+                    }`}>
+                      {ticket.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* ── Quick actions ── */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">

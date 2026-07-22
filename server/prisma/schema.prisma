@@ -368,6 +368,9 @@ model WorkTask {
   clientProjectId String?
   clientProject   ClientProject? @relation(fields: [clientProjectId], references: [id], onDelete: Cascade)
   tags            String[]
+  estimatedHours  Float?
+  loggedHours     Float?         @default(0)
+  subtasks        Json?          // Array of { id, title, isCompleted }
   creatorId       String?
   assignedToAdminId String?
   createdAt       DateTime       @default(now())
@@ -375,6 +378,7 @@ model WorkTask {
   attachments     Attachment[]
 
   @@index([clientProjectId])
+  @@index([assignedToAdminId])
   @@map("work_tasks")
 }
 
