@@ -74,7 +74,7 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
     return d.toISOString().split('T')[0]
   }
 
-  const { register, handleSubmit, watch } = useForm({
+  const { register, handleSubmit, watch, setValue } = useForm({
     defaultValues: initial
       ? {
           ...initial,
@@ -233,20 +233,49 @@ function ProjectForm({ initial, onSave, onCancel, loading, onAttachmentChange })
             </label>
             <input {...register('tags')} className={inputCls} placeholder="Web, React, E-Commerce, SEO" />
           </div>
-          <div className="sm:col-span-2 bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-2">
-            <div className="flex justify-between items-center text-xs font-bold text-gray-800">
-              <span>Completion Progress Tracker</span>
-              <span className="px-2.5 py-0.5 rounded-full bg-brand-blue text-white font-mono font-bold text-[11px]">
-                {watchedProgress}% Completed
+          <div className="sm:col-span-2 bg-white p-4.5 rounded-2xl border border-gray-200 shadow-sm space-y-3">
+            <div className="flex justify-between items-center text-xs font-bold text-gray-800 flex-wrap gap-2">
+              <span className="flex items-center gap-1.5">
+                <span>🎯</span> Completion Progress Tracker
               </span>
+              <div className="flex items-center gap-1.5">
+                {[0, 25, 50, 75, 100].map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => setValue('progress', preset)}
+                    className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
+                      Number(watchedProgress) === preset
+                        ? 'bg-brand-blue text-white border-brand-blue shadow-sm'
+                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
+                    }`}
+                  >
+                    {preset}%
+                  </button>
+                ))}
+                <span className="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-brand-blue to-indigo-600 text-white font-mono font-bold text-[11px] ml-1 shadow-sm">
+                  {watchedProgress}%
+                </span>
+              </div>
             </div>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              {...register('progress')}
-              className="w-full h-2.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-blue"
-            />
+
+            {/* Live Visual Gradient Progress Fill Bar */}
+            <div className="relative pt-1">
+              <div className="overflow-hidden h-3 text-xs flex rounded-full bg-gray-150 border border-gray-200/80 shadow-inner">
+                <div
+                  style={{ width: `${watchedProgress}%` }}
+                  className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-brand-blue via-indigo-600 to-emerald-500 transition-all duration-300 rounded-full"
+                />
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                {...register('progress')}
+                className="w-full h-3 opacity-0 cursor-pointer absolute top-1 left-0 z-10"
+                title="Slide to change project completion progress"
+              />
+            </div>
           </div>
         </div>
       </div>
