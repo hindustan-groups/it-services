@@ -23,12 +23,34 @@ export const listTasks = async (req, res, next) => {
       where,
       include: {
         attachments: {
-          orderBy: { createdAt: 'desc' }
-        }
+          orderBy: { createdAt: 'desc' },
+        },
       },
       orderBy: { createdAt: 'desc' },
     })
-    res.json({ status: 'ok', data: tasks })
+
+    const admins = await prisma.admin.findMany({ select: { id: true, name: true, email: true, role: true } })
+    const adminsMap = new Map(admins.map((a) => [a.id, a]))
+    const emailMap = new Map(admins.map((a) => [a.email?.toLowerCase(), a]))
+
+    const formatted = tasks.map((t) => {
+      const creator = t.creatorId ? adminsMap.get(t.creatorId) : null
+      const assignee = t.assignedToAdminId
+        ? adminsMap.get(t.assignedToAdminId)
+        : t.assignedTo
+        ? emailMap.get(t.assignedTo.toLowerCase())
+        : null
+
+      return {
+        ...t,
+        creatorName: creator?.name || creator?.email || 'System / Admin',
+        creatorRole: creator?.role || 'SUPER_ADMIN',
+        assigneeName: assignee?.name || assignee?.email || t.assignedTo || 'Unassigned',
+        assigneeRole: assignee?.role || 'STAFF',
+      }
+    })
+
+    res.json({ status: 'ok', data: formatted })
   } catch (err) {
     next(err)
   }

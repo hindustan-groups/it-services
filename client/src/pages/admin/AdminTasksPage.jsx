@@ -637,29 +637,41 @@ export default function AdminTasksPage() {
                           </p>
                         )}
 
-                        {/* Metadata: Due Date & Assignee */}
-                        <div className="flex items-center justify-between text-[11px] text-gray-500 border-t border-gray-100 pt-2.5">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-3.5 h-3.5 text-gray-300" />
-                            <span
-                              className={
-                                isOverdue(t.dueDate, t.status) ? 'text-red-500 font-semibold' : ''
-                              }
-                            >
-                              {t.dueDate
-                                ? new Date(t.dueDate).toLocaleDateString('en-IN', {
-                                    day: '2-digit',
-                                    month: 'short',
-                                  })
-                                : 'No date'}
-                            </span>
-                          </div>
-                          {t.assignedTo && (
-                            <div className="flex items-center gap-1 text-gray-700 font-medium">
-                              <User className="w-3.5 h-3.5 text-gray-300" />
-                              <span className="truncate max-w-[80px]">{t.assignedTo}</span>
+                        {/* Metadata: Due Date & Assignee & Creator */}
+                        <div className="space-y-1.5 border-t border-gray-100 pt-2.5 text-[11px]">
+                          <div className="flex items-center justify-between text-gray-500">
+                            <div className="flex items-center gap-1">
+                              <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                              <span
+                                className={
+                                  isOverdue(t.dueDate, t.status) ? 'text-red-500 font-bold' : ''
+                                }
+                              >
+                                {t.dueDate
+                                  ? new Date(t.dueDate).toLocaleDateString('en-IN', {
+                                      day: '2-digit',
+                                      month: 'short',
+                                    })
+                                  : 'No deadline'}
+                              </span>
                             </div>
-                          )}
+                            {(t.estimatedHours || t.loggedHours > 0) && (
+                              <span className="text-[10px] font-bold text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded">
+                                ⏱️ {t.loggedHours || 0} / {t.estimatedHours || '—'} hrs
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex items-center justify-between flex-wrap gap-1 text-[10px]">
+                            <span className="text-gray-700 font-semibold truncate max-w-[120px]" title={`Assigned To: ${t.assigneeName}`}>
+                              👤 {t.assigneeName || t.assignedTo || 'Unassigned'}
+                            </span>
+                            {t.creatorName && (
+                              <span className="text-gray-400 font-medium truncate max-w-[110px]" title={`Assigned By: ${t.creatorName}`}>
+                                ✍️ By {t.creatorName}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         {/* Tags */}
