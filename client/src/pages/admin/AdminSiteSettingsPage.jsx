@@ -1,8 +1,11 @@
+/**
+ * AdminSiteSettingsPage — Global Site Settings & Branding Control Suite
+ * Manages public contact information, WhatsApp widget templates, social links,
+ * website hero media assets, 3D device showcase mockups, and company statistics.
+ */
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import {
-  CheckCircle2,
-  AlertCircle,
   Phone,
   MessageCircle,
   Mail,
@@ -11,12 +14,16 @@ import {
   Settings,
   Globe,
   Send,
-  Share2,
+  RefreshCw,
+  Sparkles,
+  Save,
+  CheckCircle2,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 import { SEO } from '@/components/ui'
 import { useSiteSettings } from '@/hooks/useContent'
 import ImageUploader from '@/components/ui/ImageUploader'
+import { useToast } from '@/components/ui/ToastProvider'
 
 const LinkedinIcon = ({ className }) => (
   <svg
@@ -81,38 +88,38 @@ const YoutubeIcon = ({ className }) => (
 
 const FIELD_GROUPS = [
   {
-    label: 'Contact Details',
+    label: 'Contact & Location Details',
     fields: [
-      { key: 'phone', label: 'Phone Number', placeholder: '+91 99999 99999', Icon: Phone },
+      { key: 'phone', label: 'Primary Contact Phone', placeholder: '+91 99291 20431', Icon: Phone },
       {
         key: 'whatsapp',
-        label: 'WhatsApp Number',
-        placeholder: '+91 99999 99999',
+        label: 'WhatsApp Support Number',
+        placeholder: '+91 99291 20431',
         Icon: MessageCircle,
       },
       {
         key: 'whatsappMessage',
-        label: 'WhatsApp Welcome Message',
-        placeholder: 'Hi! I visited your website and want to discuss a project.',
+        label: 'WhatsApp Default Welcome Message',
+        placeholder: 'Hi! I visited your website and want to discuss an IT project.',
         Icon: MessageCircle,
         isTextarea: true,
       },
       {
         key: 'email',
-        label: 'Email Address',
+        label: 'Public Support Email',
         placeholder: 'info@hindustanprojects.com',
         Icon: Mail,
       },
       {
         key: 'address',
-        label: 'Office Address',
+        label: 'Headquarters Office Address',
         placeholder: 'Bhilwara, Rajasthan 311001, India',
         Icon: MapPin,
         isTextarea: true,
       },
       {
         key: 'googleMapUrl',
-        label: 'Google Maps Embed src URL (Copy only src="..." URL from Share -> Embed Map)',
+        label: 'Google Maps Embed iframe URL (src link only)',
         placeholder: 'https://www.google.com/maps/embed?pb=...',
         Icon: MapPin,
         isTextarea: true,
@@ -120,115 +127,115 @@ const FIELD_GROUPS = [
     ],
   },
   {
-    label: 'Social Media Links',
+    label: 'Social Media Channels',
     fields: [
       {
         key: 'linkedin',
-        label: 'LinkedIn URL',
-        placeholder: 'https://linkedin.com/company/...',
+        label: 'LinkedIn Page URL',
+        placeholder: 'https://linkedin.com/company/hindustan-projects',
         Icon: LinkedinIcon,
       },
       {
         key: 'instagram',
-        label: 'Instagram URL',
-        placeholder: 'https://instagram.com/...',
+        label: 'Instagram Profile URL',
+        placeholder: 'https://instagram.com/hindustanprojects',
         Icon: InstagramIcon,
       },
       {
         key: 'facebook',
-        label: 'Facebook URL',
-        placeholder: 'https://facebook.com/...',
+        label: 'Facebook Page URL',
+        placeholder: 'https://facebook.com/hindustanprojects',
         Icon: FacebookIcon,
       },
       {
         key: 'youtube',
         label: 'YouTube Channel URL',
-        placeholder: 'https://youtube.com/@...',
+        placeholder: 'https://youtube.com/@hindustanprojects',
         Icon: YoutubeIcon,
       },
     ],
   },
   {
-    label: 'Website Branding & Images',
+    label: 'Website Branding & Hero Assets',
     fields: [
       {
         key: 'tagline',
-        label: 'Hero Tagline',
-        placeholder: 'Building Digital Solutions...',
+        label: 'Homepage Hero Tagline',
+        placeholder: 'Building High-Performance Digital Solutions That Drive Growth',
         Icon: Type,
         isTextarea: true,
       },
       {
         key: 'hero_image_url',
-        label: 'Hero Section Avatar Image (Leave blank to use default corporate portrait)',
+        label: 'Homepage Hero Avatar Image (Blank uses default portrait)',
         isImage: true,
         Icon: Globe,
       },
       {
         key: 'why_choose_us_image_url',
-        label: 'Why Choose Us Section Image (Leave blank to use default corporate layout)',
+        label: 'Why Choose Us Section Graphic (Blank uses default layout)',
         isImage: true,
         Icon: Globe,
       },
       {
         key: 'about_hero_laptop_image',
-        label: 'About Page Hero Laptop Mockup (Desktop View Screen)',
+        label: 'About Page Laptop Screen Mockup (Desktop View)',
         isImage: true,
         Icon: Globe,
       },
       {
         key: 'about_hero_phone_image',
-        label: 'About Page Hero Phone Mockup (Mobile View Screen)',
+        label: 'About Page Phone Screen Mockup (Mobile View)',
         isImage: true,
         Icon: Globe,
       },
     ],
   },
   {
-    label: '3D Device Showcase Custom Previews (Optional)',
+    label: '3D Device Showcase Custom Previews',
     fields: [
       {
         key: 'showcase_web_image',
-        label: 'Desktop Monitor Mockup Image (Leave blank to use default interactive live UI)',
+        label: 'Desktop Monitor Mockup Image (Blank uses live interactive UI)',
         isImage: true,
         Icon: Globe,
       },
       {
         key: 'showcase_saas_image',
-        label: 'Laptop MacBook Mockup Image (Leave blank to use default interactive live UI)',
+        label: 'MacBook Laptop Mockup Image (Blank uses live interactive UI)',
         isImage: true,
         Icon: Globe,
       },
       {
         key: 'showcase_mobile_image',
-        label: 'iPhone Mobile Mockup Image (Leave blank to use default interactive live UI)',
+        label: 'iPhone Mobile Mockup Image (Blank uses live interactive UI)',
         isImage: true,
         Icon: Globe,
       },
     ],
   },
   {
-    label: 'Company Statistics (Number only)',
+    label: 'Company Impact Statistics (Numeric values)',
     fields: [
-      { key: 'stat_projects', label: 'Projects Delivered', placeholder: '50', Icon: Type },
-      { key: 'stat_clients', label: 'Happy Clients', placeholder: '40', Icon: Type },
-      { key: 'stat_experience', label: 'Years Experience', placeholder: '5', Icon: Type },
-      { key: 'stat_cities', label: 'Cities Served', placeholder: '3', Icon: Type },
+      { key: 'stat_projects', label: 'Projects Delivered Count', placeholder: '50', Icon: Type },
+      { key: 'stat_clients', label: 'Satisfied Clients Count', placeholder: '40', Icon: Type },
+      { key: 'stat_experience', label: 'Years Experience Count', placeholder: '5', Icon: Type },
+      { key: 'stat_cities', label: 'Cities Served Count', placeholder: '3', Icon: Type },
     ],
   },
 ]
 
-const inputCls =
-  'w-full pl-9 pr-3.5 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all'
-const textareaCls =
-  'w-full pl-9 pr-3.5 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all min-h-[70px] resize-y'
+const inputStyle =
+  'w-full pl-9 pr-3.5 py-2.5 text-xs sm:text-sm border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all font-sans'
+const textareaStyle =
+  'w-full pl-9 pr-3.5 py-2.5 text-xs sm:text-sm border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all min-h-[75px] resize-y font-sans'
 
 export default function AdminSiteSettingsPage() {
   const qc = useQueryClient()
+  const { addToast } = useToast()
 
-  const { data, isLoading } = useSiteSettings()
+  const { data, isLoading, refetch } = useSiteSettings()
 
-  // Bind values dynamically so react-hook-form populates immediately when query finishes
   const {
     register,
     handleSubmit,
@@ -239,30 +246,64 @@ export default function AdminSiteSettingsPage() {
     values: data?.data || {},
   })
 
-  // Watch fields in real-time for live preview
+  // Real-time watched form state for live web preview
   const watched = watch()
 
   const mutation = useMutation({
     mutationFn: (d) => api.patch('/admin/settings', d),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['site-settings'] }),
+    onSuccess: () => {
+      addToast('Global site settings saved and published live!', 'success')
+      qc.invalidateQueries({ queryKey: ['site-settings'] })
+    },
+    onError: (err) => {
+      addToast(err.message || 'Failed to save site settings', 'error')
+    },
   })
 
   const onSubmit = (d) => mutation.mutate(d)
 
   return (
     <>
-      <SEO title="Site Settings" noIndex />
-      <div className="space-y-6">
-        {/* Page Header */}
-        <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center shrink-0">
-            <Settings className="w-5 h-5 text-brand-blue" />
-          </div>
-          <div>
-            <h1 className="font-heading text-2xl font-bold text-gray-900">Site Settings</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
-              Manage contact info, social links, and tagline shown across the public website.
-            </p>
+      <SEO title="Site Settings & Branding" noIndex />
+      <div className="space-y-6 max-w-6xl mx-auto pb-12">
+        
+        {/* ── Executive Dark Header Banner ────────────────────────── */}
+        <div className="bg-gradient-to-r from-slate-900 via-gray-900 to-brand-blue p-6 sm:p-8 rounded-3xl text-white shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-brand-blue/20 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0 shadow-inner">
+                <Settings className="w-7 h-7 text-blue-300" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight">
+                    Site Settings &amp; Global Branding
+                  </h1>
+                  <span className="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-blue-500/20 text-blue-200 border border-blue-400/30 uppercase tracking-wider">
+                    Live Sync
+                  </span>
+                </div>
+                <p className="text-gray-300 text-xs sm:text-sm mt-1 max-w-xl leading-relaxed">
+                  Manage public contact details, WhatsApp widget pre-filled messages, social media links, hero graphics, and impact counters.
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Action Refresh & Save */}
+            <div className="flex items-center gap-3 shrink-0">
+              <button
+                onClick={() => {
+                  refetch()
+                  addToast('Refreshed site settings', 'info')
+                }}
+                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 text-white"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Refresh</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -270,38 +311,39 @@ export default function AdminSiteSettingsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-7 space-y-6">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="bg-white border border-gray-100 rounded-xl p-6 space-y-4">
+                <div key={i} className="bg-white border border-gray-200/80 rounded-2xl p-6 space-y-4 shadow-sm">
                   <div className="h-4 w-1/4 bg-gray-100 rounded animate-pulse" />
                   <div className="h-10 bg-gray-50 rounded-xl animate-pulse" />
                   <div className="h-10 bg-gray-50 rounded-xl animate-pulse" />
                 </div>
               ))}
             </div>
-            <div className="lg:col-span-5 h-[400px] bg-gray-50 rounded-2xl animate-pulse" />
+            <div className="lg:col-span-5 h-[400px] bg-white border border-gray-200 rounded-2xl animate-pulse shadow-sm" />
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* ── Left side: Form Settings ── */}
-            <form onSubmit={handleSubmit(onSubmit)} className="lg:col-span-7 space-y-5">
+            
+            {/* ── Left Side: Settings Form ──────────────────────── */}
+            <form onSubmit={handleSubmit(onSubmit)} className="lg:col-span-7 space-y-6">
               {FIELD_GROUPS.map((group) => (
                 <div
                   key={group.label}
-                  className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden transition-all hover:shadow-md"
+                  className="bg-white border border-gray-200/80 rounded-2xl shadow-sm overflow-hidden transition-all hover:shadow-md"
                 >
                   {/* Group Header */}
-                  <div className="px-5 py-3.5 border-b border-gray-100 bg-gray-50/60">
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                  <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/80">
+                    <p className="text-xs font-extrabold text-gray-700 uppercase tracking-wider">
                       {group.label}
                     </p>
                   </div>
 
-                  {/* Fields */}
-                  <div className="p-5 space-y-4.5">
+                  {/* Group Fields */}
+                  <div className="p-6 space-y-5">
                     {group.fields.map((f) => (
                       <div key={f.key}>
                         {f.isImage ? (
                           <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-gray-600 block">
+                            <label className="text-xs font-bold text-gray-800 block">
                               {f.label}
                             </label>
                             <ImageUploader
@@ -312,22 +354,22 @@ export default function AdminSiteSettingsPage() {
                           </div>
                         ) : (
                           <>
-                            <label className="text-xs font-semibold text-gray-600 block mb-1.5">
+                            <label className="text-xs font-bold text-gray-800 block mb-1.5">
                               {f.label}
                             </label>
                             <div className="relative">
-                              <f.Icon className="absolute left-3 top-3 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                              <f.Icon className="absolute left-3.5 top-3 w-4 h-4 text-gray-400 pointer-events-none" />
                               {f.isTextarea ? (
                                 <textarea
                                   {...register(f.key)}
                                   placeholder={f.placeholder}
-                                  className={textareaCls}
+                                  className={textareaStyle}
                                 />
                               ) : (
                                 <input
                                   {...register(f.key)}
                                   placeholder={f.placeholder}
-                                  className={inputCls}
+                                  className={inputStyle}
                                 />
                               )}
                             </div>
@@ -339,42 +381,50 @@ export default function AdminSiteSettingsPage() {
                 </div>
               ))}
 
-              {/* Status Messages */}
-              {mutation.isSuccess && (
-                <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm">
-                  <CheckCircle2 className="w-4 h-4 shrink-0" /> Settings saved successfully.
-                </div>
-              )}
-              {mutation.isError && (
-                <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3 shadow-sm">
-                  <AlertCircle className="w-4 h-4 shrink-0" /> Failed to save settings.
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={isSubmitting || mutation.isPending}
-                className="w-full bg-brand-blue text-white font-semibold py-3 rounded-xl text-sm hover:shadow-md hover:-translate-y-[1px] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {mutation.isPending ? 'Saving…' : 'Save Settings'}
-              </button>
+              {/* Submit Save Button */}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={isSubmitting || mutation.isPending}
+                  className="w-full bg-brand-blue hover:bg-brand-blue-hover text-white font-bold py-4 rounded-2xl text-xs sm:text-sm shadow-md hover:shadow-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  {mutation.isPending ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" /> Saving &amp; Publishing Settings…
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" /> Save &amp; Publish Global Site Settings
+                    </>
+                  )}
+                </button>
+                <p className="text-center text-xs text-gray-400 mt-2 font-medium">
+                  Changes take effect immediately across all public website pages and client footer.
+                </p>
+              </div>
             </form>
 
-            {/* ── Right side: Real-Time Live Preview ── */}
+            {/* ── Right Side: Sticky Live Preview Panel ─────────── */}
             <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-6">
-              {/* Preview Title */}
-              <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">
-                <Globe className="w-3.5 h-3.5 text-gray-400" />
-                <span>Live Web Preview</span>
+              
+              {/* Preview Section Header */}
+              <div className="flex items-center justify-between text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">
+                <div className="flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-brand-blue" />
+                  <span>Real-Time Web Preview</span>
+                </div>
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  Live Mirror
+                </span>
               </div>
 
-              {/* Mock Footer Layout */}
-              <div className="border border-gray-100 rounded-2xl shadow-lg overflow-hidden bg-white">
-                <div className="bg-gray-50 border-b border-gray-100 px-4 py-2 flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                    Mock Footer Section
+              {/* Mock Footer Layout Card */}
+              <div className="border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden bg-white">
+                <div className="bg-gray-50 border-b border-gray-100 px-4 py-2.5 flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                    Public Footer Section Preview
                   </span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                 </div>
                 <div
                   className="p-6 text-white text-left"
@@ -393,7 +443,7 @@ export default function AdminSiteSettingsPage() {
                           Hindustan Projects
                         </span>
                       </div>
-                      <p className="text-xs text-white/60 italic leading-relaxed font-light font-sans max-w-sm">
+                      <p className="text-xs text-white/70 italic leading-relaxed font-light max-w-sm">
                         "
                         {watched.tagline || 'Building Digital Solutions That Drive Business Growth'}
                         "
@@ -404,40 +454,40 @@ export default function AdminSiteSettingsPage() {
 
                     {/* Contacts */}
                     <div className="space-y-2.5">
-                      <div className="flex items-start gap-2.5 text-xs text-white/70">
+                      <div className="flex items-start gap-2.5 text-xs text-white/80">
                         <MapPin className="w-3.5 h-3.5 text-white/50 shrink-0 mt-0.5" />
                         <span className="leading-tight">
-                          {watched.address || 'Office Address...'}
+                          {watched.address || 'Bhilwara, Rajasthan 311001, India'}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-xs text-white/70">
+                      <div className="flex items-center gap-2.5 text-xs text-white/80">
                         <Phone className="w-3.5 h-3.5 text-white/50 shrink-0" />
-                        <span>{watched.phone || 'Phone number...'}</span>
+                        <span>{watched.phone || '+91 99291 20431'}</span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-xs text-white/70">
+                      <div className="flex items-center gap-2.5 text-xs text-white/80">
                         <Mail className="w-3.5 h-3.5 text-white/50 shrink-0" />
                         <span className="underline decoration-white/20">
-                          {watched.email || 'Email address...'}
+                          {watched.email || 'info@hindustanprojects.com'}
                         </span>
                       </div>
                     </div>
 
                     <hr className="border-white/10" />
 
-                    {/* Socials */}
+                    {/* Social Icons */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="p-1.5 rounded-lg bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors cursor-pointer">
+                        <span className="p-1.5 rounded-lg bg-white/10 border border-white/20 text-white/80 hover:text-white transition-colors cursor-pointer">
                           <LinkedinIcon className="w-3.5 h-3.5" />
                         </span>
-                        <span className="p-1.5 rounded-lg bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors cursor-pointer">
+                        <span className="p-1.5 rounded-lg bg-white/10 border border-white/20 text-white/80 hover:text-white transition-colors cursor-pointer">
                           <InstagramIcon className="w-3.5 h-3.5" />
                         </span>
-                        <span className="p-1.5 rounded-lg bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors cursor-pointer">
+                        <span className="p-1.5 rounded-lg bg-white/10 border border-white/20 text-white/80 hover:text-white transition-colors cursor-pointer">
                           <FacebookIcon className="w-3.5 h-3.5" />
                         </span>
                       </div>
-                      <span className="text-[10px] text-white/30 font-medium">
+                      <span className="text-[10px] text-white/40 font-medium">
                         © {new Date().getFullYear()} Hindustan Projects
                       </span>
                     </div>
@@ -445,66 +495,75 @@ export default function AdminSiteSettingsPage() {
                 </div>
               </div>
 
-              {/* Mock WhatsApp Chat widget */}
-              <div className="border border-gray-100 rounded-2xl shadow-lg overflow-hidden bg-[#E5DDD5]">
+              {/* Mock WhatsApp Floating Widget Card */}
+              <div className="border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden bg-[#E5DDD5]">
                 {/* Header */}
-                <div className="bg-[#075E54] text-white px-4 py-3 flex items-center gap-3 shrink-0 shadow">
-                  <div className="relative w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center shrink-0 font-heading font-black text-xs text-brand-red">
-                    Hi
-                    <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-green-400 border border-[#075E54]" />
+                <div className="bg-[#075E54] text-white px-4 py-3 flex items-center gap-3 shrink-0 shadow-sm">
+                  <div className="relative w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center shrink-0 font-heading font-black text-xs text-white">
+                    HP
+                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-[#075E54]" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold leading-none">Hindustan Projects</p>
+                    <p className="text-xs font-bold leading-none">Hindustan Projects Support</p>
                     <p className="text-[9px] text-white/70 mt-0.5 leading-none">
-                      Typically replies instantly
+                      Typically replies in under 15 mins
                     </p>
                   </div>
                 </div>
 
-                {/* Message Log */}
+                {/* Messages Chat */}
                 <div className="p-4 space-y-3 font-sans text-xs">
-                  {/* Greeting bubble */}
-                  <div className="bg-white rounded-r-xl rounded-bl-xl p-2.5 max-w-[85%] shadow-sm relative text-gray-800 leading-normal">
-                    <p className="font-semibold text-[10px] text-[#075E54] mb-0.5">Support Desk</p>
-                    <p>
-                      Hello! Welcome to Hindustan Projects. How can we help you build your digital
-                      product today?
+                  {/* Support bubble */}
+                  <div className="bg-white rounded-r-xl rounded-bl-xl p-2.5 max-w-[85%] shadow-xs relative text-gray-800 leading-normal">
+                    <p className="font-bold text-[10px] text-[#075E54] mb-0.5">Support Representative</p>
+                    <p className="text-xs">
+                      Namaste! Welcome to Hindustan Projects. How can we assist with your IT project today?
                     </p>
                     <span className="text-[8px] text-gray-400 float-right mt-1">10:00 AM</span>
                   </div>
 
-                  {/* Template message draft bubble */}
-                  <div className="bg-[#DCF8C6] rounded-l-xl rounded-br-xl p-2.5 max-w-[85%] ml-auto shadow-sm relative text-gray-800 leading-normal border border-[#DCF8C6]">
-                    <div className="text-[9px] text-green-700/80 font-bold border-b border-green-200 pb-1 mb-1.5 flex items-center gap-1">
-                      <Send className="w-2.5 h-2.5" /> Client WhatsApp Message Draft
+                  {/* Pre-filled template bubble */}
+                  <div className="bg-[#DCF8C6] rounded-l-xl rounded-br-xl p-2.5 max-w-[85%] ml-auto shadow-xs relative text-gray-800 leading-normal border border-[#DCF8C6]">
+                    <div className="text-[9px] text-emerald-800 font-bold border-b border-emerald-200/80 pb-1 mb-1.5 flex items-center gap-1">
+                      <Send className="w-2.5 h-2.5" /> Client Pre-filled Message Template
                     </div>
-                    <p className="italic text-gray-700 whitespace-pre-line font-mono text-[11px] bg-white/40 p-1.5 rounded border border-green-200/30">
+                    <p className="italic text-gray-800 whitespace-pre-line font-mono text-[11px] bg-white/50 p-2 rounded-lg border border-emerald-200/50">
                       {watched.whatsappMessage ||
-                        'Hi! I visited your website and want to discuss a project.'}
+                        'Hi! I visited your website and want to discuss an IT project.'}
                     </p>
-                    <span className="text-[8px] text-green-600/70 float-right mt-1.5">
-                      Draft template
+                    <span className="text-[8px] text-emerald-700/80 float-right mt-1.5 font-bold">
+                      Target payload
                     </span>
                   </div>
                 </div>
 
-                {/* Widget Footer info */}
-                <div className="bg-white/95 border-t border-gray-100 px-4 py-2.5 flex items-center justify-between text-[10px] text-gray-500">
+                {/* Target Number Bar */}
+                <div className="bg-white/95 border-t border-gray-200/80 px-4 py-2.5 flex items-center justify-between text-[10px] text-gray-600">
                   <div className="flex items-center gap-1.5">
-                    <MessageCircle className="w-3.5 h-3.5 text-green-600 shrink-0" />
+                    <MessageCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                     <span>
-                      Target Number:{' '}
-                      <strong className="font-semibold text-gray-700">
-                        {watched.whatsapp || 'Not set'}
+                      WhatsApp Target:{' '}
+                      <strong className="font-mono font-bold text-gray-900">
+                        {watched.whatsapp || '+91 99291 20431'}
                       </strong>
                     </span>
                   </div>
-                  <span className="px-2 py-0.5 bg-green-50 text-green-700 border border-green-200 rounded font-medium text-[9px]">
-                    ACTIVE
+                  <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md font-extrabold text-[9px] uppercase tracking-wider">
+                    Ready
                   </span>
                 </div>
               </div>
+
+              {/* Guidance Notice */}
+              <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 border border-blue-200/80 rounded-2xl p-4 shadow-xs flex items-start gap-3">
+                <Sparkles className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  Settings modified here update live footers, contact page maps, and floating WhatsApp widgets immediately across the web app.
+                </p>
+              </div>
+
             </div>
+
           </div>
         )}
       </div>
