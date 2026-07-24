@@ -685,30 +685,30 @@ router.patch('/blog/comments/:id/approve', verifyToken, requireRole('ADMIN', 'SU
 router.delete('/blog/comments/:id', verifyToken, requireRole('SUPER_ADMIN'), adminDeleteComment)
 
 // ── Integration Config (Cloudinary, SMTP, reCAPTCHA, DB, JWT) ─
-router.get('/integrations', verifyToken, requireRole('SUPER_ADMIN'), verifyUnlockToken, getIntegrationConfig)
-router.patch('/integrations', verifyToken, requireRole('SUPER_ADMIN'), verifyUnlockToken, updateIntegrationConfig)
-router.post('/integrations/test-smtp', verifyToken, requireRole('SUPER_ADMIN'), verifyUnlockToken, testSmtpConnection)
+router.get('/integrations', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN'), verifyUnlockToken, getIntegrationConfig)
+router.patch('/integrations', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN'), verifyUnlockToken, updateIntegrationConfig)
+router.post('/integrations/test-smtp', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN'), verifyUnlockToken, testSmtpConnection)
 router.post(
   '/integrations/test-cloudinary',
   verifyToken,
-  requireRole('SUPER_ADMIN'),
+  requireRole('SUPER_ADMIN', 'ADMIN'),
   verifyUnlockToken,
   testCloudinaryConnection
 )
 router.post(
   '/integrations/test-database',
   verifyToken,
-  requireRole('SUPER_ADMIN'),
+  requireRole('SUPER_ADMIN', 'ADMIN'),
   verifyUnlockToken,
   testDatabaseConnection
 )
 router.post(
   '/integrations/verify-key',
   verifyToken,
-  requireRole('SUPER_ADMIN'),
+  requireRole('SUPER_ADMIN', 'ADMIN'),
   verifyIntegrationKey
 )
-router.get('/integrations/check-unlock', verifyToken, requireRole('SUPER_ADMIN'), checkUnlockToken)
+router.get('/integrations/check-unlock', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN'), checkUnlockToken)
 
 // ── Recycle Bin Management ────────────────────────────────────
 router.get('/recycle-bin', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), getDeletedItems)
