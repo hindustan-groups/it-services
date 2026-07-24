@@ -1,5 +1,5 @@
 /**
- * AdminSettingsPage — Change email, password, and Integration Master Key
+ * AdminSettingsPage — Modern Enterprise Account & Security Settings Panel
  */
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -19,16 +19,23 @@ import {
   Info,
   Copy,
   Check,
+  Shield,
+  Sparkles,
+  Zap,
+  LockKeyhole,
+  User,
+  CheckCircle,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 import { SEO } from '@/components/ui'
+import { useToast } from '@/components/ui/ToastProvider'
 
 // ── Zod schemas ───────────────────────────────────────────────
 const passwordSchema = z
   .object({
-    currentPassword: z.string().min(1, 'Required'),
-    newPassword: z.string().min(8, 'Min 8 characters'),
-    confirmPassword: z.string().min(1, 'Required'),
+    currentPassword: z.string().min(1, 'Current password is required'),
+    newPassword: z.string().min(8, 'New password must be at least 8 characters'),
+    confirmPassword: z.string().min(1, 'Please confirm your new password'),
   })
   .refine((d) => d.newPassword === d.confirmPassword, {
     message: 'Passwords do not match',
@@ -37,45 +44,74 @@ const passwordSchema = z
 
 const emailSchema = z.object({
   newEmail: z.string().email('Please enter a valid email address'),
-  password: z.string().min(1, 'Password is required to confirm changes'),
+  password: z.string().min(1, 'Password is required to confirm email changes'),
 })
 
 const masterKeySchema = z
   .object({
-    currentKey: z.string().min(1, 'Current key is required'),
+    currentKey: z.string().min(1, 'Current master key is required'),
     newKey: z.string().min(8, 'New key must be at least 8 characters'),
-    confirmKey: z.string().min(1, 'Required'),
+    confirmKey: z.string().min(1, 'Please confirm new master key'),
   })
   .refine((d) => d.newKey === d.confirmKey, {
-    message: 'Keys do not match',
+    message: 'Master keys do not match',
     path: ['confirmKey'],
   })
 
-// ── Shared password input ─────────────────────────────────────
-function PasswordInput({ label, name, register, error, show, onToggle }) {
+// ── Password Strength Calculator ──────────────────────────────
+function getPasswordStrength(password) {
+  if (!password) return { score: 0, label: '', color: 'bg-gray-200', width: 'w-0', text: 'text-gray-400' }
+  let score = 0
+  if (password.length >= 8) score += 1
+  if (/[A-Z]/.test(password)) score += 1
+  if (/[0-9]/.test(password)) score += 1
+  if (/[^A-Za-z0-9]/.test(password)) score += 1
+
+  switch (score) {
+    case 1:
+      return { score: 1, label: 'Weak', color: 'bg-red-500', width: 'w-1/4', text: 'text-red-500' }
+    case 2:
+      return { score: 2, label: 'Fair', color: 'bg-amber-500', width: 'w-2/4', text: 'text-amber-500' }
+    case 3:
+      return { score: 3, label: 'Good', color: 'bg-blue-500', width: 'w-3/4', text: 'text-blue-500' }
+    case 4:
+      return { score: 4, label: 'Strong', color: 'bg-emerald-500', width: 'w-full', text: 'text-emerald-500' }
+    default:
+      return { score: 0, label: 'Too Short', color: 'bg-gray-300', width: 'w-0', text: 'text-gray-400' }
+  }
+}
+
+// ── Shared Password Input Component ───────────────────────────
+function PasswordInput({ label, name, register, error, show, onToggle, placeholder, onChangeExtra }) {
   return (
     <div>
-      <label className="text-xs font-semibold text-gray-600 block mb-1.5">{label}</label>
+      <label className="text-xs font-bold text-gray-700 block mb-1.5 uppercase tracking-wider">{label}</label>
       <div className="relative">
-        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
         <input
           type={show ? 'text' : 'password'}
-          {...register(name)}
-          className={`w-full pl-9 pr-10 py-2.5 text-sm border rounded-xl bg-gray-50 focus:bg-white
-            focus:outline-none focus:ring-2 focus:ring-brand-blue/25 focus:border-brand-blue
+          {...register(name, {
+            onChange: (e) => {
+              if (onChangeExtra) onChangeExtra(e.target.value)
+            },
+          })}
+          placeholder={placeholder || '••••••••'}
+          className={`w-full pl-10 pr-11 py-2.5 text-sm border rounded-xl bg-gray-50/50 focus:bg-white
+            focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue
             transition-all ${error ? 'border-red-400 bg-red-50/30' : 'border-gray-200'}`}
         />
         <button
           type="button"
           onClick={onToggle}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+          tabIndex={-1}
+          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
         >
           {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
         </button>
       </div>
       {error && (
-        <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
-          <AlertCircle className="w-3 h-3" />
+        <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1 font-medium">
+          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
           {error.message}
         </p>
       )}
@@ -83,22 +119,22 @@ function PasswordInput({ label, name, register, error, show, onToggle }) {
   )
 }
 
-// ── Status alert ──────────────────────────────────────────────
+// ── Status Alert Banner ───────────────────────────────────────
 function StatusAlert({ status, msg }) {
   if (!status) return null
   const ok = status === 'success'
   return (
     <div
-      className={`flex items-center gap-2 text-sm rounded-xl px-4 py-3 border ${
-        ok ? 'text-green-700 bg-green-50 border-green-200' : 'text-red-600 bg-red-50 border-red-200'
+      className={`flex items-center gap-2.5 text-sm rounded-xl px-4 py-3 border animate-fadeIn ${
+        ok ? 'text-emerald-800 bg-emerald-50 border-emerald-200' : 'text-red-700 bg-red-50 border-red-200'
       }`}
     >
       {ok ? (
-        <CheckCircle2 className="w-4 h-4 shrink-0" />
+        <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
       ) : (
-        <AlertCircle className="w-4 h-4 shrink-0" />
+        <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
       )}
-      {msg}
+      <span className="font-medium text-xs sm:text-sm">{msg}</span>
     </div>
   )
 }
@@ -108,6 +144,8 @@ function EmailForm({ currentEmail, onEmailUpdated }) {
   const [showPassword, setShowPassword] = useState(false)
   const [status, setStatus] = useState(null)
   const [msg, setMsg] = useState('')
+  const { addToast } = useToast()
+
   const {
     register,
     handleSubmit,
@@ -125,72 +163,86 @@ function EmailForm({ currentEmail, onEmailUpdated }) {
         password: data.password,
       })
       setStatus('success')
-      setMsg(res.message || 'Email updated successfully.')
+      const successMsg = res.message || 'Email address updated successfully.'
+      setMsg(successMsg)
+      addToast(successMsg, 'success')
       reset()
       if (onEmailUpdated) onEmailUpdated(res.data)
     } catch (err) {
       setStatus('error')
-      setMsg(err.message || 'Failed to update email.')
+      const errorMsg = err.message || 'Failed to update email address.'
+      setMsg(errorMsg)
+      addToast(errorMsg, 'error')
     }
   }
 
   return (
-    <div className="bg-white border border-gray-100 border-l-4 border-l-brand-blue rounded-xl p-6 shadow-sm">
-      <div className="flex items-center gap-2 mb-5">
-        <div className="w-7 h-7 rounded-lg bg-brand-blue/10 flex items-center justify-center">
-          <Mail className="w-3.5 h-3.5 text-brand-blue" />
+    <div className="bg-white border border-gray-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+            <Mail className="w-5 h-5 text-brand-blue" />
+          </div>
+          <div>
+            <h2 className="font-heading text-base font-bold text-gray-900">Change Account Email</h2>
+            <p className="text-xs text-gray-500 mt-0.5">Primary email address used for admin login & security alerts.</p>
+          </div>
         </div>
-        <h2 className="font-heading text-base font-semibold text-gray-800">Change Account Email</h2>
+        <span className="text-[11px] font-semibold text-gray-500 bg-gray-100 border border-gray-200 px-2.5 py-1 rounded-full">
+          Current: {currentEmail || 'Not set'}
+        </span>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1.5">
+          <label className="text-xs font-bold text-gray-700 block mb-1.5 uppercase tracking-wider">
             New Email Address
           </label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             <input
               type="email"
               {...register('newEmail')}
-              placeholder="e.g. newadmin@hindustanprojects.com"
-              className={`w-full pl-9 pr-4 py-2.5 text-sm border rounded-xl bg-gray-50 focus:bg-white
-                focus:outline-none focus:ring-2 focus:ring-brand-blue/25 focus:border-brand-blue
+              placeholder="e.g. admin@hindustanprojects.com"
+              className={`w-full pl-10 pr-4 py-2.5 text-sm border rounded-xl bg-gray-50/50 focus:bg-white
+                focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue
                 transition-all ${errors.newEmail ? 'border-red-400 bg-red-50/30' : 'border-gray-200'}`}
             />
           </div>
           {errors.newEmail && (
-            <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
+            <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1 font-medium">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               {errors.newEmail.message}
             </p>
           )}
         </div>
 
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1.5">
-            Current Password (to confirm)
+          <label className="text-xs font-bold text-gray-700 block mb-1.5 uppercase tracking-wider">
+            Current Password (To Confirm)
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             <input
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
-              className={`w-full pl-9 pr-10 py-2.5 text-sm border rounded-xl bg-gray-50 focus:bg-white
-                focus:outline-none focus:ring-2 focus:ring-brand-blue/25 focus:border-brand-blue
+              placeholder="Enter password to authorize"
+              className={`w-full pl-10 pr-11 py-2.5 text-sm border rounded-xl bg-gray-50/50 focus:bg-white
+                focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue
                 transition-all ${errors.password ? 'border-red-400 bg-red-50/30' : 'border-gray-200'}`}
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              tabIndex={-1}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
           {errors.password && (
-            <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
+            <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1 font-medium">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               {errors.password.message}
             </p>
           )}
@@ -201,10 +253,20 @@ function EmailForm({ currentEmail, onEmailUpdated }) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-brand-blue text-white font-semibold py-2.5 rounded-xl text-sm
-            hover:shadow-md transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full bg-brand-blue hover:bg-brand-blue-hover text-white font-bold py-2.5 rounded-xl text-sm
+            shadow-sm hover:shadow transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
         >
-          {isSubmitting ? 'Updating…' : 'Update Email Address'}
+          {isSubmitting ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Updating Email Address…</span>
+            </>
+          ) : (
+            <>
+              <Mail className="w-4 h-4" />
+              <span>Update Email Address</span>
+            </>
+          )}
         </button>
       </form>
     </div>
@@ -216,6 +278,9 @@ function PasswordForm() {
   const [show, setShow] = useState({ curr: false, new: false, conf: false })
   const [status, setStatus] = useState(null)
   const [msg, setMsg] = useState('')
+  const [typedNewPassword, setTypedNewPassword] = useState('')
+  const { addToast } = useToast()
+
   const {
     register,
     handleSubmit,
@@ -225,6 +290,8 @@ function PasswordForm() {
     resolver: zodResolver(passwordSchema),
   })
 
+  const strength = getPasswordStrength(typedNewPassword)
+
   const onSubmit = async (data) => {
     setStatus(null)
     try {
@@ -233,21 +300,29 @@ function PasswordForm() {
         newPassword: data.newPassword,
       })
       setStatus('success')
-      setMsg(res.message || 'Password updated successfully.')
+      const successMsg = res.message || 'Password updated successfully.'
+      setMsg(successMsg)
+      addToast(successMsg, 'success')
       reset()
+      setTypedNewPassword('')
     } catch (err) {
       setStatus('error')
-      setMsg(err.message || 'Failed to update password.')
+      const errorMsg = err.message || 'Failed to update password.'
+      setMsg(errorMsg)
+      addToast(errorMsg, 'error')
     }
   }
 
   return (
-    <div className="bg-white border border-gray-100 border-l-4 border-l-brand-blue rounded-xl p-6 shadow-sm">
-      <div className="flex items-center gap-2 mb-5">
-        <div className="w-7 h-7 rounded-lg bg-brand-blue/10 flex items-center justify-center">
-          <Lock className="w-3.5 h-3.5 text-brand-blue" />
+    <div className="bg-white border border-gray-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-center gap-3 mb-5">
+        <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+          <LockKeyhole className="w-5 h-5 text-emerald-600" />
         </div>
-        <h2 className="font-heading text-base font-semibold text-gray-800">Change Password</h2>
+        <div>
+          <h2 className="font-heading text-base font-bold text-gray-900">Update Password</h2>
+          <p className="text-xs text-gray-500 mt-0.5">Ensure your account uses a strong, uncompromised password.</p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
@@ -258,15 +333,49 @@ function PasswordForm() {
           error={errors.currentPassword}
           show={show.curr}
           onToggle={() => setShow((s) => ({ ...s, curr: !s.curr }))}
+          placeholder="Enter your current password"
         />
-        <PasswordInput
-          label="New Password (min 8 characters)"
-          name="newPassword"
-          register={register}
-          error={errors.newPassword}
-          show={show.new}
-          onToggle={() => setShow((s) => ({ ...s, new: !s.new }))}
-        />
+
+        <div>
+          <PasswordInput
+            label="New Password (min 8 characters)"
+            name="newPassword"
+            register={register}
+            error={errors.newPassword}
+            show={show.new}
+            onToggle={() => setShow((s) => ({ ...s, new: !s.new }))}
+            placeholder="Create a strong new password"
+            onChangeExtra={(val) => setTypedNewPassword(val)}
+          />
+
+          {/* Password Strength Visual Meter */}
+          {typedNewPassword && (
+            <div className="mt-2.5 bg-gray-50 p-3 rounded-xl border border-gray-200/80 space-y-1.5">
+              <div className="flex items-center justify-between text-xs font-semibold">
+                <span className="text-gray-500">Password Strength:</span>
+                <span className={strength.text}>{strength.label}</span>
+              </div>
+              <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div className={`h-full ${strength.color} transition-all duration-300 ${strength.width}`} />
+              </div>
+              <div className="grid grid-cols-2 gap-1 pt-1 text-[11px] text-gray-500">
+                <span className={`flex items-center gap-1 ${typedNewPassword.length >= 8 ? 'text-emerald-600 font-semibold' : ''}`}>
+                  {typedNewPassword.length >= 8 ? <CheckCircle className="w-3 h-3 shrink-0 text-emerald-600" /> : '•'} 8+ Characters
+                </span>
+                <span className={`flex items-center gap-1 ${/[A-Z]/.test(typedNewPassword) ? 'text-emerald-600 font-semibold' : ''}`}>
+                  {/[A-Z]/.test(typedNewPassword) ? <CheckCircle className="w-3 h-3 shrink-0 text-emerald-600" /> : '•'} Uppercase Letter
+                </span>
+                <span className={`flex items-center gap-1 ${/[0-9]/.test(typedNewPassword) ? 'text-emerald-600 font-semibold' : ''}`}>
+                  {/[0-9]/.test(typedNewPassword) ? <CheckCircle className="w-3 h-3 shrink-0 text-emerald-600" /> : '•'} Number
+                </span>
+                <span className={`flex items-center gap-1 ${/[^A-Za-z0-9]/.test(typedNewPassword) ? 'text-emerald-600 font-semibold' : ''}`}>
+                  {/[^A-Za-z0-9]/.test(typedNewPassword) ? <CheckCircle className="w-3 h-3 shrink-0 text-emerald-600" /> : '•'} Special Symbol
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
         <PasswordInput
           label="Confirm New Password"
           name="confirmPassword"
@@ -274,6 +383,7 @@ function PasswordForm() {
           error={errors.confirmPassword}
           show={show.conf}
           onToggle={() => setShow((s) => ({ ...s, conf: !s.conf }))}
+          placeholder="Re-enter new password"
         />
 
         <StatusAlert status={status} msg={msg} />
@@ -281,10 +391,20 @@ function PasswordForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-brand-blue text-white font-semibold py-2.5 rounded-xl text-sm
-            hover:shadow-md transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-sm
+            shadow-sm hover:shadow transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
         >
-          {isSubmitting ? 'Updating…' : 'Update Password'}
+          {isSubmitting ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Saving New Password…</span>
+            </>
+          ) : (
+            <>
+              <LockKeyhole className="w-4 h-4" />
+              <span>Update Password</span>
+            </>
+          )}
         </button>
       </form>
     </div>
@@ -296,10 +416,11 @@ function MasterKeyForm() {
   const [show, setShow] = useState({ curr: false, new: false, conf: false })
   const [status, setStatus] = useState(null)
   const [msg, setMsg] = useState('')
-  const [keyData, setKeyData] = useState(null) // { key, source }
+  const [keyData, setKeyData] = useState(null)
   const [keyLoading, setKeyLoading] = useState(true)
   const [showCurrentKey, setShowCurrentKey] = useState(false)
   const [copied, setCopied] = useState(false)
+  const { addToast } = useToast()
 
   const {
     register,
@@ -320,7 +441,6 @@ function MasterKeyForm() {
   }
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchKey()
   }, [])
 
@@ -329,9 +449,9 @@ function MasterKeyForm() {
     try {
       await navigator.clipboard.writeText(keyData.key)
       setCopied(true)
+      addToast('Master key copied to clipboard', 'info')
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // fallback for browsers without clipboard API
       const el = document.createElement('textarea')
       el.value = keyData.key
       document.body.appendChild(el)
@@ -339,6 +459,7 @@ function MasterKeyForm() {
       document.execCommand('copy')
       document.body.removeChild(el)
       setCopied(true)
+      addToast('Master key copied to clipboard', 'info')
       setTimeout(() => setCopied(false), 2000)
     }
   }
@@ -351,84 +472,86 @@ function MasterKeyForm() {
         newKey: data.newKey,
       })
       setStatus('success')
-      setMsg(res.message || 'Integration master key updated successfully.')
+      const successMsg = res.message || 'Integration master key updated successfully.'
+      setMsg(successMsg)
+      addToast(successMsg, 'success')
       reset()
       fetchKey()
     } catch (err) {
       setStatus('error')
-      setMsg(err.message || 'Failed to update master key.')
+      const errorMsg = err.message || 'Failed to update master key.'
+      setMsg(errorMsg)
+      addToast(errorMsg, 'error')
     }
   }
 
   return (
-    <div className="bg-white border border-orange-100 border-l-4 border-l-orange-400 rounded-xl p-6 shadow-sm">
-      <div className="flex items-center gap-2 mb-2">
-        <div className="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center">
-          <ShieldCheck className="w-3.5 h-3.5 text-orange-500" />
+    <div className="bg-white border border-amber-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl pointer-events-none" />
+      
+      <div className="flex items-center gap-3 mb-2">
+        <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
+          <ShieldCheck className="w-5 h-5 text-amber-600" />
         </div>
-        <h2 className="font-heading text-base font-semibold text-gray-800">
-          Integration Page Master Key
-        </h2>
+        <div>
+          <div className="flex items-center gap-2">
+            <h2 className="font-heading text-base font-bold text-gray-900">Integration Master Access Key</h2>
+            <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 bg-amber-100 text-amber-800 rounded-md border border-amber-200">
+              Super Admin Only
+            </span>
+          </div>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Unlocks system integrations, Cloudinary assets, and third-party API configs.
+          </p>
+        </div>
       </div>
-      <p className="text-xs text-gray-500 mb-4 leading-relaxed">
-        This key unlocks the Integration Settings page. It protects your Cloudinary, database, and
-        email credentials. Change it regularly and keep it secret.
-      </p>
 
-      {/* Current key display */}
-      <div className="mb-5 bg-orange-50 border border-orange-200 rounded-xl p-4">
+      {/* Current key info card */}
+      <div className="my-4 bg-amber-50/60 border border-amber-200/80 rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-1.5">
-            <Info className="w-3.5 h-3.5 text-orange-500" />
-            <p className="text-xs font-semibold text-orange-800">Current Master Key</p>
+            <Info className="w-4 h-4 text-amber-600 shrink-0" />
+            <p className="text-xs font-bold text-amber-900">Active Master Key</p>
           </div>
-          <span className="text-[10px] text-orange-500 bg-orange-100 border border-orange-200 px-2 py-0.5 rounded-full font-medium">
-            {keyData?.source === 'database' ? 'Updated via Admin' : 'From .env file'}
+          <span className="text-[10px] text-amber-700 bg-white border border-amber-200 px-2 py-0.5 rounded-full font-semibold">
+            {keyData?.source === 'database' ? 'Updated via Admin' : 'Loaded from .env'}
           </span>
         </div>
 
         {keyLoading ? (
-          <div className="h-9 bg-orange-100 animate-pulse rounded-lg" />
+          <div className="h-10 bg-amber-100/70 animate-pulse rounded-lg" />
         ) : keyData?.key ? (
           <div className="flex items-center gap-2">
             <code
-              className={`flex-1 text-sm font-mono bg-white border border-orange-200 rounded-lg px-3 py-2
-              text-orange-900 tracking-wide select-all break-all leading-relaxed
-              ${showCurrentKey ? '' : 'blur-[3px] select-none pointer-events-none'}`}
+              className={`flex-1 text-xs sm:text-sm font-mono bg-white border border-amber-200 rounded-lg px-3 py-2
+              text-amber-950 tracking-wider select-all break-all leading-relaxed shadow-inner
+              ${showCurrentKey ? '' : 'blur-[4px] select-none pointer-events-none'}`}
             >
               {keyData.key}
             </code>
-            <div className="flex flex-col gap-1.5 shrink-0">
+            <div className="flex items-center gap-1.5 shrink-0">
               <button
                 type="button"
                 onClick={() => setShowCurrentKey((v) => !v)}
-                className="p-2 rounded-lg bg-white border border-orange-200 text-orange-500
-                  hover:bg-orange-100 transition-colors"
+                className="p-2 rounded-lg bg-white border border-amber-200 text-amber-700
+                  hover:bg-amber-100/60 transition-colors shadow-sm cursor-pointer"
                 title={showCurrentKey ? 'Hide key' : 'Show key'}
               >
-                {showCurrentKey ? (
-                  <EyeOff className="w-3.5 h-3.5" />
-                ) : (
-                  <Eye className="w-3.5 h-3.5" />
-                )}
+                {showCurrentKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
               <button
                 type="button"
                 onClick={handleCopy}
-                className="p-2 rounded-lg bg-white border border-orange-200 text-orange-500
-                  hover:bg-orange-100 transition-colors"
+                className="p-2 rounded-lg bg-white border border-amber-200 text-amber-700
+                  hover:bg-amber-100/60 transition-colors shadow-sm cursor-pointer"
                 title="Copy to clipboard"
               >
-                {copied ? (
-                  <Check className="w-3.5 h-3.5 text-green-600" />
-                ) : (
-                  <Copy className="w-3.5 h-3.5" />
-                )}
+                {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
               </button>
             </div>
           </div>
         ) : (
-          <p className="text-xs text-orange-600 italic">No key configured.</p>
+          <p className="text-xs text-amber-700 italic">No master key configured.</p>
         )}
       </div>
 
@@ -440,6 +563,7 @@ function MasterKeyForm() {
           error={errors.currentKey}
           show={show.curr}
           onToggle={() => setShow((s) => ({ ...s, curr: !s.curr }))}
+          placeholder="Enter active master key"
         />
         <PasswordInput
           label="New Master Key (min 8 characters)"
@@ -448,6 +572,7 @@ function MasterKeyForm() {
           error={errors.newKey}
           show={show.new}
           onToggle={() => setShow((s) => ({ ...s, new: !s.new }))}
+          placeholder="Create new master key"
         />
         <PasswordInput
           label="Confirm New Master Key"
@@ -456,6 +581,7 @@ function MasterKeyForm() {
           error={errors.confirmKey}
           show={show.conf}
           onToggle={() => setShow((s) => ({ ...s, conf: !s.conf }))}
+          placeholder="Re-enter new master key"
         />
 
         <StatusAlert status={status} msg={msg} />
@@ -463,10 +589,20 @@ function MasterKeyForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5
-            rounded-xl text-sm hover:shadow-md transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5
+            rounded-xl text-sm shadow-sm hover:shadow transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
         >
-          {isSubmitting ? 'Updating…' : 'Update Master Key'}
+          {isSubmitting ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Updating Master Key…</span>
+            </>
+          ) : (
+            <>
+              <KeyRound className="w-4 h-4" />
+              <span>Update Master Key</span>
+            </>
+          )}
         </button>
       </form>
     </div>
@@ -476,13 +612,14 @@ function MasterKeyForm() {
 // ── Two-Factor Authentication (2FA) Form ──────────────────────
 function TwoFactorForm({ admin, setAdmin }) {
   const [loading, setLoading] = useState(false)
-  const [setupData, setSetupData] = useState(null) // { secret, qrCode }
+  const [setupData, setSetupData] = useState(null)
   const [otpCode, setOtpCode] = useState('')
   const [password, setPassword] = useState('')
   const [showDisableForm, setShowDisableForm] = useState(false)
   const [status, setStatus] = useState(null)
   const [msg, setMsg] = useState('')
   const [copiedSecret, setCopiedSecret] = useState(false)
+  const { addToast } = useToast()
 
   const handleStartSetup = async () => {
     setLoading(true)
@@ -490,9 +627,12 @@ function TwoFactorForm({ admin, setAdmin }) {
     try {
       const res = await api.post('/admin/2fa/setup')
       setSetupData(res.data)
+      addToast('2FA QR Code generated. Scan with Google Authenticator.', 'info')
     } catch (err) {
       setStatus('error')
-      setMsg(err.message || 'Failed to initiate 2FA setup.')
+      const errorMsg = err.message || 'Failed to initiate 2FA setup.'
+      setMsg(errorMsg)
+      addToast(errorMsg, 'error')
     } finally {
       setLoading(false)
     }
@@ -510,13 +650,17 @@ function TwoFactorForm({ admin, setAdmin }) {
     try {
       const res = await api.post('/admin/2fa/verify', { token: otpCode })
       setStatus('success')
-      setMsg(res.message || '2FA enabled successfully!')
+      const successMsg = res.message || '2FA enabled successfully!'
+      setMsg(successMsg)
+      addToast(successMsg, 'success')
       setSetupData(null)
       setOtpCode('')
       setAdmin({ ...admin, twoFactorEnabled: true })
     } catch (err) {
       setStatus('error')
-      setMsg(err.message || 'Failed to verify code.')
+      const errorMsg = err.message || 'Failed to verify OTP code.'
+      setMsg(errorMsg)
+      addToast(errorMsg, 'error')
     } finally {
       setLoading(false)
     }
@@ -534,13 +678,17 @@ function TwoFactorForm({ admin, setAdmin }) {
     try {
       const res = await api.post('/admin/2fa/disable', { password })
       setStatus('success')
-      setMsg(res.message || '2FA disabled successfully.')
+      const successMsg = res.message || '2FA disabled successfully.'
+      setMsg(successMsg)
+      addToast(successMsg, 'info')
       setPassword('')
       setShowDisableForm(false)
       setAdmin({ ...admin, twoFactorEnabled: false })
     } catch (err) {
       setStatus('error')
-      setMsg(err.message || 'Failed to disable 2FA.')
+      const errorMsg = err.message || 'Failed to disable 2FA.'
+      setMsg(errorMsg)
+      addToast(errorMsg, 'error')
     } finally {
       setLoading(false)
     }
@@ -556,24 +704,40 @@ function TwoFactorForm({ admin, setAdmin }) {
   const isEnabled = admin?.twoFactorEnabled
 
   return (
-    <div className="bg-white border border-gray-100 border-l-4 border-l-brand-blue rounded-xl p-6 shadow-sm space-y-4">
-      <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-lg bg-brand-blue/10 flex items-center justify-center">
-          <ShieldCheck className="w-3.5 h-3.5 text-brand-blue" />
+    <div className="bg-white border border-gray-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
+            <Shield className="w-5 h-5 text-indigo-600" />
+          </div>
+          <div>
+            <h2 className="font-heading text-base font-bold text-gray-900">
+              Two-Factor Authentication (2FA)
+            </h2>
+            <p className="text-xs text-gray-500 mt-0.5">Adds an extra layer of security using Google Authenticator / Authy.</p>
+          </div>
         </div>
-        <h2 className="font-heading text-base font-semibold text-gray-800">
-          Two-Factor Authentication (2FA)
-        </h2>
+
+        <span
+          className={`inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold border ${
+            isEnabled
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+              : 'bg-amber-50 text-amber-700 border-amber-200'
+          }`}
+        >
+          <span className={`w-2 h-2 rounded-full ${isEnabled ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+          {isEnabled ? 'Enabled & Active' : 'Disabled'}
+        </span>
       </div>
 
       {isEnabled ? (
         <div className="space-y-4">
-          <div className="flex items-start gap-3 bg-green-50 border border-green-200 rounded-xl p-4">
-            <ShieldCheck className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3.5 bg-emerald-50/70 border border-emerald-200/80 rounded-xl p-4">
+            <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
             <div>
-              <h3 className="text-sm font-semibold text-green-850 font-heading">2FA is Enabled</h3>
-              <p className="text-xs text-green-700 leading-relaxed mt-1">
-                Your account is secured with a secondary OTP verification code upon login.
+              <h3 className="text-sm font-bold text-emerald-950 font-heading">Your Account is Strongly Protected</h3>
+              <p className="text-xs text-emerald-700 leading-relaxed mt-0.5">
+                Every login attempt will require your password plus a 6-digit TOTP code from your mobile authenticator app.
               </p>
             </div>
           </div>
@@ -581,7 +745,7 @@ function TwoFactorForm({ admin, setAdmin }) {
           {showDisableForm ? (
             <form onSubmit={handleDisable2FA} className="space-y-3 pt-2">
               <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1.5">
+                <label className="text-xs font-bold text-gray-700 block mb-1.5 uppercase tracking-wider">
                   Confirm Password to Disable 2FA
                 </label>
                 <input
@@ -589,7 +753,7 @@ function TwoFactorForm({ admin, setAdmin }) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter current password"
-                  className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/25 focus:border-brand-blue transition-all"
+                  className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all"
                 />
               </div>
 
@@ -597,9 +761,9 @@ function TwoFactorForm({ admin, setAdmin }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-xl text-xs transition-colors disabled:opacity-60 cursor-pointer"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-xs transition-colors disabled:opacity-60 cursor-pointer shadow-sm"
                 >
-                  {loading ? 'Disabling...' : 'Confirm Disable'}
+                  {loading ? 'Disabling...' : 'Confirm & Disable 2FA'}
                 </button>
                 <button
                   type="button"
@@ -608,7 +772,7 @@ function TwoFactorForm({ admin, setAdmin }) {
                     setStatus(null)
                     setMsg('')
                   }}
-                  className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-2.5 rounded-xl text-xs transition-colors cursor-pointer"
+                  className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -617,9 +781,9 @@ function TwoFactorForm({ admin, setAdmin }) {
           ) : (
             <button
               onClick={() => setShowDisableForm(true)}
-              className="w-full bg-red-50 hover:bg-red-100 text-red-600 font-semibold py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+              className="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-2.5 rounded-xl text-xs sm:text-sm transition-colors cursor-pointer"
             >
-              Disable 2FA
+              Disable Two-Factor Authentication
             </button>
           )}
         </div>
@@ -628,37 +792,42 @@ function TwoFactorForm({ admin, setAdmin }) {
           <div className="flex items-start gap-3 bg-gray-50 border border-gray-200 rounded-xl p-4">
             <Info className="w-5 h-5 text-gray-500 shrink-0 mt-0.5" />
             <div>
-              <h3 className="text-sm font-semibold text-gray-700 font-heading">2FA is Disabled</h3>
-              <p className="text-xs text-gray-500 leading-relaxed mt-1">
-                Enabling 2FA adds an extra layer of protection. You will need a 6-digit code from Google Authenticator to log in.
+              <h3 className="text-sm font-bold text-gray-800 font-heading">Why enable 2FA?</h3>
+              <p className="text-xs text-gray-600 leading-relaxed mt-0.5">
+                Even if someone steals your password, they cannot log in without access to your physical phone or authenticator app.
               </p>
             </div>
           </div>
 
           {setupData ? (
             <div className="space-y-4 border-t border-gray-100 pt-4">
-              <div className="flex flex-col items-center justify-center p-5 bg-gray-50 rounded-xl border border-gray-200">
-                <p className="text-xs font-bold text-gray-700 mb-3 text-center">
-                  1. Scan QR Code inside Authenticator App
+              <div className="flex flex-col items-center justify-center p-5 bg-gray-50/80 rounded-xl border border-gray-200">
+                <p className="text-xs font-bold text-gray-800 mb-3 text-center uppercase tracking-wider">
+                  Step 1: Scan QR Code with Authenticator App
                 </p>
-                <img src={setupData.qrCode} alt="2FA QR Code" className="w-44 h-44 border border-gray-200 rounded-xl p-2 bg-white shadow-sm" />
-                
-                {/* Visual guidance alert box */}
-                <div className="mt-4 px-3.5 py-2.5 bg-brand-blue/5 border border-brand-blue/15 rounded-lg text-left max-w-sm">
-                  <div className="flex gap-2 items-start">
+                <img
+                  src={setupData.qrCode}
+                  alt="2FA QR Code"
+                  className="w-48 h-48 border border-gray-200 rounded-xl p-2 bg-white shadow-md"
+                />
+
+                {/* Important scanning notice */}
+                <div className="mt-4 px-4 py-3 bg-blue-50 border border-blue-200 rounded-xl text-left max-w-sm">
+                  <div className="flex gap-2.5 items-start">
                     <Info className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
-                    <div className="text-[11px] text-gray-600 leading-relaxed">
-                      <p className="font-bold text-brand-blue">Important Scanning Note:</p>
-                      <p className="mt-0.5">Do NOT scan this with your normal phone camera or a web browser (it will show a blank/invalid link).</p>
-                      <p className="mt-1">Instead, open <span className="font-bold text-gray-800">Google Authenticator</span> or <span className="font-bold text-gray-800">Authy</span>, tap the <span className="font-bold text-gray-800 font-mono">+</span> button, and scan the QR code from inside that app.</p>
+                    <div className="text-[11px] text-gray-700 leading-relaxed">
+                      <p className="font-bold text-brand-blue">Scan inside Google Authenticator / Authy:</p>
+                      <p className="mt-0.5">Do NOT scan with standard camera. Open your Authenticator app, tap <span className="font-bold">+</span>, and scan this code.</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Manual entry / copy key */}
+                {/* Manual entry fallback */}
                 <div className="mt-4 w-full max-w-xs flex flex-col items-center">
-                  <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Or enter key manually</span>
-                  <div className="flex w-full items-center gap-1.5 bg-white border border-gray-200 rounded-lg p-1.5 pl-3 shadow-inner">
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                    Or Enter Secret Key Manually
+                  </span>
+                  <div className="flex w-full items-center gap-1.5 bg-white border border-gray-200 rounded-xl p-1.5 pl-3 shadow-inner">
                     <code className="flex-1 font-mono font-extrabold text-xs text-brand-blue truncate select-all">
                       {setupData.secret}
                     </code>
@@ -667,16 +836,13 @@ function TwoFactorForm({ admin, setAdmin }) {
                       onClick={() => {
                         navigator.clipboard.writeText(setupData.secret)
                         setCopiedSecret(true)
+                        addToast('2FA secret copied', 'info')
                         setTimeout(() => setCopiedSecret(false), 2000)
                       }}
-                      className="p-1.5 hover:bg-gray-50 rounded-md text-gray-400 hover:text-brand-blue transition-colors shrink-0"
+                      className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-brand-blue transition-colors shrink-0 cursor-pointer"
                       title="Copy Key"
                     >
-                      {copiedSecret ? (
-                        <Check className="w-3.5 h-3.5 text-green-600" />
-                      ) : (
-                        <Copy className="w-3.5 h-3.5" />
-                      )}
+                      {copiedSecret ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
@@ -684,15 +850,15 @@ function TwoFactorForm({ admin, setAdmin }) {
 
               <form onSubmit={handleVerifySetup} className="space-y-3">
                 <div>
-                  <label className="text-xs font-semibold text-gray-600 block mb-1.5">
-                    2. Enter 6-digit verification code from Authenticator app
+                  <label className="text-xs font-bold text-gray-700 block mb-1.5 uppercase tracking-wider">
+                    Step 2: Enter 6-Digit Code from Authenticator
                   </label>
                   <input
                     type="text"
                     value={otpCode}
                     onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     placeholder="e.g. 123456"
-                    className="w-full text-center tracking-widest font-mono font-bold text-lg px-3.5 py-2.5 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/25 focus:border-brand-blue transition-all"
+                    className="w-full text-center tracking-[0.25em] font-mono font-bold text-xl px-4 py-3 border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all"
                   />
                 </div>
 
@@ -700,14 +866,24 @@ function TwoFactorForm({ admin, setAdmin }) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 bg-brand-blue hover:bg-brand-blue-hover text-white font-semibold py-2.5 rounded-xl text-xs transition-colors disabled:opacity-60 cursor-pointer"
+                    className="flex-1 bg-brand-blue hover:bg-brand-blue-hover text-white font-bold py-2.5 rounded-xl text-xs sm:text-sm transition-all shadow cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2"
                   >
-                    {loading ? 'Verifying...' : 'Verify & Enable'}
+                    {loading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Verifying…</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheck className="w-4 h-4" />
+                        <span>Verify & Activate 2FA</span>
+                      </>
+                    )}
                   </button>
                   <button
                     type="button"
                     onClick={handleCancelSetup}
-                    className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-2.5 rounded-xl text-xs transition-colors cursor-pointer"
+                    className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold py-2.5 rounded-xl text-xs sm:text-sm transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -718,93 +894,210 @@ function TwoFactorForm({ admin, setAdmin }) {
             <button
               onClick={handleStartSetup}
               disabled={loading}
-              className="w-full bg-brand-blue hover:bg-brand-blue-hover text-white font-semibold py-2.5 rounded-xl text-sm transition-all shadow-sm hover:shadow cursor-pointer"
+              className="w-full bg-brand-blue hover:bg-brand-blue-hover text-white font-bold py-3 rounded-xl text-sm transition-all shadow-sm hover:shadow cursor-pointer flex items-center justify-center gap-2"
             >
-              {loading ? 'Initiating Setup...' : 'Setup Two-Factor Authentication'}
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Initiating Setup…</span>
+                </>
+              ) : (
+                <>
+                  <Zap className="w-4 h-4" />
+                  <span>Setup Two-Factor Authentication</span>
+                </>
+              )}
             </button>
           )}
         </div>
       )}
-      
-      {/* Global Status Alert for 2FA actions */}
+
       <StatusAlert status={status} msg={msg} />
     </div>
   )
 }
 
-// ── Page ──────────────────────────────────────────────────────
+// ── Main Settings Page Component ──────────────────────────────
 export default function AdminSettingsPage() {
   const { admin, setAdmin } = useOutletContext()
+  const [activeTab, setActiveTab] = useState('ALL') // 'ALL' | 'ACCOUNT' | 'SECURITY' | 'KEYS'
+
+  const isSuperAdmin = admin?.role === 'SUPER_ADMIN'
+  const is2FAOn = Boolean(admin?.twoFactorEnabled)
 
   return (
     <>
-      <SEO title="Account Settings" noIndex />
-      <div className="space-y-6 max-w-lg">
-        {/* Header */}
-        <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center shrink-0">
-            <KeyRound className="w-5 h-5 text-brand-blue" />
-          </div>
-          <div>
-            <h1 className="font-heading text-2xl font-bold text-gray-900">Account Settings</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Manage your admin account and security.</p>
+      <SEO title="Account & Security Settings" noIndex />
+      <div className="space-y-6 max-w-6xl mx-auto pb-10">
+        
+        {/* ── Header Banner ──────────────────────────────────── */}
+        <div className="bg-gradient-to-r from-slate-900 via-gray-900 to-brand-blue p-6 sm:p-8 rounded-3xl text-white shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-brand-blue/20 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0 shadow-inner">
+                <KeyRound className="w-7 h-7 text-blue-300" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight">Account & Security</h1>
+                  <span className="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-blue-500/20 text-blue-200 border border-blue-400/30 uppercase tracking-wider">
+                    Enterprise Portal
+                  </span>
+                </div>
+                <p className="text-gray-300 text-xs sm:text-sm mt-1 max-w-xl leading-relaxed">
+                  Manage your credentials, update admin password, configure 2FA authentication, and review system master access keys.
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Profile Summary Badge */}
+            <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 min-w-[240px] shrink-0 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-300 font-medium">Logged in as:</span>
+                <span className="text-xs font-bold text-white px-2 py-0.5 bg-brand-blue rounded-md">
+                  {isSuperAdmin ? 'SUPER ADMIN' : admin?.role || 'ADMIN'}
+                </span>
+              </div>
+              <p className="text-sm font-bold text-white truncate">{admin?.email || 'admin@hindustanprojects.com'}</p>
+              
+              <div className="pt-1 flex items-center justify-between border-t border-white/10 text-xs">
+                <span className="text-gray-300">Security Score:</span>
+                <span className={`font-bold flex items-center gap-1 ${is2FAOn ? 'text-emerald-400' : 'text-amber-300'}`}>
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  {is2FAOn ? 'Maximum Protection' : 'Standard'}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Profile card */}
-        <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-5">
-          <div className="flex items-center gap-4">
-            <div
-              className="w-14 h-14 rounded-full bg-gradient-to-br from-brand-blue to-brand-blue/70
-              flex items-center justify-center shadow-sm shrink-0"
+        {/* ── Segmented Navigation Tabs ───────────────────────── */}
+        <div className="flex items-center gap-2 border-b border-gray-200 pb-2 overflow-x-auto no-scrollbar">
+          <button
+            onClick={() => setActiveTab('ALL')}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === 'ALL'
+                ? 'bg-gray-900 text-white shadow'
+                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+            }`}
+          >
+            All Settings
+          </button>
+          <button
+            onClick={() => setActiveTab('ACCOUNT')}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-2 ${
+              activeTab === 'ACCOUNT'
+                ? 'bg-brand-blue text-white shadow'
+                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+            }`}
+          >
+            <User className="w-4 h-4" />
+            Account Profile
+          </button>
+          <button
+            onClick={() => setActiveTab('SECURITY')}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-2 ${
+              activeTab === 'SECURITY'
+                ? 'bg-brand-blue text-white shadow'
+                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+            }`}
+          >
+            <Shield className="w-4 h-4" />
+            Password & 2FA
+          </button>
+          {isSuperAdmin && (
+            <button
+              onClick={() => setActiveTab('KEYS')}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-2 ${
+                activeTab === 'KEYS'
+                  ? 'bg-amber-600 text-white shadow'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+              }`}
             >
-              <span className="text-white font-bold text-lg">
-                {admin?.email ? admin.email[0].toUpperCase() : 'A'}
-              </span>
-            </div>
-            <div>
-              <p className="font-semibold text-gray-900">{admin?.email || 'Admin'}</p>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {admin?.role === 'SUPER_ADMIN' ? 'Super Admin' : 'Administrator'} · Hindustan
-                Projects
-              </p>
-              <span
-                className="inline-flex items-center gap-1 mt-1.5 text-xs px-2 py-0.5
-                bg-green-50 text-green-700 border border-green-200 rounded-full font-medium"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
-                Active Session
-              </span>
-            </div>
-          </div>
+              <KeyRound className="w-4 h-4" />
+              Integration Master Key
+            </button>
+          )}
         </div>
 
-        {/* Change Email */}
-        <EmailForm
-          currentEmail={admin?.email}
-          onEmailUpdated={(updatedData) => setAdmin(updatedData)}
-        />
+        {/* ── Settings Content Grid ───────────────────────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        {/* Change Password */}
-        <PasswordForm />
+          {/* Profile Overview Card (Always shown in ALL or ACCOUNT) */}
+          {(activeTab === 'ALL' || activeTab === 'ACCOUNT') && (
+            <div className="lg:col-span-2 bg-white border border-gray-200/80 rounded-2xl shadow-sm p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-blue via-indigo-600 to-brand-blue-hover flex items-center justify-center shadow-md shrink-0 text-white font-extrabold text-2xl border-2 border-white">
+                  {admin?.email ? admin.email[0].toUpperCase() : 'A'}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-gray-900 text-lg">{admin?.email || 'Admin'}</h3>
+                    <span className="px-2.5 py-0.5 text-xs font-bold bg-blue-50 text-brand-blue border border-blue-200 rounded-full">
+                      {isSuperAdmin ? 'Super Administrator' : 'Administrator'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Hindustan Projects Management System</p>
+                  <div className="flex items-center gap-3 mt-2">
+                    <span className="inline-flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      Active Session Verified
+                    </span>
+                    {is2FAOn && (
+                      <span className="inline-flex items-center gap-1 text-xs text-indigo-700 font-semibold bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200">
+                        <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+                        2FA Enabled
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
-        {/* Two-Factor Authentication (2FA) */}
-        <TwoFactorForm admin={admin} setAdmin={setAdmin} />
+          {/* Account Email Form */}
+          {(activeTab === 'ALL' || activeTab === 'ACCOUNT') && (
+            <EmailForm
+              currentEmail={admin?.email}
+              onEmailUpdated={(updatedData) => setAdmin(updatedData)}
+            />
+          )}
 
-        {/* Integration Master Key — only show for SUPER_ADMIN */}
-        {admin?.role === 'SUPER_ADMIN' && <MasterKeyForm />}
+          {/* Update Password Form */}
+          {(activeTab === 'ALL' || activeTab === 'SECURITY') && <PasswordForm />}
 
-        {/* Security reminder */}
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 flex items-start gap-3">
-          <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-          <div>
-            <h3 className="text-sm font-semibold text-amber-800 mb-1">Security Reminder</h3>
-            <p className="text-xs text-amber-700 leading-relaxed">
-              Use a strong, unique password. Never share your admin credentials. If you suspect
-              unauthorized access, change your password immediately.
+          {/* Two-Factor Authentication Form */}
+          {(activeTab === 'ALL' || activeTab === 'SECURITY') && (
+            <TwoFactorForm admin={admin} setAdmin={setAdmin} />
+          )}
+
+          {/* Integration Master Key Form (SUPER_ADMIN only) */}
+          {isSuperAdmin && (activeTab === 'ALL' || activeTab === 'KEYS') && (
+            <div className={activeTab === 'KEYS' ? 'lg:col-span-2' : ''}>
+              <MasterKeyForm />
+            </div>
+          )}
+
+        </div>
+
+        {/* ── Security Best Practices Reminder Banner ────────────── */}
+        <div className="bg-gradient-to-r from-amber-50 to-orange-50/80 border border-amber-200/80 rounded-2xl p-5 sm:p-6 shadow-sm flex items-start gap-4">
+          <div className="w-10 h-10 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0 mt-0.5">
+            <ShieldAlert className="w-5 h-5 text-amber-700" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-bold text-amber-950 font-heading flex items-center gap-2">
+              <span>Enterprise Security Best Practices</span>
+              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+            </h3>
+            <p className="text-xs text-amber-800 leading-relaxed">
+              Always use unique, complex passwords for your admin account. Do not share your login credentials or master key with anyone. Enable Two-Factor Authentication (2FA) for extra protection against brute-force and phishing attacks.
             </p>
           </div>
         </div>
+
       </div>
     </>
   )
