@@ -1,13 +1,15 @@
 /**
- * AdminSettingsPage — Modern Enterprise Account & Security Settings Panel
+ * AdminSettingsPage — Enterprise Account Security & Credentials Vault
+ * Controls admin account credentials, email updates, password changes,
+ * 2FA TOTP authentication, and Master Access keys.
  */
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { useOutletContext } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import {
-  CheckCircle2,
   AlertCircle,
   Eye,
   EyeOff,
@@ -25,12 +27,15 @@ import {
   LockKeyhole,
   User,
   CheckCircle,
+  RefreshCw,
+  Key,
+  ShieldX,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 import { SEO } from '@/components/ui'
 import { useToast } from '@/components/ui/ToastProvider'
 
-// ── Zod schemas ───────────────────────────────────────────────
+// ── Zod Validation Schemas ─────────────────────────────────────
 const passwordSchema = z
   .object({
     currentPassword: z.string().min(1, 'Current password is required'),
@@ -96,7 +101,7 @@ function PasswordInput({ label, name, register, error, show, onToggle, placehold
             },
           })}
           placeholder={placeholder || '••••••••'}
-          className={`w-full pl-10 pr-11 py-2.5 text-sm border rounded-xl bg-gray-50/50 focus:bg-white
+          className={`w-full pl-10 pr-11 py-2.5 text-xs sm:text-sm border rounded-xl bg-gray-50/50 focus:bg-white
             focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue
             transition-all ${error ? 'border-red-400 bg-red-50/30' : 'border-gray-200'}`}
         />
@@ -104,7 +109,7 @@ function PasswordInput({ label, name, register, error, show, onToggle, placehold
           type="button"
           onClick={onToggle}
           tabIndex={-1}
-          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1 cursor-pointer"
         >
           {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
         </button>
@@ -119,31 +124,9 @@ function PasswordInput({ label, name, register, error, show, onToggle, placehold
   )
 }
 
-// ── Status Alert Banner ───────────────────────────────────────
-function StatusAlert({ status, msg }) {
-  if (!status) return null
-  const ok = status === 'success'
-  return (
-    <div
-      className={`flex items-center gap-2.5 text-sm rounded-xl px-4 py-3 border animate-fadeIn ${
-        ok ? 'text-emerald-800 bg-emerald-50 border-emerald-200' : 'text-red-700 bg-red-50 border-red-200'
-      }`}
-    >
-      {ok ? (
-        <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-      ) : (
-        <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
-      )}
-      <span className="font-medium text-xs sm:text-sm">{msg}</span>
-    </div>
-  )
-}
-
 // ── Change Email Form ─────────────────────────────────────────
 function EmailForm({ currentEmail, onEmailUpdated }) {
   const [showPassword, setShowPassword] = useState(false)
-  const [status, setStatus] = useState(null)
-  const [msg, setMsg] = useState('')
   const { addToast } = useToast()
 
   const {
@@ -156,22 +139,17 @@ function EmailForm({ currentEmail, onEmailUpdated }) {
   })
 
   const onSubmit = async (data) => {
-    setStatus(null)
     try {
       const res = await api.post('/admin/change-email', {
         newEmail: data.newEmail,
         password: data.password,
       })
-      setStatus('success')
       const successMsg = res.message || 'Email address updated successfully.'
-      setMsg(successMsg)
       addToast(successMsg, 'success')
       reset()
       if (onEmailUpdated) onEmailUpdated(res.data)
     } catch (err) {
-      setStatus('error')
       const errorMsg = err.message || 'Failed to update email address.'
-      setMsg(errorMsg)
       addToast(errorMsg, 'error')
     }
   }
@@ -185,11 +163,11 @@ function EmailForm({ currentEmail, onEmailUpdated }) {
           </div>
           <div>
             <h2 className="font-heading text-base font-bold text-gray-900">Change Account Email</h2>
-            <p className="text-xs text-gray-500 mt-0.5">Primary email address used for admin login & security alerts.</p>
+            <p className="text-xs text-gray-500 mt-0.5">Primary email address used for admin login &amp; security alerts.</p>
           </div>
         </div>
-        <span className="text-[11px] font-semibold text-gray-500 bg-gray-100 border border-gray-200 px-2.5 py-1 rounded-full">
-          Current: {currentEmail || 'Not set'}
+        <span className="text-[11px] font-semibold text-gray-600 bg-gray-100 border border-gray-200 px-3 py-1 rounded-full font-mono">
+          {currentEmail || 'Not set'}
         </span>
       </div>
 
@@ -204,7 +182,7 @@ function EmailForm({ currentEmail, onEmailUpdated }) {
               type="email"
               {...register('newEmail')}
               placeholder="e.g. admin@hindustanprojects.com"
-              className={`w-full pl-10 pr-4 py-2.5 text-sm border rounded-xl bg-gray-50/50 focus:bg-white
+              className={`w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm border rounded-xl bg-gray-50/50 focus:bg-white
                 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue
                 transition-all ${errors.newEmail ? 'border-red-400 bg-red-50/30' : 'border-gray-200'}`}
             />
@@ -227,7 +205,7 @@ function EmailForm({ currentEmail, onEmailUpdated }) {
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
               placeholder="Enter password to authorize"
-              className={`w-full pl-10 pr-11 py-2.5 text-sm border rounded-xl bg-gray-50/50 focus:bg-white
+              className={`w-full pl-10 pr-11 py-2.5 text-xs sm:text-sm border rounded-xl bg-gray-50/50 focus:bg-white
                 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue
                 transition-all ${errors.password ? 'border-red-400 bg-red-50/30' : 'border-gray-200'}`}
             />
@@ -235,7 +213,7 @@ function EmailForm({ currentEmail, onEmailUpdated }) {
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               tabIndex={-1}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1 cursor-pointer"
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -248,17 +226,15 @@ function EmailForm({ currentEmail, onEmailUpdated }) {
           )}
         </div>
 
-        <StatusAlert status={status} msg={msg} />
-
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-brand-blue hover:bg-brand-blue-hover text-white font-bold py-2.5 rounded-xl text-sm
+          className="w-full bg-brand-blue hover:bg-brand-blue-hover text-white font-bold py-2.5 rounded-xl text-xs sm:text-sm
             shadow-sm hover:shadow transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <RefreshCw className="w-4 h-4 animate-spin" />
               <span>Updating Email Address…</span>
             </>
           ) : (
@@ -276,8 +252,6 @@ function EmailForm({ currentEmail, onEmailUpdated }) {
 // ── Change Password Form ──────────────────────────────────────
 function PasswordForm() {
   const [show, setShow] = useState({ curr: false, new: false, conf: false })
-  const [status, setStatus] = useState(null)
-  const [msg, setMsg] = useState('')
   const [typedNewPassword, setTypedNewPassword] = useState('')
   const { addToast } = useToast()
 
@@ -293,22 +267,17 @@ function PasswordForm() {
   const strength = getPasswordStrength(typedNewPassword)
 
   const onSubmit = async (data) => {
-    setStatus(null)
     try {
       const res = await api.post('/admin/change-password', {
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
       })
-      setStatus('success')
       const successMsg = res.message || 'Password updated successfully.'
-      setMsg(successMsg)
       addToast(successMsg, 'success')
       reset()
       setTypedNewPassword('')
     } catch (err) {
-      setStatus('error')
       const errorMsg = err.message || 'Failed to update password.'
-      setMsg(errorMsg)
       addToast(errorMsg, 'error')
     }
   }
@@ -320,7 +289,7 @@ function PasswordForm() {
           <LockKeyhole className="w-5 h-5 text-emerald-600" />
         </div>
         <div>
-          <h2 className="font-heading text-base font-bold text-gray-900">Update Password</h2>
+          <h2 className="font-heading text-base font-bold text-gray-900">Update Account Password</h2>
           <p className="text-xs text-gray-500 mt-0.5">Ensure your account uses a strong, uncompromised password.</p>
         </div>
       </div>
@@ -386,17 +355,15 @@ function PasswordForm() {
           placeholder="Re-enter new password"
         />
 
-        <StatusAlert status={status} msg={msg} />
-
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-sm
+          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs sm:text-sm
             shadow-sm hover:shadow transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <RefreshCw className="w-4 h-4 animate-spin" />
               <span>Saving New Password…</span>
             </>
           ) : (
@@ -414,10 +381,6 @@ function PasswordForm() {
 // ── Integration Master Key Form ───────────────────────────────
 function MasterKeyForm() {
   const [show, setShow] = useState({ curr: false, new: false, conf: false })
-  const [status, setStatus] = useState(null)
-  const [msg, setMsg] = useState('')
-  const [keyData, setKeyData] = useState(null)
-  const [keyLoading, setKeyLoading] = useState(true)
   const [showCurrentKey, setShowCurrentKey] = useState(false)
   const [copied, setCopied] = useState(false)
   const { addToast } = useToast()
@@ -431,19 +394,10 @@ function MasterKeyForm() {
     resolver: zodResolver(masterKeySchema),
   })
 
-  const fetchKey = () => {
-    setKeyLoading(true)
-    api
-      .get('/admin/master-key-hint')
-      .then((r) => setKeyData(r))
-      .catch(() => setKeyData(null))
-      .finally(() => setKeyLoading(false))
-  }
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchKey()
-  }, [])
+  const { data: keyData, isLoading: keyLoading, refetch: fetchKey } = useQuery({
+    queryKey: ['admin-master-key-hint'],
+    queryFn: () => api.get('/admin/master-key-hint'),
+  })
 
   const handleCopy = async () => {
     if (!keyData?.key) return
@@ -466,22 +420,17 @@ function MasterKeyForm() {
   }
 
   const onSubmit = async (data) => {
-    setStatus(null)
     try {
       const res = await api.post('/admin/change-master-key', {
         currentKey: data.currentKey,
         newKey: data.newKey,
       })
-      setStatus('success')
       const successMsg = res.message || 'Integration master key updated successfully.'
-      setMsg(successMsg)
       addToast(successMsg, 'success')
       reset()
       fetchKey()
     } catch (err) {
-      setStatus('error')
       const errorMsg = err.message || 'Failed to update master key.'
-      setMsg(errorMsg)
       addToast(errorMsg, 'error')
     }
   }
@@ -492,7 +441,7 @@ function MasterKeyForm() {
       
       <div className="flex items-center gap-3 mb-2">
         <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
-          <ShieldCheck className="w-5 h-5 text-amber-600" />
+          <Key className="w-5 h-5 text-amber-600" />
         </div>
         <div>
           <div className="flex items-center gap-2">
@@ -502,7 +451,7 @@ function MasterKeyForm() {
             </span>
           </div>
           <p className="text-xs text-gray-500 mt-0.5">
-            Unlocks system integrations, Cloudinary assets, and third-party API configs.
+            Unlocks system integrations, Cloudinary assets, and third-party API credentials.
           </p>
         </div>
       </div>
@@ -514,7 +463,7 @@ function MasterKeyForm() {
             <Info className="w-4 h-4 text-amber-600 shrink-0" />
             <p className="text-xs font-bold text-amber-900">Active Master Key</p>
           </div>
-          <span className="text-[10px] text-amber-700 bg-white border border-amber-200 px-2 py-0.5 rounded-full font-semibold">
+          <span className="text-[10px] text-amber-700 bg-white border border-amber-200 px-2.5 py-0.5 rounded-full font-semibold">
             {keyData?.source === 'database' ? 'Updated via Admin' : 'Loaded from .env'}
           </span>
         </div>
@@ -535,7 +484,7 @@ function MasterKeyForm() {
                 type="button"
                 onClick={() => setShowCurrentKey((v) => !v)}
                 className="p-2 rounded-lg bg-white border border-amber-200 text-amber-700
-                  hover:bg-amber-100/60 transition-colors shadow-sm cursor-pointer"
+                  hover:bg-amber-100/60 transition-colors shadow-xs cursor-pointer"
                 title={showCurrentKey ? 'Hide key' : 'Show key'}
               >
                 {showCurrentKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -544,7 +493,7 @@ function MasterKeyForm() {
                 type="button"
                 onClick={handleCopy}
                 className="p-2 rounded-lg bg-white border border-amber-200 text-amber-700
-                  hover:bg-amber-100/60 transition-colors shadow-sm cursor-pointer"
+                  hover:bg-amber-100/60 transition-colors shadow-xs cursor-pointer"
                 title="Copy to clipboard"
               >
                 {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
@@ -552,7 +501,7 @@ function MasterKeyForm() {
             </div>
           </div>
         ) : (
-          <p className="text-xs text-amber-700 italic">No master key configured.</p>
+          <p className="text-xs text-amber-700 italic">No master key found.</p>
         )}
       </div>
 
@@ -585,17 +534,15 @@ function MasterKeyForm() {
           placeholder="Re-enter new master key"
         />
 
-        <StatusAlert status={status} msg={msg} />
-
         <button
           type="submit"
           disabled={isSubmitting}
           className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5
-            rounded-xl text-sm shadow-sm hover:shadow transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+            rounded-xl text-xs sm:text-sm shadow-sm hover:shadow transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <RefreshCw className="w-4 h-4 animate-spin" />
               <span>Updating Master Key…</span>
             </>
           ) : (
@@ -617,22 +564,17 @@ function TwoFactorForm({ admin, setAdmin }) {
   const [otpCode, setOtpCode] = useState('')
   const [password, setPassword] = useState('')
   const [showDisableForm, setShowDisableForm] = useState(false)
-  const [status, setStatus] = useState(null)
-  const [msg, setMsg] = useState('')
   const [copiedSecret, setCopiedSecret] = useState(false)
   const { addToast } = useToast()
 
   const handleStartSetup = async () => {
     setLoading(true)
-    setStatus(null)
     try {
       const res = await api.post('/admin/2fa/setup')
       setSetupData(res.data)
       addToast('2FA QR Code generated. Scan with Google Authenticator.', 'info')
     } catch (err) {
-      setStatus('error')
       const errorMsg = err.message || 'Failed to initiate 2FA setup.'
-      setMsg(errorMsg)
       addToast(errorMsg, 'error')
     } finally {
       setLoading(false)
@@ -642,25 +584,19 @@ function TwoFactorForm({ admin, setAdmin }) {
   const handleVerifySetup = async (e) => {
     e.preventDefault()
     if (!otpCode || otpCode.length !== 6) {
-      setStatus('error')
-      setMsg('Please enter a valid 6-digit verification code.')
+      addToast('Please enter a valid 6-digit verification code.', 'error')
       return
     }
     setLoading(true)
-    setStatus(null)
     try {
       const res = await api.post('/admin/2fa/verify', { token: otpCode })
-      setStatus('success')
       const successMsg = res.message || '2FA enabled successfully!'
-      setMsg(successMsg)
       addToast(successMsg, 'success')
       setSetupData(null)
       setOtpCode('')
       setAdmin({ ...admin, twoFactorEnabled: true })
     } catch (err) {
-      setStatus('error')
       const errorMsg = err.message || 'Failed to verify OTP code.'
-      setMsg(errorMsg)
       addToast(errorMsg, 'error')
     } finally {
       setLoading(false)
@@ -670,25 +606,19 @@ function TwoFactorForm({ admin, setAdmin }) {
   const handleDisable2FA = async (e) => {
     e.preventDefault()
     if (!password) {
-      setStatus('error')
-      setMsg('Please enter your password to disable 2FA.')
+      addToast('Please enter your password to disable 2FA.', 'error')
       return
     }
     setLoading(true)
-    setStatus(null)
     try {
       const res = await api.post('/admin/2fa/disable', { password })
-      setStatus('success')
       const successMsg = res.message || '2FA disabled successfully.'
-      setMsg(successMsg)
       addToast(successMsg, 'info')
       setPassword('')
       setShowDisableForm(false)
       setAdmin({ ...admin, twoFactorEnabled: false })
     } catch (err) {
-      setStatus('error')
       const errorMsg = err.message || 'Failed to disable 2FA.'
-      setMsg(errorMsg)
       addToast(errorMsg, 'error')
     } finally {
       setLoading(false)
@@ -698,8 +628,6 @@ function TwoFactorForm({ admin, setAdmin }) {
   const handleCancelSetup = () => {
     setSetupData(null)
     setOtpCode('')
-    setStatus(null)
-    setMsg('')
   }
 
   const isEnabled = admin?.twoFactorEnabled
@@ -738,7 +666,7 @@ function TwoFactorForm({ admin, setAdmin }) {
             <div>
               <h3 className="text-sm font-bold text-emerald-950 font-heading">Your Account is Strongly Protected</h3>
               <p className="text-xs text-emerald-700 leading-relaxed mt-0.5">
-                Every login attempt will require your password plus a 6-digit TOTP code from your mobile authenticator app.
+                Every login attempt requires your password plus a 6-digit TOTP code from your mobile authenticator app.
               </p>
             </div>
           </div>
@@ -754,7 +682,7 @@ function TwoFactorForm({ admin, setAdmin }) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter current password"
-                  className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all"
+                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all"
                 />
               </div>
 
@@ -762,17 +690,13 @@ function TwoFactorForm({ admin, setAdmin }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-xs transition-colors disabled:opacity-60 cursor-pointer shadow-sm"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-xs transition-colors disabled:opacity-60 cursor-pointer shadow-sm flex items-center justify-center gap-1.5"
                 >
                   {loading ? 'Disabling...' : 'Confirm & Disable 2FA'}
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowDisableForm(false)
-                    setStatus(null)
-                    setMsg('')
-                  }}
+                  onClick={() => setShowDisableForm(false)}
                   className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer"
                 >
                   Cancel
@@ -782,9 +706,10 @@ function TwoFactorForm({ admin, setAdmin }) {
           ) : (
             <button
               onClick={() => setShowDisableForm(true)}
-              className="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-2.5 rounded-xl text-xs sm:text-sm transition-colors cursor-pointer"
+              className="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-2.5 rounded-xl text-xs sm:text-sm transition-colors cursor-pointer flex items-center justify-center gap-1.5"
             >
-              Disable Two-Factor Authentication
+              <ShieldX className="w-4 h-4" />
+              <span>Disable Two-Factor Authentication</span>
             </button>
           )}
         </div>
@@ -812,7 +737,6 @@ function TwoFactorForm({ admin, setAdmin }) {
                   className="w-48 h-48 border border-gray-200 rounded-xl p-2 bg-white shadow-md"
                 />
 
-                {/* Important scanning notice */}
                 <div className="mt-4 px-4 py-3 bg-blue-50 border border-blue-200 rounded-xl text-left max-w-sm">
                   <div className="flex gap-2.5 items-start">
                     <Info className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
@@ -823,7 +747,6 @@ function TwoFactorForm({ admin, setAdmin }) {
                   </div>
                 </div>
 
-                {/* Manual entry fallback */}
                 <div className="mt-4 w-full max-w-xs flex flex-col items-center">
                   <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
                     Or Enter Secret Key Manually
@@ -867,17 +790,17 @@ function TwoFactorForm({ admin, setAdmin }) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 bg-brand-blue hover:bg-brand-blue-hover text-white font-bold py-2.5 rounded-xl text-xs sm:text-sm transition-all shadow cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2"
+                    className="flex-1 bg-brand-blue hover:bg-brand-blue-hover text-white font-bold py-2.5 rounded-xl text-xs sm:text-sm transition-all shadow-xs cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2"
                   >
                     {loading ? (
                       <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <RefreshCw className="w-4 h-4 animate-spin" />
                         <span>Verifying…</span>
                       </>
                     ) : (
                       <>
                         <ShieldCheck className="w-4 h-4" />
-                        <span>Verify & Activate 2FA</span>
+                        <span>Verify &amp; Activate 2FA</span>
                       </>
                     )}
                   </button>
@@ -895,11 +818,11 @@ function TwoFactorForm({ admin, setAdmin }) {
             <button
               onClick={handleStartSetup}
               disabled={loading}
-              className="w-full bg-brand-blue hover:bg-brand-blue-hover text-white font-bold py-3 rounded-xl text-sm transition-all shadow-sm hover:shadow cursor-pointer flex items-center justify-center gap-2"
+              className="w-full bg-brand-blue hover:bg-brand-blue-hover text-white font-bold py-3 rounded-xl text-xs sm:text-sm transition-all shadow-sm hover:shadow cursor-pointer flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <RefreshCw className="w-4 h-4 animate-spin" />
                   <span>Initiating Setup…</span>
                 </>
               ) : (
@@ -912,8 +835,6 @@ function TwoFactorForm({ admin, setAdmin }) {
           )}
         </div>
       )}
-
-      <StatusAlert status={status} msg={msg} />
     </div>
   )
 }
@@ -928,12 +849,12 @@ export default function AdminSettingsPage() {
 
   return (
     <>
-      <SEO title="Account & Security Settings" noIndex />
-      <div className="space-y-6 max-w-6xl mx-auto pb-10">
+      <SEO title="Account Security & Credentials" noIndex />
+      <div className="space-y-6 max-w-6xl mx-auto pb-12">
         
-        {/* ── Header Banner ──────────────────────────────────── */}
+        {/* ── Executive Dark Header Banner ────────────────────────── */}
         <div className="bg-gradient-to-r from-slate-900 via-gray-900 to-brand-blue p-6 sm:p-8 rounded-3xl text-white shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-brand-blue/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-brand-blue/20 rounded-full blur-3xl pointer-events-none" />
           
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-start gap-4">
@@ -942,13 +863,13 @@ export default function AdminSettingsPage() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight">Account & Security</h1>
+                  <h1 className="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight">Account &amp; Security Vault</h1>
                   <span className="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-blue-500/20 text-blue-200 border border-blue-400/30 uppercase tracking-wider">
-                    Enterprise Portal
+                    Super Admin Vault
                   </span>
                 </div>
                 <p className="text-gray-300 text-xs sm:text-sm mt-1 max-w-xl leading-relaxed">
-                  Manage your credentials, update admin password, configure 2FA authentication, and review system master access keys.
+                  Manage administrator login credentials, update passwords, configure 2FA authentication, and manage Master Access keys.
                 </p>
               </div>
             </div>
@@ -957,11 +878,11 @@ export default function AdminSettingsPage() {
             <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 min-w-[240px] shrink-0 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-300 font-medium">Logged in as:</span>
-                <span className="text-xs font-bold text-white px-2 py-0.5 bg-brand-blue rounded-md">
+                <span className="text-[10px] font-extrabold text-white px-2 py-0.5 bg-brand-blue rounded-md uppercase tracking-wider">
                   {isSuperAdmin ? 'SUPER ADMIN' : admin?.role || 'ADMIN'}
                 </span>
               </div>
-              <p className="text-sm font-bold text-white truncate">{admin?.email || 'admin@hindustanprojects.com'}</p>
+              <p className="text-xs sm:text-sm font-bold text-white truncate">{admin?.email || 'admin@hindustanprojects.com'}</p>
               
               <div className="pt-1 flex items-center justify-between border-t border-white/10 text-xs">
                 <span className="text-gray-300">Security Score:</span>
@@ -975,50 +896,50 @@ export default function AdminSettingsPage() {
         </div>
 
         {/* ── Segmented Navigation Tabs ───────────────────────── */}
-        <div className="flex items-center gap-2 border-b border-gray-200 pb-2 overflow-x-auto no-scrollbar">
+        <div className="flex gap-1.5 bg-gray-100 p-1.5 rounded-2xl w-fit border border-gray-200/80 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveTab('ALL')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'ALL'
-                ? 'bg-gray-900 text-white shadow'
-                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                ? 'bg-brand-blue text-white shadow-md'
+                : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            All Settings
+            All Vault Settings
           </button>
           <button
             onClick={() => setActiveTab('ACCOUNT')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${
               activeTab === 'ACCOUNT'
-                ? 'bg-brand-blue text-white shadow'
-                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                ? 'bg-brand-blue text-white shadow-md'
+                : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             <User className="w-4 h-4" />
-            Account Profile
+            <span>Email &amp; Profile</span>
           </button>
           <button
             onClick={() => setActiveTab('SECURITY')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${
               activeTab === 'SECURITY'
-                ? 'bg-brand-blue text-white shadow'
-                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                ? 'bg-brand-blue text-white shadow-md'
+                : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             <Shield className="w-4 h-4" />
-            Password & 2FA
+            <span>Password &amp; 2FA</span>
           </button>
           {isSuperAdmin && (
             <button
               onClick={() => setActiveTab('KEYS')}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${
                 activeTab === 'KEYS'
-                  ? 'bg-amber-600 text-white shadow'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  ? 'bg-amber-600 text-white shadow-md'
+                  : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               <KeyRound className="w-4 h-4" />
-              Integration Master Key
+              <span>Integration Master Key</span>
             </button>
           )}
         </div>
@@ -1028,20 +949,20 @@ export default function AdminSettingsPage() {
 
           {/* Profile Overview Card (Always shown in ALL or ACCOUNT) */}
           {(activeTab === 'ALL' || activeTab === 'ACCOUNT') && (
-            <div className="lg:col-span-2 bg-white border border-gray-200/80 rounded-2xl shadow-sm p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div className="lg:col-span-2 bg-white border border-gray-200/80 rounded-2xl shadow-sm p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:shadow-md transition-shadow">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-blue via-indigo-600 to-brand-blue-hover flex items-center justify-center shadow-md shrink-0 text-white font-extrabold text-2xl border-2 border-white">
                   {admin?.email ? admin.email[0].toUpperCase() : 'A'}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-gray-900 text-lg">{admin?.email || 'Admin'}</h3>
+                    <h3 className="font-bold text-gray-900 text-base sm:text-lg">{admin?.email || 'Admin'}</h3>
                     <span className="px-2.5 py-0.5 text-xs font-bold bg-blue-50 text-brand-blue border border-blue-200 rounded-full">
                       {isSuperAdmin ? 'Super Administrator' : 'Administrator'}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Hindustan Projects Management System</p>
-                  <div className="flex items-center gap-3 mt-2">
+                  <p className="text-xs text-gray-500 mt-1">Hindustan Projects Corporate Management Suite</p>
+                  <div className="flex flex-wrap items-center gap-3 mt-2">
                     <span className="inline-flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                       Active Session Verified
@@ -1049,7 +970,7 @@ export default function AdminSettingsPage() {
                     {is2FAOn && (
                       <span className="inline-flex items-center gap-1 text-xs text-indigo-700 font-semibold bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200">
                         <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
-                        2FA Enabled
+                        2FA Active
                       </span>
                     )}
                   </div>
@@ -1094,7 +1015,7 @@ export default function AdminSettingsPage() {
               <Sparkles className="w-3.5 h-3.5 text-amber-600" />
             </h3>
             <p className="text-xs text-amber-800 leading-relaxed">
-              Always use unique, complex passwords for your admin account. Do not share your login credentials or master key with anyone. Enable Two-Factor Authentication (2FA) for extra protection against brute-force and phishing attacks.
+              Always use unique, complex passwords for your admin account. Do not share your login credentials or master key with anyone. Enable Two-Factor Authentication (2FA) for maximum protection against unauthorized access.
             </p>
           </div>
         </div>
