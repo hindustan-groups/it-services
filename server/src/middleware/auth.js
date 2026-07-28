@@ -70,16 +70,37 @@ export const requireRole =
  * if the request lacks a valid token.
  */
 export const hideAdminRoutes = (req, res, next) => {
+  const envSecret = process.env.ADMIN_SECRET_PATH || 'secure-hp-portal-2026'
+  const strippedSecret = envSecret.startsWith('admin-') ? envSecret.slice(6) : envSecret
+  const prefixedSecret = envSecret.startsWith('admin-') ? envSecret : `admin-${envSecret}`
+
   const cleanUrl = req.originalUrl.split('?')[0]
 
-  // Public/login paths allowed to bypass the stealth 404 filter
-  if (
-    cleanUrl.includes('/login') ||
-    cleanUrl.includes('/logout') ||
-    cleanUrl.includes('/refresh-token') ||
-    cleanUrl.includes('/2fa/') ||
-    cleanUrl.includes('h9z7')
-  ) {
+  // Allowed public/login paths that bypass stealth 404
+  const allowedPaths = [
+    `/api/admin/${envSecret}/login`,
+    `/api/admin/${envSecret}`,
+    `/api/admin/${strippedSecret}/login`,
+    `/api/admin/${strippedSecret}`,
+    `/api/admin/${prefixedSecret}/login`,
+    `/api/admin/${prefixedSecret}`,
+    `/api/admin/h9z7/login`,
+    `/api/admin/h9z7`,
+    `/api/admin/admin-h9z7/login`,
+    `/api/admin/admin-h9z7`,
+    `/api/admin/hp/login`,
+    `/api/admin/hp`,
+    `/api/admin/admin-hp/login`,
+    `/api/admin/admin-hp`,
+    `/api/admin/secure-hp-portal-2026/login`,
+    `/api/admin/secure-hp-portal-2026`,
+    `/api/admin/login`,
+    `/api/admin/logout`,
+    `/api/admin/refresh-token`,
+    `/api/admin/2fa/login`,
+  ]
+
+  if (allowedPaths.includes(cleanUrl)) {
     return next()
   }
 

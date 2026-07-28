@@ -391,15 +391,6 @@ loginPaths.forEach((path) => {
   )
 })
 
-// Dynamic fallback for any custom secret path parameter
-router.post(
-  '/:secretPath/login',
-  adminLoginLimiter,
-  [body('email').isEmail().normalizeEmail(), body('password').notEmpty()],
-  validateRequest,
-  adminLogin
-)
-
 router.post('/logout', adminLogout)
 router.post('/refresh-token', adminRefreshToken)
 
