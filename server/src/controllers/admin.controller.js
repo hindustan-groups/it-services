@@ -42,15 +42,19 @@ export const adminLogin = async (req, res, next) => {
 
     const admin = await prisma.admin.findUnique({ where: { email: cleanEmail } })
     if (!admin) {
-      await prisma.activityLog.create({
-        data: {
-          adminId: 'UNKNOWN',
-          adminEmail: cleanEmail || 'unknown',
-          action: 'LOGIN_FAIL',
-          entity: 'Admin',
-          details: `Failed login: account not found. IP: ${ip}`,
-        },
-      }).catch((e) => console.error('[ActivityLog] Failed to log failure:', e.message))
+      try {
+        await prisma.activityLog.create({
+          data: {
+            adminId: 'UNKNOWN',
+            adminEmail: cleanEmail || 'unknown',
+            action: 'LOGIN_FAIL',
+            entity: 'Admin',
+            details: `Failed login: account not found. IP: ${ip}`,
+          },
+        })
+      } catch (e) {
+        console.error('[ActivityLog] Failed to log failure:', e.message)
+      }
 
       return res.status(401).json({ status: 'error', message: 'Invalid credentials.' })
     }
@@ -82,29 +86,37 @@ export const adminLogin = async (req, res, next) => {
         `[SECURITY_ALERT] FAILED_LOGIN_ATTEMPT | Email: ${email} | IP: ${ip} | Total attempts: ${attempts}`
       )
 
-      await prisma.activityLog.create({
-        data: {
-          adminId: admin.id,
-          adminEmail: admin.email,
-          action: 'LOGIN_FAIL',
-          entity: 'Admin',
-          details: `Failed login: incorrect password. IP: ${ip}. Attempt: ${attempts}`,
-        },
-      }).catch((e) => console.error('[ActivityLog] Failed to log failure:', e.message))
+      try {
+        await prisma.activityLog?.create({
+          data: {
+            adminId: admin.id,
+            adminEmail: admin.email,
+            action: 'LOGIN_FAIL',
+            entity: 'Admin',
+            details: `Failed login: incorrect password. IP: ${ip}. Attempt: ${attempts}`,
+          },
+        })
+      } catch (e) {
+        console.error('[ActivityLog] Failed to log failure:', e.message)
+      }
 
       if (attempts >= 5) {
         lockoutUntil = new Date(Date.now() + 15 * 60 * 1000) // 15 minutes
         message = 'Too many failed attempts. Account locked for 15 minutes.'
 
-        await prisma.activityLog.create({
-          data: {
-            adminId: admin.id,
-            adminEmail: admin.email,
-            action: 'LOCKOUT',
-            entity: 'Admin',
-            details: `Account locked for 15 minutes due to repeated failed logins. IP: ${ip}`,
-          },
-        }).catch((e) => console.error('[ActivityLog] Failed to log lockout:', e.message))
+        try {
+          await prisma.activityLog?.create({
+            data: {
+              adminId: admin.id,
+              adminEmail: admin.email,
+              action: 'LOCKOUT',
+              entity: 'Admin',
+              details: `Account locked for 15 minutes due to repeated failed logins. IP: ${ip}`,
+            },
+          })
+        } catch (e) {
+          console.error('[ActivityLog] Failed to log lockout:', e.message)
+        }
 
         // Send lockout notification email (at exactly 5 attempts to avoid spamming on subsequent attempts)
         if (attempts === 5) {

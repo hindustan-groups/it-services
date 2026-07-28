@@ -219,11 +219,14 @@ export const requestTimeout = (req, res, next) => {
 
 // ── HTTPS Enforcement Middleware ──────────────────────────────
 export const enforceHttps = (req, res, next) => {
+  const url = req?.originalUrl || req?.url || ''
   if (
     process.env.NODE_ENV === 'production' &&
-    req.headers['x-forwarded-proto'] !== 'https'
+    req?.headers?.['x-forwarded-proto'] &&
+    req.headers['x-forwarded-proto'] !== 'https' &&
+    !url.startsWith('/api')
   ) {
-    return res.redirect(301, `https://${req.headers.host}${req.url}`)
+    return res.redirect(301, `https://${req.headers.host || ''}${url}`)
   }
   next()
 }

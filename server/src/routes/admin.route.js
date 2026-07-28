@@ -385,7 +385,7 @@ loginPaths.forEach((path) => {
   router.post(
     path,
     adminLoginLimiter,
-    [body('email').isEmail().normalizeEmail(), body('password').notEmpty()],
+    [body('email').isEmail().withMessage('Valid email required'), body('password').notEmpty().withMessage('Password required')],
     validateRequest,
     adminLogin
   )
