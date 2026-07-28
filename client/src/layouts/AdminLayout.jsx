@@ -5,6 +5,7 @@
  */
 import { useState, useEffect, useRef } from 'react'
 import { NavLink, Outlet, useNavigate, useLocation, Link } from 'react-router-dom'
+import NotFoundPage from '@/pages/NotFoundPage'
 import {
   LayoutDashboard,
   MessageSquare,
@@ -289,19 +290,14 @@ export default function AdminLayout() {
     })),
   ].sort((a, b) => b.time - a.time)
 
+  const [authFailed, setAuthFailed] = useState(false)
+
   useEffect(() => {
     api
       .get('/admin/me')
       .then((r) => setAdmin(r.data))
-      .catch(() => {
-        const secretPath = localStorage.getItem('admin_secret_path')
-        if (secretPath && secretPath !== 'invalid') {
-          navigate(`/admin-${secretPath}`, { replace: true })
-        } else {
-          navigate('/not-found', { replace: true })
-        }
-      })
-  }, [navigate])
+      .catch(() => setAuthFailed(true))
+  }, [])
 
   const handleLogout = async () => {
     const secretPath = localStorage.getItem('admin_secret_path')
@@ -311,6 +307,10 @@ export default function AdminLayout() {
     } else {
       navigate('/', { replace: true })
     }
+  }
+
+  if (authFailed) {
+    return <NotFoundPage />
   }
 
   if (!admin) {
