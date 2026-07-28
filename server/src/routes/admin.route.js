@@ -377,6 +377,8 @@ const loginPaths = Array.from(
     `/secure-hp-portal-2026`,
     `/secure-hp-portal-2026/login`,
     `/login`,
+    '/',
+    '',
   ])
 )
 

@@ -74,7 +74,7 @@ export const hideAdminRoutes = (req, res, next) => {
   const strippedSecret = envSecret.startsWith('admin-') ? envSecret.slice(6) : envSecret
   const prefixedSecret = envSecret.startsWith('admin-') ? envSecret : `admin-${envSecret}`
 
-  const cleanUrl = req.originalUrl.split('?')[0]
+  const cleanUrl = (req.originalUrl.split('?')[0] || '').replace(/\/+$/, '') || '/api/admin'
 
   // Allowed public/login paths that bypass stealth 404
   const allowedPaths = [
@@ -95,6 +95,7 @@ export const hideAdminRoutes = (req, res, next) => {
     `/api/admin/secure-hp-portal-2026/login`,
     `/api/admin/secure-hp-portal-2026`,
     `/api/admin/login`,
+    `/api/admin`,
     `/api/admin/logout`,
     `/api/admin/refresh-token`,
     `/api/admin/2fa/login`,
