@@ -293,7 +293,14 @@ export default function AdminLayout() {
     api
       .get('/admin/me')
       .then((r) => setAdmin(r.data))
-      .catch(() => navigate('/not-found', { replace: true }))
+      .catch(() => {
+        const secretPath = localStorage.getItem('admin_secret_path')
+        if (secretPath && secretPath !== 'invalid') {
+          navigate(`/admin-${secretPath}`, { replace: true })
+        } else {
+          navigate('/not-found', { replace: true })
+        }
+      })
   }, [navigate])
 
   const handleLogout = async () => {
