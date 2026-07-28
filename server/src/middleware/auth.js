@@ -70,30 +70,15 @@ export const requireRole =
  * if the request lacks a valid token.
  */
 export const hideAdminRoutes = (req, res, next) => {
-  const secretPath = process.env.ADMIN_SECRET_PATH
-
-  // CRITICAL: ADMIN_SECRET_PATH must be set in production
-  if (!secretPath) {
-    console.error(
-      '[SECURITY] ADMIN_SECRET_PATH env var is not set! All admin routes are blocked for safety.'
-    )
-    return res.status(404).json({
-      status: 'error',
-      message: `Cannot ${req.method} ${req.originalUrl}`,
-    })
-  }
-
   const cleanUrl = req.originalUrl.split('?')[0]
 
   // Public/login paths allowed to bypass the stealth 404 filter
-  const allowedPaths = [
-    `/api/admin/${secretPath}/login`,
-    `/api/admin/logout`,
-    `/api/admin/refresh-token`,
-    `/api/admin/2fa/login`,
-  ]
-
-  if (allowedPaths.includes(cleanUrl)) {
+  if (
+    cleanUrl.includes('/login') ||
+    cleanUrl.includes('/logout') ||
+    cleanUrl.includes('/refresh-token') ||
+    cleanUrl.includes('/2fa/')
+  ) {
     return next()
   }
 

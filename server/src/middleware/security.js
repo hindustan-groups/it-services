@@ -69,17 +69,20 @@ const allowedOrigins = [
 
 export const corsOptions = cors({
   origin: (origin, callback) => {
-    // Allow all origins in development
-    if (process.env.NODE_ENV === 'development') {
+    // Allow all origins in development or no origin (curl/mobile apps)
+    if (process.env.NODE_ENV === 'development' || !origin) {
       return callback(null, true)
     }
-    // Allow requests with no origin (server-to-server, mobile apps, curl)
-    if (!origin) {
-      return callback(null, true)
-    }
+
+    const cleanOrigin = origin.toLowerCase()
     if (
       allowedOrigins.includes(origin) ||
-      (origin.startsWith('https://') && origin.endsWith('vercel.app'))
+      cleanOrigin.includes('vercel.app') ||
+      cleanOrigin.includes('hindustanprojects.in') ||
+      cleanOrigin.includes('localhost') ||
+      cleanOrigin.includes('127.0.0.1') ||
+      cleanOrigin.includes('192.168.') ||
+      cleanOrigin.includes('10.')
     ) {
       return callback(null, true)
     }

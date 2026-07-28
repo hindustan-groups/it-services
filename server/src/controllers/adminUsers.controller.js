@@ -40,21 +40,25 @@ export const createAdminUser = async (req, res, next) => {
     if (!['ADMIN', 'STAFF'].includes(role)) {
       return res.status(400).json({ status: 'error', message: 'Role must be ADMIN or STAFF.' })
     }
+    const cleanEmail = email ? email.trim().toLowerCase() : ''
+    const cleanPassword = password ? password.trim() : ''
 
-    const existing = await prisma.admin.findUnique({ where: { email } })
+    const existing = await prisma.admin.findUnique({ where: { email: cleanEmail } })
     if (existing) {
       return res.status(409).json({ status: 'error', message: 'Email is already in use.' })
     }
 
-    const passwordHash = await bcrypt.hash(password, 10)
+    const passwordHash = await bcrypt.hash(cleanPassword, 10)
 
     const user = await prisma.admin.create({
       data: {
-        email: email.trim().toLowerCase(),
+        email: cleanEmail,
         passwordHash,
         role,
         assignedModules: Array.isArray(assignedModules) ? assignedModules : [],
         isActive: true,
+        loginAttempts: 0,
+        lockoutUntil: null,
       },
       select: {
         id: true,
@@ -92,9 +96,9 @@ export const createAdminUser = async (req, res, next) => {
 
           <div style="background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 16px 20px; margin: 20px 0;">
             <p style="margin: 0 0 8px; font-size: 13px; color: #4B5563; text-transform: uppercase; letter-spacing: 0.05em; font-weight: bold;">Your Administrative Credentials</p>
-            <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">📧 <strong>Email:</strong> ${user.email}</p>
-            <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">🔑 <strong>Password:</strong> ${password}</p>
-            <p style="margin: 0; font-size: 14px; color: #1A1A1A;">🌐 <strong>Portal URL:</strong> <a href="${loginUrl}" style="color: #1A3E8C;">${loginUrl}</a></p>
+            <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">Email: ${user.email}</p>
+            <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">Password: ${cleanPassword}</p>
+            <p style="margin: 0; font-size: 14px; color: #1A1A1A;">Portal URL: <a href="${loginUrl}" style="color: #1A3E8C;">${loginUrl}</a></p>
           </div>
 
           <p style="text-align: center; margin: 30px 0;">
@@ -146,7 +150,8 @@ export const updateAdminUser = async (req, res, next) => {
       data.assignedModules = assignedModules
     }
     if (password && password.trim()) {
-      const matchesCurrent = await bcrypt.compare(password, existing.passwordHash)
+      const cleanPassword = password.trim()
+      const matchesCurrent = await bcrypt.compare(cleanPassword, existing.passwordHash)
       if (matchesCurrent) {
         return res.status(400).json({
           status: 'error',
@@ -161,7 +166,7 @@ export const updateAdminUser = async (req, res, next) => {
       })
 
       for (const entry of history) {
-        const isMatch = await bcrypt.compare(password, entry.passwordHash)
+        const isMatch = await bcrypt.compare(cleanPassword, entry.passwordHash)
         if (isMatch) {
           return res.status(400).json({
             status: 'error',
@@ -177,7 +182,9 @@ export const updateAdminUser = async (req, res, next) => {
         },
       })
 
-      data.passwordHash = await bcrypt.hash(password, 12)
+      data.passwordHash = await bcrypt.hash(cleanPassword, 12)
+      data.loginAttempts = 0
+      data.lockoutUntil = null
 
       const allHistory = await prisma.passwordHistory.findMany({
         where: { adminId: existing.id },
@@ -206,6 +213,7 @@ export const updateAdminUser = async (req, res, next) => {
 
     // If password was changed, send email notification
     if (password && password.trim()) {
+      const cleanPassword = password.trim()
       const settings = await fetchEmailFooterSettings(prisma)
       const clientUrl = env.CLIENT_URL || 'https://it-services-hindustan-projects.vercel.app'
       const rawPath = env.ADMIN_SECRET_PATH || 'admin-login'
@@ -230,9 +238,9 @@ export const updateAdminUser = async (req, res, next) => {
 
             <div style="background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 16px 20px; margin: 20px 0;">
               <p style="margin: 0 0 8px; font-size: 13px; color: #4B5563; text-transform: uppercase; letter-spacing: 0.05em; font-weight: bold;">Your Updated Administrative Credentials</p>
-              <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">📧 <strong>Email:</strong> ${user.email}</p>
-              <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">🔑 <strong>Password:</strong> ${password}</p>
-              <p style="margin: 0; font-size: 14px; color: #1A1A1A;">🌐 <strong>Portal URL:</strong> <a href="${loginUrl}" style="color: #1A3E8C;">${loginUrl}</a></p>
+              <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">Email: ${user.email}</p>
+              <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">Password: ${cleanPassword}</p>
+              <p style="margin: 0; font-size: 14px; color: #1A1A1A;">Portal URL: <a href="${loginUrl}" style="color: #1A3E8C;">${loginUrl}</a></p>
             </div>
 
             <p style="text-align: center; margin: 30px 0;">

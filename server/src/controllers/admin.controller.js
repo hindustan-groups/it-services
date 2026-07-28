@@ -6,7 +6,7 @@ import prisma from '../config/db.js'
 import { env } from '../config/env.js'
 import { setAdminCookie, setAdminRefreshTokenCookie, clearAdminCookies } from '../utils/authCookie.js'
 import { verifyMasterKey, resolveMasterKey } from '../utils/masterKey.js'
-import { sendEmail } from '../utils/mailer.js'
+import { sendEmail, professionalEmailFooter, fetchEmailFooterSettings } from '../utils/mailer.js'
 
 // Helper to generate access and refresh tokens
 const generateTokens = async (admin) => {
@@ -37,12 +37,15 @@ export const adminLogin = async (req, res, next) => {
     const { email, password } = req.body
     const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress
 
-    const admin = await prisma.admin.findUnique({ where: { email } })
+    const cleanEmail = email ? email.trim().toLowerCase() : ''
+    const cleanPassword = password ? password.trim() : ''
+
+    const admin = await prisma.admin.findUnique({ where: { email: cleanEmail } })
     if (!admin) {
       await prisma.activityLog.create({
         data: {
           adminId: 'UNKNOWN',
-          adminEmail: email || 'unknown',
+          adminEmail: cleanEmail || 'unknown',
           action: 'LOGIN_FAIL',
           entity: 'Admin',
           details: `Failed login: account not found. IP: ${ip}`,
@@ -68,7 +71,7 @@ export const adminLogin = async (req, res, next) => {
       })
     }
 
-    const valid = await bcrypt.compare(password, admin.passwordHash)
+    const valid = await bcrypt.compare(cleanPassword, admin.passwordHash)
     if (!valid) {
       const attempts = admin.loginAttempts + 1
       let lockoutUntil = null
@@ -443,16 +446,19 @@ export const getMe = async (req, res, next) => {
 export const changePassword = async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body
+    const cleanCurrent = currentPassword ? currentPassword.trim() : ''
+    const cleanNew = newPassword ? newPassword.trim() : ''
+
     const admin = await prisma.admin.findUnique({ where: { id: req.admin.id } })
     if (!admin) return res.status(404).json({ status: 'error', message: 'Admin not found.' })
 
-    const valid = await bcrypt.compare(currentPassword, admin.passwordHash)
+    const valid = await bcrypt.compare(cleanCurrent, admin.passwordHash)
     if (!valid) {
       return res.status(401).json({ status: 'error', message: 'Current password is incorrect.' })
     }
 
     // Check if password is same as current password
-    const matchesCurrent = await bcrypt.compare(newPassword, admin.passwordHash)
+    const matchesCurrent = await bcrypt.compare(cleanNew, admin.passwordHash)
     if (matchesCurrent) {
       return res.status(400).json({
         status: 'error',
@@ -468,7 +474,7 @@ export const changePassword = async (req, res, next) => {
     })
 
     for (const entry of history) {
-      const isMatch = await bcrypt.compare(newPassword, entry.passwordHash)
+      const isMatch = await bcrypt.compare(cleanNew, entry.passwordHash)
       if (isMatch) {
         return res.status(400).json({
           status: 'error',
@@ -477,7 +483,7 @@ export const changePassword = async (req, res, next) => {
       }
     }
 
-    const passwordHash = await bcrypt.hash(newPassword, 12)
+    const passwordHash = await bcrypt.hash(cleanNew, 12)
 
     // Save current password hash to history before updating
     await prisma.passwordHistory.create({
@@ -487,8 +493,15 @@ export const changePassword = async (req, res, next) => {
       },
     })
 
-    // Update admin password
-    await prisma.admin.update({ where: { id: admin.id }, data: { passwordHash } })
+    // Update admin password AND reset any lockouts
+    await prisma.admin.update({
+      where: { id: admin.id },
+      data: {
+        passwordHash,
+        loginAttempts: 0,
+        lockoutUntil: null,
+      },
+    })
 
     // Keep only the last 3 history records
     const allHistory = await prisma.passwordHistory.findMany({
@@ -502,7 +515,49 @@ export const changePassword = async (req, res, next) => {
       })
     }
 
-    res.json({ status: 'ok', message: 'Password updated successfully.' })
+    // Send confirmation email notification to the staff/admin member
+    const settings = await fetchEmailFooterSettings(prisma)
+    const clientUrl = env.CLIENT_URL || 'https://it-services-hindustan-projects.vercel.app'
+    const rawPath = env.ADMIN_SECRET_PATH || 'admin-login'
+    const loginPath = rawPath.startsWith('admin-') ? rawPath : `admin-${rawPath}`
+    const loginUrl = `${clientUrl}/${loginPath}`
+
+    sendEmail({
+      to: admin.email,
+      subject: 'Security Alert: Your Hindustan Projects Staff Password Was Changed',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+          <div style="background: #1A3E8C; padding: 20px; border-radius: 6px 6px 0 0; margin: -20px -20px 20px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 22px;"><span style="color: #E31E24;">Hindustan</span> Projects</h1>
+            <p style="color: #93c5fd; margin: 6px 0 0; font-size: 14px;">Staff Portal Security Update</p>
+          </div>
+
+          <p style="font-size: 16px; color: #1A1A1A;">Hello,</p>
+
+          <p style="font-size: 15px; color: #374151; line-height: 1.7;">
+            The password for your staff account (<strong>${admin.email}</strong>) at <strong>Hindustan Projects</strong> was changed successfully.
+          </p>
+
+          <div style="background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 16px 20px; margin: 20px 0;">
+            <p style="margin: 0 0 8px; font-size: 13px; color: #4B5563; text-transform: uppercase; letter-spacing: 0.05em; font-weight: bold;">Account Details</p>
+            <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">📧 <strong>Email:</strong> ${admin.email}</p>
+            <p style="margin: 0 0 6px; font-size: 14px; color: #1A1A1A;">🕒 <strong>Time:</strong> ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</p>
+            <p style="margin: 0; font-size: 14px; color: #1A1A1A;">🌐 <strong>Portal URL:</strong> <a href="${loginUrl}" style="color: #1A3E8C;">${loginUrl}</a></p>
+          </div>
+
+          <div style="background: #fff8f0; border: 1px solid #fed7aa; border-radius: 6px; padding: 12px 16px; margin: 20px 0;">
+            <p style="margin: 0; font-size: 13px; color: #92400e;">⚠️ If you did not make this password change, please contact your system administrator immediately.</p>
+          </div>
+
+          ${professionalEmailFooter(settings)}
+        </div>
+      `,
+      text: `Hello,\n\nYour password for Hindustan Projects staff portal (${admin.email}) was changed successfully.\nPortal URL: ${loginUrl}\n\nIf you did not perform this change, please contact support immediately.\n\nHindustan Projects Team`
+    }).catch((err) => {
+      console.error('[staff-email] Failed to send password change notification email:', err.message)
+    })
+
+    res.json({ status: 'ok', message: 'Password updated successfully. Confirmation email sent.' })
   } catch (err) {
     next(err)
   }
