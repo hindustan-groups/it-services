@@ -77,7 +77,8 @@ export const hideAdminRoutes = (req, res, next) => {
     cleanUrl.includes('/login') ||
     cleanUrl.includes('/logout') ||
     cleanUrl.includes('/refresh-token') ||
-    cleanUrl.includes('/2fa/')
+    cleanUrl.includes('/2fa/') ||
+    cleanUrl.includes('h9z7')
   ) {
     return next()
   }

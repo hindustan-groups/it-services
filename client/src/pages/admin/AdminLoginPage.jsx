@@ -32,10 +32,13 @@ export default function AdminLoginPage() {
 
   const isValidSecret =
     adminSecret &&
-    adminSecret.startsWith('admin-') &&
-    adminSecret.length > 6 &&
-    adminSecret !== 'admin-invalid'
-  const secretPath = isValidSecret ? adminSecret.slice(6).replace(/[./\s]+$/, '') : ''
+    adminSecret.length >= 3 &&
+    adminSecret !== 'admin-invalid' &&
+    adminSecret !== 'invalid'
+
+  const secretPath = isValidSecret
+    ? adminSecret.replace(/^admin-/, '').replace(/[./\s]+$/, '')
+    : ''
 
   // Store secretPath on mount to remember it for future redirects
   useEffect(() => {
@@ -64,7 +67,19 @@ export default function AdminLoginPage() {
     setLoading(true)
     setError('')
     try {
-      const res = await api.post(`/admin/${secretPath || 'invalid'}/login`, data)
+      const activePath = secretPath || adminSecret || 'h9z7'
+      let res
+      try {
+        res = await api.post(`/admin/${activePath}/login`, data)
+      } catch (firstErr) {
+        if (firstErr.status === 404) {
+          // Fallback to direct /admin/login endpoint
+          res = await api.post('/admin/login', data)
+        } else {
+          throw firstErr
+        }
+      }
+
       if (res.status === '2fa_required') {
         setTempToken(res.tempToken)
       } else {

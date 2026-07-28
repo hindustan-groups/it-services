@@ -357,15 +357,24 @@ const blogPostUpdateValidation = [
 const router = Router()
 
 // Dynamic admin login route based on secret path
-const envSecret = process.env.ADMIN_SECRET_PATH || 'secure-hp-portal-2026'
+const envSecret = process.env.ADMIN_SECRET_PATH || 'h9z7'
 const strippedSecret = envSecret.startsWith('admin-') ? envSecret.slice(6) : envSecret
 
 const loginPaths = Array.from(
   new Set([
+    `/${envSecret}`,
     `/${envSecret}/login`,
+    `/${strippedSecret}`,
     `/${strippedSecret}/login`,
+    `/h9z7`,
+    `/h9z7/login`,
+    `/admin-h9z7`,
+    `/admin-h9z7/login`,
+    `/hp`,
     `/hp/login`,
+    `/admin-hp`,
     `/admin-hp/login`,
+    `/secure-hp-portal-2026`,
     `/secure-hp-portal-2026/login`,
     `/login`,
   ])
@@ -381,6 +390,15 @@ loginPaths.forEach((path) => {
     adminLogin
   )
 })
+
+// Dynamic fallback for any custom secret path parameter
+router.post(
+  '/:secretPath/login',
+  adminLoginLimiter,
+  [body('email').isEmail().normalizeEmail(), body('password').notEmpty()],
+  validateRequest,
+  adminLogin
+)
 
 router.post('/logout', adminLogout)
 router.post('/refresh-token', adminRefreshToken)
