@@ -363,7 +363,7 @@ export default function App() {
             index
             element={
               <Suspense fallback={<PageFallback />}>
-                <AdminDashboardPage />
+                <NotFoundPage />
               </Suspense>
             }
           />
