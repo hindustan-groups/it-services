@@ -309,7 +309,7 @@ export default function AdminLayout() {
     }
   }
 
-  if (authFailed) {
+  if (location.pathname === '/admin' || location.pathname === '/admin/' || authFailed) {
     return <NotFoundPage />
   }
 
