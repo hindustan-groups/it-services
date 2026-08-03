@@ -67,6 +67,7 @@ const JobDetailPage = lazyWithRetry(() => import('@/pages/JobDetailPage'))
 const PrivacyPolicyPage = lazyWithRetry(() => import('@/pages/PrivacyPolicyPage'))
 const TermsOfServicePage = lazyWithRetry(() => import('@/pages/TermsOfServicePage'))
 const RefundPolicyPage = lazyWithRetry(() => import('@/pages/RefundPolicyPage'))
+const PricingPage = lazyWithRetry(() => import('@/pages/PricingPage'))
 const NotFoundPage = lazyWithRetry(() => import('@/pages/NotFoundPage'))
 
 // ── Admin pages — lazy loaded ──────────────────────────────────
@@ -470,6 +471,14 @@ export default function App() {
             element={
               <Suspense fallback={<PageFallback />}>
                 <ServiceDetailPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/pricing"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <PricingPage />
               </Suspense>
             }
           />

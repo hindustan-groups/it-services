@@ -6,6 +6,7 @@ import { useServices } from '@/hooks/useServices'
 const QUICK_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
+  { label: 'Pricing & Packages', href: '/pricing' },
   { label: 'About Us', href: '/about' },
   { label: 'Portfolio', href: '/portfolio' },
   { label: 'Blog', href: '/blog' },

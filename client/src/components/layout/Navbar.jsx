@@ -6,6 +6,7 @@ import { Container, Button } from '@/components/ui'
 const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
+  { label: 'Pricing', href: '/pricing' },
   { label: 'About', href: '/about' },
   { label: 'Portfolio', href: '/portfolio' },
   { label: 'Blog', href: '/blog' },
