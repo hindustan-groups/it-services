@@ -991,19 +991,23 @@ export default function PricingPage() {
       {/* ── FREE QUOTE MODAL ────────────────────────────────────────────── */}
       <AnimatePresence>
         {isQuoteModalOpen && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto bg-slate-900/60 backdrop-blur-md">
-            {/* Click backdrop to close */}
-            <div
-              className="fixed inset-0"
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+            {/* Dark blur backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setIsQuoteModalOpen(false)}
+              className="fixed inset-0 bg-slate-950/70 backdrop-blur-md"
             />
 
+            {/* Modal Card */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl p-6 sm:p-8 z-10 my-auto max-h-[90vh] overflow-y-auto border border-gray-100/90"
+              className="relative z-10 w-full max-w-lg bg-white rounded-3xl shadow-2xl p-6 sm:p-8 my-auto max-h-[90vh] overflow-y-auto border border-gray-100"
             >
               <button
                 type="button"
