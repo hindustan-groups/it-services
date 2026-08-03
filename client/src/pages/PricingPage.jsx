@@ -161,10 +161,82 @@ const SOFTWARE_SERVICES = [
 
 // ── 3. Mobile App Development ─────────────────────────────────────
 const APP_PACKAGES = [
-  { title: 'Basic App', price: '₹24,999', badge: 'Starter App', desc: 'Hybrid mobile app with essential screens, push notifications, and clean UI.', features: ['Cross-Platform (Android/iOS)', 'Basic Backend API', 'Push Notifications', 'Store Submission Help'] },
-  { title: 'Business App', price: '₹49,999', badge: 'Most Demanded', desc: 'Feature-packed mobile application with user accounts & payment gateways.', features: ['User Accounts & Auth', 'Payment Gateway Integration', 'Admin Control Panel', 'Analytics & Reporting'] },
-  { title: 'Professional App', price: '₹79,999', badge: 'Advanced Tech', desc: 'High-performance app with real-time tracking, chat, and offline capabilities.', features: ['Real-time Data Sync', 'In-App Live Chat', 'Location & Maps Integration', 'High Scalability'] },
-  { title: 'Enterprise App', price: 'Custom Quote', badge: 'Bespoke', desc: 'Complex mobile ecosystems with custom microservices and enterprise security.', features: ['Microservices Backend', 'Custom Security Protocol', 'SLA & 24/7 Monitoring', 'Dedicated Dev Team'] },
+  {
+    title: 'Basic App',
+    icon: Smartphone,
+    price: '₹24,999',
+    badge: 'Starter App',
+    isPopular: false,
+    headerGradient: 'from-blue-600 via-sky-600 to-indigo-600',
+    iconBg: 'bg-blue-50 text-blue-600 border-blue-200',
+    timeline: '15–20 Days',
+    desc: 'Hybrid cross-platform mobile application with essential screens, clean UI & push notifications.',
+    techStack: ['Android & iOS', 'Flutter / RN', 'REST API'],
+    features: [
+      'Cross-Platform (Android/iOS)',
+      'Basic Backend API',
+      'Push Notifications',
+      'Google Play Submission Help',
+      'Clean Modern UI',
+    ],
+  },
+  {
+    title: 'Business App',
+    icon: Zap,
+    price: '₹49,999',
+    badge: 'Most Demanded',
+    isPopular: true,
+    headerGradient: 'from-brand-red via-rose-600 to-brand-red-dark',
+    iconBg: 'bg-red-50 text-brand-red border-red-200',
+    timeline: '25–30 Days',
+    desc: 'Feature-packed mobile application with user authentication, payment gateway & admin portal.',
+    techStack: ['React Native / Flutter', 'Node.js Backend', 'Payment Gateway'],
+    features: [
+      'User Accounts & Auth',
+      'Payment Gateway Integration',
+      'Admin Control Panel',
+      'Analytics & Reporting',
+      'Play Store & App Store Publishing',
+    ],
+  },
+  {
+    title: 'Professional App',
+    icon: Cpu,
+    price: '₹79,999',
+    badge: 'Advanced Tech',
+    isPopular: false,
+    headerGradient: 'from-purple-600 via-violet-600 to-indigo-700',
+    iconBg: 'bg-purple-50 text-purple-600 border-purple-200',
+    timeline: '40–45 Days',
+    desc: 'High-performance app with real-time data sync, in-app chat, maps & offline mode capabilities.',
+    techStack: ['Full Stack App', 'Live Sync', 'Google Maps API'],
+    features: [
+      'Real-time Data Sync',
+      'In-App Live Chat',
+      'Location & Maps Integration',
+      'High Scalability & Caching',
+      'Dedicated Admin Panel',
+    ],
+  },
+  {
+    title: 'Enterprise App',
+    icon: Building2,
+    price: 'Custom Quote',
+    badge: 'Bespoke Ecosystem',
+    isPopular: false,
+    headerGradient: 'from-slate-800 via-slate-900 to-black',
+    iconBg: 'bg-slate-100 text-slate-900 border-slate-300',
+    timeline: 'Custom Scope',
+    desc: 'Complex enterprise mobile ecosystem with microservices backend and high-end security protocols.',
+    techStack: ['Microservices', 'Enterprise Security', 'Dedicated Team'],
+    features: [
+      'Microservices Backend',
+      'Custom Security Protocol',
+      'SLA & 24/7 Monitoring',
+      'Dedicated Developer Team',
+      'Custom Integration & ERP',
+    ],
+  },
 ]
 
 // ── 4. Branding Services ──────────────────────────────────────────
@@ -699,63 +771,139 @@ export default function PricingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 items-stretch">
             {APP_PACKAGES.map((app, idx) => {
-              const isFeatured = app.title === 'Business App'
+              const IconComp = app.icon
+              const isFeatured = app.isPopular
               return (
                 <motion.div
                   key={app.title}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 25 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: idx * 0.08 }}
-                  className={`relative bg-white rounded-3xl p-6 overflow-hidden transition-all duration-300 flex flex-col justify-between ${
+                  className={`relative bg-white rounded-3xl overflow-hidden transition-all duration-300 flex flex-col justify-between ${
                     isFeatured
-                      ? 'border-2 border-brand-red shadow-xl ring-2 ring-brand-red/30 lg:-translate-y-2'
-                      : 'border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-xl hover:-translate-y-1'
+                      ? 'border-2 border-brand-red shadow-[0_15px_50px_rgba(227,30,36,0.22)] ring-2 ring-brand-red/40 lg:-translate-y-3 z-10'
+                      : 'border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-2xl hover:-translate-y-1.5'
                   }`}
                 >
-                  <div className={`h-2 -mx-6 -mt-6 mb-6 bg-gradient-to-r ${isFeatured ? 'from-brand-red to-rose-600' : 'from-brand-blue to-indigo-600'}`} />
+                  {/* Top Colored Accent Bar */}
+                  <div className={`h-2.5 w-full bg-gradient-to-r ${app.headerGradient}`} />
 
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                        isFeatured ? 'bg-brand-red text-white' : 'bg-brand-blue/10 text-brand-blue'
-                      }`}>
-                        {app.badge}
-                      </span>
-                      <span className="text-[10px] font-bold text-gray-400">Android &amp; iOS</span>
+                  {/* Floating Popular Badge */}
+                  {app.badge && (
+                    <div
+                      className={`absolute top-5 right-5 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-xs ${
+                        isFeatured
+                          ? 'bg-gradient-to-r from-brand-red to-rose-600 text-white'
+                          : 'bg-brand-blue/10 text-brand-blue border border-brand-blue/20'
+                      }`}
+                    >
+                      {app.badge}
+                    </div>
+                  )}
+
+                  <div className="p-6 sm:p-7">
+                    {/* Header Icon + App Title */}
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 shadow-xs ${app.iconBg}`}>
+                        <IconComp className="w-5.5 h-5.5" />
+                      </div>
+                      <div>
+                        <h3 className="font-heading text-xl font-black text-text-dark">
+                          {app.title}
+                        </h3>
+                        <span className="text-[10px] font-bold text-gray-400 block">
+                          Android &amp; iOS Apps
+                        </span>
+                      </div>
                     </div>
 
-                    <h3 className="font-heading text-xl font-extrabold text-text-dark">{app.title}</h3>
-                    <div className="mt-3 mb-4">
-                      <span className="text-[10px] text-text-muted uppercase tracking-wider block font-semibold">Starting From</span>
-                      <span className={`font-heading text-2xl lg:text-3xl font-black ${isFeatured ? 'text-brand-red' : 'text-brand-blue'}`}>{app.price}</span>
-                    </div>
-                    <p className="text-xs text-text-muted leading-relaxed mb-5 min-h-[40px]">{app.desc}</p>
+                    <p className="text-xs text-text-muted leading-relaxed min-h-[38px]">
+                      {app.desc}
+                    </p>
 
-                    <ul className="space-y-2.5 border-t border-gray-100 pt-4 mb-6">
-                      {app.features.map((feat, fIdx) => (
-                        <li key={fIdx} className="flex items-center gap-2 text-xs text-text-dark font-semibold">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                          <span>{feat}</span>
-                        </li>
+                    {/* Tech Stack Chips */}
+                    <div className="flex flex-wrap gap-1.5 my-3">
+                      {app.techStack.map((tech, tIdx) => (
+                        <span key={tIdx} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-extrabold">
+                          {tech}
+                        </span>
                       ))}
-                    </ul>
+                    </div>
+
+                    {/* Price Block */}
+                    <div className="my-4 pt-3 border-t border-gray-100">
+                      <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">
+                        Starting From
+                      </span>
+                      <span
+                        className={`font-heading text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight ${
+                          isFeatured ? 'text-brand-red' : 'text-brand-blue'
+                        }`}
+                      >
+                        {app.price}
+                      </span>
+                      <div className="mt-2 text-[11px] font-semibold text-text-muted inline-flex items-center gap-1 bg-gray-100 px-2.5 py-0.5 rounded-md">
+                        <Clock className="w-3 h-3 text-amber-500" />
+                        Est. {app.timeline}
+                      </div>
+                    </div>
+
+                    {/* Features List */}
+                    <div className="border-t border-gray-100 pt-4 mb-2">
+                      <span className="text-[11px] font-extrabold text-text-dark uppercase tracking-wider block mb-2.5">
+                        Key Deliverables:
+                      </span>
+                      <ul className="space-y-2.5">
+                        {app.features.map((feat, fIdx) => (
+                          <li key={fIdx} className="flex items-start gap-2.5 text-xs text-text-dark">
+                            <span className="p-0.5 rounded-full bg-emerald-500 text-white mt-0.5 shrink-0 shadow-xs">
+                              <Check className="w-3 h-3 stroke-[3]" />
+                            </span>
+                            <span className="font-semibold">{feat}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
 
-                  <Button
-                    variant={isFeatured ? 'primary' : 'outline'}
-                    size="sm"
-                    fullWidth
-                    onClick={() => openQuoteModal(`Mobile App: ${app.title}`)}
-                    className={isFeatured ? 'shadow-md shadow-brand-red/25' : ''}
-                  >
-                    Get Started
-                  </Button>
+                  {/* Card Bottom CTA Button */}
+                  <div className="p-6 sm:p-7 pt-0 border-t border-gray-100/80 mt-auto">
+                    <Button
+                      variant={isFeatured ? 'primary' : 'outline'}
+                      fullWidth
+                      onClick={() => openQuoteModal(`Mobile App: ${app.title}`)}
+                      className={isFeatured ? 'shadow-lg shadow-brand-red/30' : ''}
+                    >
+                      Get Started
+                    </Button>
+                  </div>
                 </motion.div>
               )
             })}
+          </div>
+
+          {/* App Store Publishing Guarantee Banner */}
+          <div className="mt-12 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-brand-blue/10 via-brand-red/5 to-brand-blue/10 border border-brand-blue/20 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-text-dark shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-brand-blue text-white flex items-center justify-center shrink-0 shadow-xs">
+                <Smartphone className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="font-extrabold text-brand-blue block">100% App Store Publishing Guarantee</span>
+                <span className="text-text-muted text-xs">Full source code ownership, Play Store / App Store deployment help, and backend API setup.</span>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => openQuoteModal('Mobile App Architecture Consultation')}
+              className="shrink-0 text-xs"
+            >
+              Consult App Architect
+            </Button>
           </div>
         </Container>
       </section>
