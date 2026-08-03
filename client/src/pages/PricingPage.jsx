@@ -920,7 +920,7 @@ export default function PricingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
             {BRANDING_SERVICES.map((item, idx) => {
               const IconComp = item.icon
               return (
@@ -931,14 +931,17 @@ export default function PricingPage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: idx * 0.05 }}
                   onClick={() => openQuoteModal(`Branding: ${item.title}`)}
-                  className="bg-white rounded-3xl p-5 border border-gray-200/90 hover:border-brand-red/50 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 text-center flex flex-col items-center justify-between group cursor-pointer"
+                  className="bg-white rounded-3xl p-5 border border-gray-200/90 hover:border-brand-red/50 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-center flex flex-col items-center justify-between group cursor-pointer overflow-hidden relative"
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-brand-red/10 text-brand-red flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-brand-red group-hover:text-white transition-all duration-300 shadow-xs">
-                    <IconComp className="w-5.5 h-5.5" />
+                  <div className="h-1.5 w-full bg-gradient-to-r from-brand-red to-rose-600 absolute top-0 left-0" />
+                  
+                  <div className="w-13 h-13 rounded-2xl bg-brand-red/10 text-brand-red flex items-center justify-center my-2 group-hover:scale-110 group-hover:bg-brand-red group-hover:text-white transition-all duration-300 shadow-sm">
+                    <IconComp className="w-6 h-6" />
                   </div>
-                  <h3 className="font-heading text-sm font-extrabold text-text-dark mb-2 group-hover:text-brand-red transition-colors">{item.title}</h3>
-                  <div className="mt-auto pt-2 border-t border-gray-100 w-full">
-                    <span className="text-[9px] text-text-muted uppercase block font-semibold">Starting From</span>
+                  <h3 className="font-heading text-sm font-extrabold text-text-dark mb-3 group-hover:text-brand-red transition-colors">{item.title}</h3>
+                  
+                  <div className="mt-auto pt-2.5 border-t border-gray-100 w-full">
+                    <span className="text-[9px] text-text-muted uppercase block font-extrabold">Starting From</span>
                     <span className="font-heading text-base font-black text-brand-red">{item.price}</span>
                   </div>
                 </motion.div>
@@ -960,7 +963,7 @@ export default function PricingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 items-stretch">
             {MARKETING_SERVICES.map((mkt, idx) => (
               <motion.div
                 key={mkt.title}
@@ -968,28 +971,31 @@ export default function PricingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: idx * 0.08 }}
-                className="bg-white rounded-3xl p-6 border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
+                className="bg-white rounded-3xl overflow-hidden border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group"
               >
-                <div>
-                  <span className="inline-block px-3 py-1 rounded-full bg-brand-red/10 text-brand-red text-[11px] font-black uppercase tracking-wider mb-4">
+                <div className="h-2.5 w-full bg-gradient-to-r from-brand-blue via-indigo-600 to-brand-red" />
+                <div className="p-6 sm:p-7">
+                  <span className="inline-block px-3 py-1 rounded-full bg-brand-red/10 text-brand-red text-[10px] font-black uppercase tracking-wider mb-4">
                     {mkt.badge}
                   </span>
-                  <h3 className="font-heading text-xl font-extrabold text-text-dark">{mkt.title}</h3>
+                  <h3 className="font-heading text-xl font-black text-text-dark group-hover:text-brand-blue transition-colors">{mkt.title}</h3>
                   <div className="mt-3 mb-4">
-                    <span className="text-[10px] text-text-muted uppercase tracking-wider block font-semibold">Starting From</span>
-                    <span className="font-heading text-2xl lg:text-3xl font-black text-brand-blue">{mkt.price}</span>
+                    <span className="text-[10px] text-text-muted uppercase tracking-wider block font-extrabold">Starting From</span>
+                    <span className="font-heading text-3xl sm:text-4xl font-black text-brand-blue">{mkt.price}</span>
                   </div>
                   <p className="text-xs text-text-muted leading-relaxed mb-6 min-h-[48px]">{mkt.desc}</p>
                 </div>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  fullWidth
-                  onClick={() => openQuoteModal(`Digital Marketing: ${mkt.title}`)}
-                >
-                  Start Campaign
-                </Button>
+                <div className="p-6 sm:p-7 pt-0 border-t border-gray-100/80 mt-auto">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    fullWidth
+                    onClick={() => openQuoteModal(`Digital Marketing: ${mkt.title}`)}
+                  >
+                    Start Campaign
+                  </Button>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -1018,8 +1024,9 @@ export default function PricingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: idx * 0.05 }}
-                  className="bg-white rounded-3xl p-6 border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
+                  className="bg-white rounded-3xl p-6 border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group overflow-hidden relative"
                 >
+                  <div className="h-1.5 w-full bg-gradient-to-r from-brand-blue to-indigo-600 absolute top-0 left-0" />
                   <div>
                     <div className="w-12 h-12 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center mb-4 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-300 shadow-xs">
                       <IconComp className="w-6 h-6" />
@@ -1060,6 +1067,7 @@ export default function PricingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {WHY_CHOOSE_US.map((item, idx) => {
               const IconComp = item.icon
+              const stepNum = (idx + 1).toString().padStart(2, '0')
               return (
                 <motion.div
                   key={item.title}
@@ -1067,10 +1075,14 @@ export default function PricingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: idx * 0.05 }}
-                  className="bg-white rounded-3xl p-6 border border-gray-200/90 hover:border-brand-blue/40 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                  className="relative bg-white rounded-3xl p-6 border border-gray-200/90 hover:border-brand-blue/40 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden"
                 >
+                  <span className="absolute top-4 right-4 text-xs font-black text-gray-300">
+                    #{stepNum}
+                  </span>
+
                   <div>
-                    <div className="w-12 h-12 rounded-2xl bg-brand-red/10 text-brand-red flex items-center justify-center mb-4 shadow-xs">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-red/10 to-brand-blue/10 text-brand-red flex items-center justify-center mb-4 shadow-xs">
                       <IconComp className="w-6 h-6" />
                     </div>
                     <h3 className="font-heading text-base font-extrabold text-text-dark mb-2">
@@ -1089,10 +1101,10 @@ export default function PricingPage() {
       <section id="development-process" className="py-16 lg:py-24 bg-gradient-to-b from-gray-50 to-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-text-dark">
               Our Development Process
             </h2>
-            <p className="text-text-muted text-sm sm:text-base mt-2">
+            <p className="text-text-muted text-sm sm:text-base mt-3 leading-relaxed">
               A structured 9-step timeline ensuring complete transparency, quality control, and timely milestone delivery.
             </p>
           </div>
@@ -1127,7 +1139,7 @@ export default function PricingPage() {
           </div>
 
           {/* MOBILE & TABLET TIMELINE (Vertical) */}
-          <div className="lg:hidden relative pl-6 border-l-2 border-brand-red/40 space-y-8 my-6 ml-4">
+          <div className="lg:hidden relative pl-6 border-l-4 border-brand-red/50 space-y-6 my-6 ml-4">
             {PROCESS_STEPS.map((proc, idx) => (
               <motion.div
                 key={proc.step}
@@ -1135,13 +1147,13 @@ export default function PricingPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: idx * 0.05 }}
-                className="relative pl-6"
+                className="relative pl-6 bg-white p-4 rounded-2xl border border-gray-200/80 shadow-xs"
               >
                 {/* Step Circle Pin */}
-                <div className="absolute -left-[33px] top-0 w-9 h-9 rounded-full bg-white border-2 border-brand-red text-brand-red font-heading font-extrabold text-xs flex items-center justify-center shadow-md">
+                <div className="absolute -left-[37px] top-4 w-9 h-9 rounded-full bg-white border-2 border-brand-red text-brand-red font-heading font-extrabold text-xs flex items-center justify-center shadow-md">
                   {proc.step}
                 </div>
-                <h3 className="font-heading text-base font-bold text-text-dark">
+                <h3 className="font-heading text-base font-extrabold text-text-dark">
                   {proc.title}
                 </h3>
                 <p className="text-xs text-text-muted mt-1 leading-relaxed">
@@ -1157,10 +1169,10 @@ export default function PricingPage() {
       <section id="faq-section" className="py-16 lg:py-24 bg-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-text-dark">
               Frequently Asked Questions
             </h2>
-            <p className="text-text-muted text-sm sm:text-base mt-2">
+            <p className="text-text-muted text-sm sm:text-base mt-3 leading-relaxed">
               Clear answers to common questions about timelines, hosting, upgrades, and payment terms.
             </p>
           </div>
@@ -1176,12 +1188,14 @@ export default function PricingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: idx * 0.05 }}
-                  className="bg-white rounded-2xl border border-gray-200/90 shadow-xs overflow-hidden"
+                  className={`bg-white rounded-2xl border transition-all duration-300 overflow-hidden ${
+                    isOpen ? 'border-brand-blue shadow-md ring-1 ring-brand-blue/20' : 'border-gray-200/90 shadow-xs hover:border-gray-300'
+                  }`}
                 >
                   <button
                     type="button"
                     onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                    className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 font-heading font-bold text-base text-text-dark hover:text-brand-blue transition-colors focus:outline-none cursor-pointer"
+                    className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 font-heading font-extrabold text-base text-text-dark hover:text-brand-blue transition-colors focus:outline-none cursor-pointer"
                     aria-expanded={isOpen}
                   >
                     <span>{faq.question}</span>
@@ -1212,9 +1226,12 @@ export default function PricingPage() {
           </div>
 
           {/* Bottom Disclaimer Note */}
-          <div className="mt-14 max-w-3xl mx-auto text-center p-5 rounded-2xl bg-brand-blue/5 border border-brand-blue/20 text-xs sm:text-sm text-text-muted shadow-xs">
-            <span className="font-bold text-brand-blue">Note: </span>
-            "All prices shown are starting prices. Final quotation depends on project requirements, features, integrations and delivery timeline."
+          <div className="mt-14 max-w-3xl mx-auto text-center p-5 rounded-2xl bg-gradient-to-r from-brand-blue/5 via-brand-red/5 to-brand-blue/5 border border-brand-blue/20 text-xs sm:text-sm text-text-muted shadow-xs flex items-center justify-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-brand-blue shrink-0" />
+            <span>
+              <strong className="text-brand-blue">Transparent Pricing Policy: </strong>
+              "All prices shown are starting prices. Final quotation depends on project requirements, features, integrations and delivery timeline."
+            </span>
           </div>
         </Container>
       </section>
