@@ -36,6 +36,9 @@ import {
   Star,
   CheckCircle,
   Shield,
+  Rocket,
+  Crown,
+  Building2,
 } from 'lucide-react'
 import { Container, Button, SEO } from '@/components/ui'
 import { breadcrumbSchema, faqSchema } from '@/components/ui/SEO'
@@ -47,13 +50,16 @@ import { useToast } from '@/components/ui/ToastProvider'
 const WEBSITE_PACKAGES = [
   {
     name: 'Starter',
+    icon: Rocket,
     badge: 'Best for Small Business',
     isPopular: false,
+    headerGradient: 'from-blue-600 via-indigo-600 to-blue-700',
+    iconBg: 'bg-blue-50 text-blue-600 border-blue-200',
     price: '₹7,999',
     priceSubtitle: 'Starting From',
     delivery: '5–7 Days',
     support: '7 Days Free Support',
-    description: 'Perfect for startups and local businesses looking to establish a professional online presence fast.',
+    description: 'Perfect for startups and small businesses looking to launch a fast, modern website.',
     features: [
       'Up to 5 Pages',
       'Mobile Responsive Design',
@@ -69,13 +75,16 @@ const WEBSITE_PACKAGES = [
   },
   {
     name: 'Business',
+    icon: Zap,
     badge: 'Most Popular',
     isPopular: true,
+    headerGradient: 'from-brand-red via-rose-600 to-brand-red-dark',
+    iconBg: 'bg-red-50 text-brand-red border-red-200',
     price: '₹14,999',
     priceSubtitle: 'Starting From',
     delivery: '7–12 Days',
     support: '30 Days Free Support',
-    description: 'Our most popular choice for growing businesses needing premium UI, admin panel & lead tools.',
+    description: 'Our most popular package for growing businesses needing dynamic UI, blog & admin portal.',
     features: [
       'Up to 10 Pages',
       'Premium UI Design',
@@ -92,13 +101,16 @@ const WEBSITE_PACKAGES = [
   },
   {
     name: 'Professional',
+    icon: Crown,
     badge: 'Advanced & Scalable',
     isPopular: false,
+    headerGradient: 'from-purple-600 via-violet-600 to-indigo-700',
+    iconBg: 'bg-purple-50 text-purple-600 border-purple-200',
     price: '₹24,999',
     priceSubtitle: 'Starting From',
     delivery: '15–20 Days',
     support: '3 Months Support',
-    description: 'Ideal for established companies seeking custom workflows, payment gateway & high performance.',
+    description: 'Ideal for established businesses seeking dynamic features, custom dashboard & payments.',
     features: [
       'Unlimited Pages',
       'Dynamic Website',
@@ -114,20 +126,23 @@ const WEBSITE_PACKAGES = [
   },
   {
     name: 'Enterprise',
-    badge: 'Bespoke Software',
+    icon: Building2,
+    badge: 'Custom Architecture',
     isPopular: false,
+    headerGradient: 'from-slate-800 via-slate-900 to-black',
+    iconBg: 'bg-slate-100 text-slate-900 border-slate-300',
     price: 'Custom Quote',
     priceSubtitle: 'Tailored for You',
     delivery: 'Custom Timeline',
     support: 'Dedicated Support',
-    description: 'Custom web platforms, ERP/CRM suites, multi-user systems, and enterprise integrations.',
+    description: 'Complete ERP, CRM, HRMS, multi-user platforms & API integrations for large enterprises.',
     features: [
-      'ERP Integration',
-      'CRM Development',
-      'HRMS System',
-      'Inventory Management',
+      'ERP',
+      'CRM',
+      'HRMS',
+      'Inventory',
       'API Integrations',
-      'Multi User Access',
+      'Multi User',
       'Custom Dashboard',
       'Dedicated Support',
     ],
@@ -487,93 +502,130 @@ export default function PricingPage() {
       <section id="website-packages" className="py-16 lg:py-24 bg-bg-base scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="inline-block px-3 py-1 rounded-full bg-brand-red/10 text-brand-red text-xs font-extrabold uppercase tracking-widest mb-2">
+            <span className="inline-block px-3.5 py-1 rounded-full bg-brand-red/10 text-brand-red text-xs font-extrabold uppercase tracking-widest mb-2">
               Section 1
             </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-text-dark">
               Website Development Packages
             </h2>
-            <p className="text-text-muted text-sm sm:text-base mt-2">
-              High-performance, mobile-responsive website solutions built to scale your brand and generate high-quality leads.
+            <p className="text-text-muted text-sm sm:text-base mt-3 leading-relaxed">
+              High-performance, mobile-responsive website solutions built to scale your business and capture high-intent leads.
             </p>
           </div>
 
-          {/* Pricing Grid */}
+          {/* Pricing Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 items-stretch">
-            {WEBSITE_PACKAGES.map((pkg, idx) => (
-              <motion.div
-                key={pkg.name}
-                initial={{ opacity: 0, y: 25 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.1 }}
-                className={`relative flex flex-col justify-between rounded-3xl p-6 sm:p-7 transition-all duration-300 ${
-                  pkg.isPopular
-                    ? 'bg-gradient-to-b from-white via-red-50/30 to-white border-2 border-brand-red shadow-[0_12px_40px_rgba(227,30,36,0.18)] lg:-translate-y-3 z-10'
-                    : 'bg-white border border-gray-200/90 hover:border-brand-blue/40 shadow-sm hover:shadow-xl hover:-translate-y-1.5'
-                }`}
-              >
-                {/* Popular Badge */}
-                {pkg.badge && (
-                  <div
-                    className={`absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow-md ${
-                      pkg.isPopular
-                        ? 'bg-gradient-to-r from-brand-red to-rose-600 text-white'
-                        : 'bg-brand-blue/10 text-brand-blue border border-brand-blue/20'
-                    }`}
-                  >
-                    {pkg.badge}
-                  </div>
-                )}
+            {WEBSITE_PACKAGES.map((pkg, idx) => {
+              const IconComp = pkg.icon
+              return (
+                <motion.div
+                  key={pkg.name}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: idx * 0.1 }}
+                  className={`relative flex flex-col justify-between rounded-3xl transition-all duration-300 overflow-hidden ${
+                    pkg.isPopular
+                      ? 'bg-gradient-to-b from-white via-red-50/40 to-white border-2 border-brand-red shadow-[0_15px_50px_rgba(227,30,36,0.22)] ring-2 ring-brand-red/40 lg:-translate-y-3 z-10'
+                      : 'bg-white border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-2xl hover:-translate-y-1.5'
+                  }`}
+                >
+                  {/* Top Colored Gradient Accent Line */}
+                  <div className={`h-2.5 w-full bg-gradient-to-r ${pkg.headerGradient}`} />
 
-                <div>
-                  <h3 className="font-heading text-xl font-bold text-text-dark pt-2">
-                    {pkg.name}
-                  </h3>
-                  <p className="text-xs text-text-muted mt-1 leading-relaxed min-h-[36px]">
-                    {pkg.description}
-                  </p>
-
-                  <div className="my-5 pt-3 border-t border-gray-100">
-                    <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider block">
-                      {pkg.priceSubtitle}
-                    </span>
-                    <span
-                      className={`font-heading text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight ${
-                        pkg.isPopular ? 'text-brand-red' : 'text-brand-blue'
+                  {/* Floating Popular / Category Badge */}
+                  {pkg.badge && (
+                    <div
+                      className={`absolute top-5 right-5 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-xs ${
+                        pkg.isPopular
+                          ? 'bg-gradient-to-r from-brand-red to-rose-600 text-white'
+                          : 'bg-brand-blue/10 text-brand-blue border border-brand-blue/20'
                       }`}
                     >
-                      {pkg.price}
-                    </span>
+                      {pkg.badge}
+                    </div>
+                  )}
+
+                  <div className="p-6 sm:p-7">
+                    {/* Header Icon + Name */}
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 shadow-xs ${pkg.iconBg}`}>
+                        <IconComp className="w-5.5 h-5.5" />
+                      </div>
+                      <div>
+                        <h3 className="font-heading text-xl font-black text-text-dark">
+                          {pkg.name}
+                        </h3>
+                        <span className="text-[11px] font-bold text-emerald-600 block">
+                          ✔ Verified Plan
+                        </span>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-text-muted leading-relaxed min-h-[38px]">
+                      {pkg.description}
+                    </p>
+
+                    {/* Price Block */}
+                    <div className="my-5 pt-4 border-t border-gray-100">
+                      <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">
+                        {pkg.priceSubtitle}
+                      </span>
+                      <div className="flex items-baseline gap-1 mt-0.5">
+                        <span
+                          className={`font-heading text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight ${
+                            pkg.isPopular ? 'text-brand-red' : 'text-brand-blue'
+                          }`}
+                        >
+                          {pkg.price}
+                        </span>
+                      </div>
+
+                      {/* Delivery & Support Badges */}
+                      <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-semibold text-text-muted">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-100 text-gray-700">
+                          <Zap className="w-3 h-3 text-amber-500" />
+                          {pkg.delivery}
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-100 text-gray-700">
+                          <Shield className="w-3 h-3 text-brand-blue" />
+                          {pkg.support}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Feature Checklist */}
+                    <div className="border-t border-gray-100 pt-5 mb-2">
+                      <span className="text-[11px] font-extrabold text-text-dark uppercase tracking-wider block mb-3">
+                        Included Features:
+                      </span>
+                      <ul className="space-y-3">
+                        {pkg.features.map((feature, fIdx) => (
+                          <li key={fIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-text-dark">
+                            <span className="p-0.5 rounded-full bg-emerald-500 text-white mt-0.5 shrink-0 shadow-xs">
+                              <Check className="w-3 h-3 stroke-[3]" />
+                            </span>
+                            <span className="font-semibold">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
 
-                  {/* Feature Checklist */}
-                  <div className="border-t border-gray-100 pt-5 mb-6">
-                    <ul className="space-y-3">
-                      {pkg.features.map((feature, fIdx) => (
-                        <li key={fIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-text-dark">
-                          <span className="p-0.5 rounded-full bg-emerald-100 text-emerald-600 mt-0.5 shrink-0">
-                            <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                          </span>
-                          <span className="font-medium">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  {/* Card Bottom CTA Button */}
+                  <div className="p-6 sm:p-7 pt-0 border-t border-gray-100/80 mt-auto">
+                    <Button
+                      variant={pkg.isPopular ? 'primary' : 'outline'}
+                      fullWidth
+                      onClick={() => openQuoteModal(`Website Package: ${pkg.name}`)}
+                      className={pkg.isPopular ? 'shadow-lg shadow-brand-red/30' : ''}
+                    >
+                      Get Started
+                    </Button>
                   </div>
-                </div>
-
-                <div className="pt-4 border-t border-gray-100">
-                  <Button
-                    variant={pkg.isPopular ? 'primary' : 'outline'}
-                    fullWidth
-                    onClick={() => openQuoteModal(`Website Package: ${pkg.name}`)}
-                    className={pkg.isPopular ? 'shadow-md shadow-brand-red/25' : ''}
-                  >
-                    Get Started
-                  </Button>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              )
+            })}
           </div>
         </Container>
       </section>
