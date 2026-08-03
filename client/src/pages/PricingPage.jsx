@@ -361,32 +361,56 @@ const PROCESS_STEPS = [
   { step: '09', title: 'Support', desc: 'Providing ongoing post-delivery technical help and training.' },
 ]
 
-// ── 9. FAQs Accordion Data ────────────────────────────────────────
+// ── 9. Quick 10 Deliverables & Policy Guarantees ──────────────────
+const QUICK_GUARANTEES_10 = [
+  { question: 'Kitna time lagega?', answer: 'Starter: 5–7 Days | Business: 7–10 Days | Apps & Software: 15–25 Days.', icon: Clock, badge: 'Fast Delivery' },
+  { question: 'Domain included?', answer: 'Yes! 1 Year Free .com / .in Domain in Business & Professional plans.', icon: Globe, badge: 'Free Domain' },
+  { question: 'Hosting included?', answer: 'Yes! High-speed NVMe SSD Cloud Hosting with SSL included in all plans.', icon: Server, badge: 'Free Cloud Hosting' },
+  { question: 'Payment kaise hoga?', answer: 'Flexible 50% Advance to start & balance 50% after complete live demo via UPI / Bank Transfer.', icon: CreditCard, badge: '50% Milestone' },
+  { question: 'Future update milega?', answer: 'Yes! Full Source Code ownership + Easy Content & Future Stack Upgrade Support.', icon: RefreshCw, badge: 'Source Code Access' },
+  { question: 'Admin Panel milega?', answer: 'Yes! Easy-to-use Admin Panel to manage leads, blogs, and site content without coding.', icon: LayoutDashboard, badge: 'Admin Control' },
+  { question: 'SEO included?', answer: 'Yes! 100% On-Page SEO, Google Search Console Indexing & Meta Tag setup included.', icon: Search, badge: 'Google SEO Ready' },
+  { question: 'Mobile responsive?', answer: 'Yes! 100% Mobile, Tablet, Laptop, and Desktop Responsive Layout guarantee.', icon: Smartphone, badge: '100% Mobile Ready' },
+  { question: 'Warranty?', answer: 'Yes! 100% Bug-Free Code Warranty. Any technical glitch post-launch is fixed at zero cost.', icon: ShieldCheck, badge: 'Bug-Free Warranty' },
+  { question: 'Support?', answer: 'Free Dedicated Support: Starter = 1 Month, Business = 2 Months, Professional = 5 Months.', icon: Headphones, badge: 'Free Support' },
+]
+
+// ── 10. FAQs Accordion Data ────────────────────────────────────────
 const FAQS = [
   {
-    question: 'How long does a website take?',
+    question: 'Kitna time lagega website / app banane me?',
     answer:
-      'Standard websites take between 5 to 12 days depending on the package selected. Starter websites are delivered in 5–7 days, Business packages in 7–12 days, and custom web applications or enterprise software in 15–20+ days.',
+      'Starter websites 5–7 Days me deliver hoti hain. Business websites 7–10 Days me, and Mobile Apps / Custom Software 15–25 Days me complete live deliver hoti hain.',
   },
   {
-    question: 'Can I upgrade later?',
+    question: 'Kya Domain aur Hosting free milegi?',
     answer:
-      'Yes, absolutely! You can start with a base package like Starter and upgrade to Business or Professional at any time as your business grows. We ensure seamless upgrades with zero downtime and full content preservation.',
+      'Haan! Sabhi packages me High-Speed NVMe SSD Cloud Hosting & SSL Certificate included hai. Business & Professional packages me 1 Year Free .com / .in Domain Name bhi shamil hai.',
   },
   {
-    question: 'Do you provide hosting?',
+    question: 'Payment kaise aur kitne steps me hoga?',
     answer:
-      'Yes! We provide complete domain registration, high-speed NVMe SSD cloud hosting, SSL security certificates, and business email setups as part of our hosting and maintenance services.',
+      'Payment simple milestone breakdown par hota hai: 50% Advance start karne ke liye, aur baki 50% final live website demo dikhane ke baad. Payment UPI (GPay, PhonePe, Paytm), Cards, ya Net Banking se kar sakte hain.',
   },
   {
-    question: 'What payment methods are accepted?',
+    question: 'Kya Admin Panel aur Source Code milega?',
     answer:
-      'We accept all major payment options including UPI (Google Pay, PhonePe, Paytm), Credit/Debit Cards, Net Banking, and direct NEFT/RTGS bank transfers. We operate on a standard 40% advance to start development.',
+      'Haan! Aapko user-friendly Admin Dashboard milta hai jahan se aap leads, content aur images khud update kar sakte hain. Saath hi 100% Source Code Ownership aapka hota hai.',
   },
   {
-    question: 'Will I receive support after delivery?',
+    question: 'Kya future updates aur modification support milega?',
     answer:
-      'Yes! Every package comes with complimentary post-delivery support (ranging from 7 days to 3 months depending on the plan). We also offer Annual Maintenance Contracts (AMC) for ongoing maintenance.',
+      'Bilkul! Future me website me additional features, pages ya technology upgrade karwana bilkul easy hai. Hum complete upgrade support provide karte hain.',
+  },
+  {
+    question: 'SEO aur Mobile Responsiveness included hai kya?',
+    answer:
+      'Haan! Har website 100% Mobile, Tablet & Desktop responsive hoti hai, aur Google Search Console Indexing + On-Page SEO optimization default included rehta hai.',
+  },
+  {
+    question: 'Post-delivery Warranty aur Support kitne time ka milega?',
+    answer:
+      'Complimentary Technical Support: Starter Package par 1 Month, Business Package par 2 Months, aur Professional Package par 5 Months Support milta hai. Saath hi 100% Bug-Free Code Warranty bhi di jaati hai.',
   },
 ]
 
@@ -637,6 +661,58 @@ export default function PricingPage() {
           </a>
         </Container>
       </div>
+
+      {/* ── 10 QUICK DELIVERABLES & POLICY GUARANTEES ─────────────────── */}
+      <section className="py-12 bg-gradient-to-b from-gray-50 to-bg-base border-b border-gray-200/60">
+        <Container>
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="inline-block px-3.5 py-1 rounded-full bg-brand-red/10 text-brand-red text-xs font-black uppercase tracking-wider mb-2.5">
+              10-Point Client Promise
+            </span>
+            <h2 className="font-heading text-2xl sm:text-3xl font-black text-text-dark">
+              Quick Answers &amp; Package Deliverables
+            </h2>
+            <p className="text-text-muted text-xs sm:text-sm mt-1.5">
+              Everything you need to know about timelines, hosting, domain, payments &amp; support before getting started.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {QUICK_GUARANTEES_10.map((item, idx) => {
+              const IconComp = item.icon
+              return (
+                <motion.div
+                  key={item.question}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: idx * 0.04 }}
+                  className="bg-white rounded-2xl p-4 border border-gray-200/90 shadow-xs hover:shadow-md hover:border-brand-blue/40 transition-all flex flex-col justify-between group relative overflow-hidden"
+                >
+                  <div className="h-1 w-full bg-gradient-to-r from-brand-blue to-brand-red absolute top-0 left-0" />
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <div className="w-8 h-8 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center group-hover:bg-brand-blue group-hover:text-white transition-colors">
+                        <IconComp className="w-4 h-4" />
+                      </div>
+                      <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                        {item.badge}
+                      </span>
+                    </div>
+
+                    <h3 className="font-heading text-xs font-black text-text-dark group-hover:text-brand-blue transition-colors">
+                      {item.question}
+                    </h3>
+                    <p className="text-[11px] text-text-muted mt-1 leading-snug">
+                      {item.answer}
+                    </p>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+        </Container>
+      </section>
 
       {/* ── SECTION 1: WEBSITE DEVELOPMENT PACKAGES ───────────────────── */}
       <section id="website-packages" className="py-16 lg:py-24 bg-bg-base scroll-mt-24">
