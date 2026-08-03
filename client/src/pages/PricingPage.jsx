@@ -251,10 +251,78 @@ const BRANDING_SERVICES = [
 
 // ── 5. Digital Marketing ──────────────────────────────────────────
 const MARKETING_SERVICES = [
-  { title: 'SEO', price: '₹4,999/month', badge: 'Organic Growth', desc: 'Rank #1 on Google with keyword research, technical SEO, and link building.' },
-  { title: 'Google Ads', price: '₹5,999/month', badge: 'Instant Leads', desc: 'High-converting PPC search and display campaigns targeting high-intent buyers.' },
-  { title: 'Meta Ads', price: '₹5,999/month', badge: 'Social Reach', desc: 'Targeted Instagram & Facebook ad campaigns with high-converting creative designs.' },
-  { title: 'Social Media Management', price: '₹6,999/month', badge: 'Brand Presence', desc: 'Custom graphics, reels content calendar, page management & audience engagement.' },
+  {
+    title: 'SEO (Google Ranking)',
+    icon: TrendingUp,
+    price: '₹4,999',
+    period: '/ month',
+    badge: 'Organic Growth',
+    isPopular: false,
+    headerGradient: 'from-emerald-500 via-teal-600 to-emerald-700',
+    iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+    desc: 'Rank #1 on Google Search with high-intent keyword research, technical SEO, and link building.',
+    features: [
+      'Keyword & Competitor Research',
+      'On-Page & Technical SEO',
+      'High-DA Link Building',
+      'Google Maps (GMB) Optimization',
+      'Monthly Traffic & Ranking Reports',
+    ],
+  },
+  {
+    title: 'Google Ads (PPC)',
+    icon: Zap,
+    price: '₹5,999',
+    period: '/ month',
+    badge: 'Highest Lead ROI',
+    isPopular: true,
+    headerGradient: 'from-brand-red via-rose-600 to-brand-red-dark',
+    iconBg: 'bg-red-50 text-brand-red border-red-200',
+    desc: 'High-converting Google Search & Display PPC campaigns targeting ready-to-buy customers.',
+    features: [
+      'Search & Display Campaign Setup',
+      'High-Intent Buyer Keyword Bidding',
+      'Negative Keyword Filtering',
+      'Conversion Tracking & Analytics',
+      'Landing Page Consultation',
+    ],
+  },
+  {
+    title: 'Meta Ads (Insta & FB)',
+    icon: MessageSquare,
+    price: '₹5,999',
+    period: '/ month',
+    badge: 'Targeted Reach',
+    isPopular: false,
+    headerGradient: 'from-blue-600 via-indigo-600 to-blue-700',
+    iconBg: 'bg-blue-50 text-blue-600 border-blue-200',
+    desc: 'Targeted Instagram & Facebook lead generation ads with high-converting visual creative designs.',
+    features: [
+      'FB & Instagram Ad Campaign Setup',
+      'Laser-Targeted Audience Demographics',
+      'Retargeting & Lookalike Audiences',
+      'High-Converting Graphic & Reel Ads',
+      'A/B Testing & Weekly Optimization',
+    ],
+  },
+  {
+    title: 'Social Media Management',
+    icon: Palette,
+    price: '₹6,999',
+    period: '/ month',
+    badge: 'Complete Brand Presence',
+    isPopular: false,
+    headerGradient: 'from-purple-600 via-pink-600 to-rose-600',
+    iconBg: 'bg-purple-50 text-purple-600 border-purple-200',
+    desc: 'Custom social media graphics, reels content calendar, page management & audience engagement.',
+    features: [
+      '12+ Custom Graphic Posts / Month',
+      'Trending Reels Content Calendar',
+      'Page Setup & Profile Branding',
+      'Hashtag & Audience Growth Strategy',
+      'Community Comment & DM Help',
+    ],
+  },
 ]
 
 // ── 6. Hosting & Maintenance Feature Cards ───────────────────────
@@ -964,40 +1032,127 @@ export default function PricingPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 items-stretch">
-            {MARKETING_SERVICES.map((mkt, idx) => (
-              <motion.div
-                key={mkt.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.08 }}
-                className="bg-white rounded-3xl overflow-hidden border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group"
-              >
-                <div className="h-2.5 w-full bg-gradient-to-r from-brand-blue via-indigo-600 to-brand-red" />
-                <div className="p-6 sm:p-7">
-                  <span className="inline-block px-3 py-1 rounded-full bg-brand-red/10 text-brand-red text-[10px] font-black uppercase tracking-wider mb-4">
-                    {mkt.badge}
-                  </span>
-                  <h3 className="font-heading text-xl font-black text-text-dark group-hover:text-brand-blue transition-colors">{mkt.title}</h3>
-                  <div className="mt-3 mb-4">
-                    <span className="text-[10px] text-text-muted uppercase tracking-wider block font-extrabold">Starting From</span>
-                    <span className="font-heading text-3xl sm:text-4xl font-black text-brand-blue">{mkt.price}</span>
-                  </div>
-                  <p className="text-xs text-text-muted leading-relaxed mb-6 min-h-[48px]">{mkt.desc}</p>
-                </div>
+            {MARKETING_SERVICES.map((mkt, idx) => {
+              const IconComp = mkt.icon
+              const isFeatured = mkt.isPopular
+              return (
+                <motion.div
+                  key={mkt.title}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: idx * 0.08 }}
+                  className={`relative bg-white rounded-3xl overflow-hidden transition-all duration-300 flex flex-col justify-between ${
+                    isFeatured
+                      ? 'border-2 border-brand-red shadow-[0_15px_50px_rgba(227,30,36,0.22)] ring-2 ring-brand-red/40 lg:-translate-y-3 z-10'
+                      : 'border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-2xl hover:-translate-y-1.5'
+                  }`}
+                >
+                  {/* Top Colored Accent Line */}
+                  <div className={`h-2.5 w-full bg-gradient-to-r ${mkt.headerGradient}`} />
 
-                <div className="p-6 sm:p-7 pt-0 border-t border-gray-100/80 mt-auto">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    fullWidth
-                    onClick={() => openQuoteModal(`Digital Marketing: ${mkt.title}`)}
-                  >
-                    Start Campaign
-                  </Button>
-                </div>
-              </motion.div>
-            ))}
+                  {/* Badge */}
+                  {mkt.badge && (
+                    <div
+                      className={`absolute top-5 right-5 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-xs ${
+                        isFeatured
+                          ? 'bg-gradient-to-r from-brand-red to-rose-600 text-white'
+                          : 'bg-brand-blue/10 text-brand-blue border border-brand-blue/20'
+                      }`}
+                    >
+                      {mkt.badge}
+                    </div>
+                  )}
+
+                  <div className="p-6 sm:p-7">
+                    {/* Header Icon + Service Title */}
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 shadow-xs ${mkt.iconBg}`}>
+                        <IconComp className="w-5.5 h-5.5" />
+                      </div>
+                      <div>
+                        <h3 className="font-heading text-lg font-black text-text-dark leading-snug">
+                          {mkt.title}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-text-muted leading-relaxed min-h-[38px]">
+                      {mkt.desc}
+                    </p>
+
+                    {/* Clean Price & Billing Suffix (Fixes '/month' wrapping issue completely) */}
+                    <div className="my-4 pt-4 border-t border-gray-100">
+                      <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">
+                        Monthly Retainer
+                      </span>
+                      <div className="flex items-baseline gap-2 mt-1 flex-wrap">
+                        <span
+                          className={`font-heading text-3xl sm:text-4xl font-black tracking-tight ${
+                            isFeatured ? 'text-brand-red' : 'text-brand-blue'
+                          }`}
+                        >
+                          {mkt.price}
+                        </span>
+                        <span className="text-xs font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-md border border-gray-200 shrink-0">
+                          {mkt.period}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Key Deliverables List */}
+                    <div className="border-t border-gray-100 pt-4 mb-2">
+                      <span className="text-[11px] font-extrabold text-text-dark uppercase tracking-wider block mb-2.5">
+                        Campaign Includes:
+                      </span>
+                      <ul className="space-y-2.5">
+                        {mkt.features.map((feat, fIdx) => (
+                          <li key={fIdx} className="flex items-start gap-2.5 text-xs text-text-dark">
+                            <span className="p-0.5 rounded-full bg-emerald-500 text-white mt-0.5 shrink-0 shadow-xs">
+                              <Check className="w-3 h-3 stroke-[3]" />
+                            </span>
+                            <span className="font-semibold">{feat}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Card Bottom CTA Button */}
+                  <div className="p-6 sm:p-7 pt-0 border-t border-gray-100/80 mt-auto">
+                    <Button
+                      variant={isFeatured ? 'primary' : 'outline'}
+                      fullWidth
+                      onClick={() => openQuoteModal(`Digital Marketing: ${mkt.title}`)}
+                      className={isFeatured ? 'shadow-lg shadow-brand-red/30' : ''}
+                    >
+                      Start Campaign
+                    </Button>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+
+          {/* Marketing Consultation Strip */}
+          <div className="mt-12 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-brand-red/5 via-brand-blue/10 to-brand-red/5 border border-brand-blue/20 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-text-dark shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-brand-red text-white flex items-center justify-center shrink-0 shadow-xs">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="font-extrabold text-brand-blue block">Need Custom Multi-Channel Marketing Budget?</span>
+                <span className="text-text-muted text-xs">We create combined SEO + Google Ads + Meta Ads strategy tailored for maximum business ROI.</span>
+              </div>
+            </div>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => openQuoteModal('Custom Marketing Strategy Consultation')}
+              className="shrink-0 text-xs shadow-md shadow-brand-red/20"
+            >
+              Get Custom Ad Proposal
+            </Button>
           </div>
         </Container>
       </section>
