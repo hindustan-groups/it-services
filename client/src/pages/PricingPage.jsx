@@ -683,34 +683,34 @@ export default function PricingPage() {
                     </div>
                   )}
 
-                  <div className="p-6 sm:p-7">
+                  <div className="p-5 sm:p-6">
                     {/* Header Icon + Name */}
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 shadow-xs ${pkg.iconBg}`}>
-                        <IconComp className="w-5.5 h-5.5" />
+                    <div className="flex items-center gap-3 mb-2.5">
+                      <div className={`w-10 h-10 rounded-2xl border flex items-center justify-center shrink-0 shadow-xs ${pkg.iconBg}`}>
+                        <IconComp className="w-5 h-5" />
                       </div>
                       <div>
                         <h3 className="font-heading text-xl font-black text-text-dark">
                           {pkg.name}
                         </h3>
-                        <span className="text-[11px] font-bold text-emerald-600 block">
+                        <span className="text-[10px] font-bold text-emerald-600 block">
                           ✔ Verified Plan
                         </span>
                       </div>
                     </div>
 
-                    <p className="text-xs text-text-muted leading-relaxed min-h-[38px]">
+                    <p className="text-xs text-text-muted leading-relaxed">
                       {pkg.description}
                     </p>
 
                     {/* Price Block */}
-                    <div className="my-5 pt-4 border-t border-gray-100">
+                    <div className="my-3.5 pt-3 border-t border-gray-100">
                       <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">
                         {pkg.priceSubtitle}
                       </span>
                       <div className="flex items-baseline gap-1 mt-0.5">
                         <span
-                          className={`font-heading text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight ${
+                          className={`font-heading text-3xl sm:text-4xl font-black tracking-tight ${
                             pkg.isPopular ? 'text-brand-red' : 'text-brand-blue'
                           }`}
                         >
@@ -719,12 +719,12 @@ export default function PricingPage() {
                       </div>
 
                       {/* Delivery & Support Badges */}
-                      <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-semibold text-text-muted">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-100 text-gray-700">
+                      <div className="mt-2.5 flex flex-wrap gap-1.5 text-[11px] font-semibold text-text-muted">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-gray-100 text-gray-700 text-[10px]">
                           <Zap className="w-3 h-3 text-amber-500" />
                           {pkg.delivery}
                         </span>
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-100 text-gray-700">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-gray-100 text-gray-700 text-[10px]">
                           <Shield className="w-3 h-3 text-brand-blue" />
                           {pkg.support}
                         </span>
@@ -732,15 +732,15 @@ export default function PricingPage() {
                     </div>
 
                     {/* Feature Checklist */}
-                    <div className="border-t border-gray-100 pt-5 mb-2">
-                      <span className="text-[11px] font-extrabold text-text-dark uppercase tracking-wider block mb-3">
+                    <div className="border-t border-gray-100 pt-3 mb-1">
+                      <span className="text-[10px] font-extrabold text-text-dark uppercase tracking-wider block mb-2">
                         Included Features:
                       </span>
-                      <ul className="space-y-3">
+                      <ul className="space-y-2">
                         {pkg.features.map((feature, fIdx) => (
-                          <li key={fIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-text-dark">
+                          <li key={fIdx} className="flex items-start gap-2 text-xs text-text-dark">
                             <span className="p-0.5 rounded-full bg-emerald-500 text-white mt-0.5 shrink-0 shadow-xs">
-                              <Check className="w-3 h-3 stroke-[3]" />
+                              <Check className="w-2.5 h-2.5 stroke-[3]" />
                             </span>
                             <span className="font-semibold">{feature}</span>
                           </li>
@@ -750,7 +750,7 @@ export default function PricingPage() {
                   </div>
 
                   {/* Card Bottom CTA Button */}
-                  <div className="p-6 sm:p-7 pt-0 border-t border-gray-100/80 mt-auto">
+                  <div className="p-5 sm:p-6 pt-0 border-t border-gray-100/80 mt-auto">
                     <Button
                       variant={pkg.isPopular ? 'primary' : 'outline'}
                       fullWidth
@@ -792,20 +792,20 @@ export default function PricingPage() {
                   className="bg-white rounded-3xl overflow-hidden border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group"
                 >
                   <div className={`h-2 w-full bg-gradient-to-r ${item.color}`} />
-                  <div className="p-6 sm:p-7">
-                    <div className={`w-13 h-13 rounded-2xl bg-gradient-to-br ${item.color} text-white flex items-center justify-center mb-5 shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                  <div className="p-5 sm:p-6">
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.color} text-white flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300`}>
                       <IconComp className="w-6 h-6" />
                     </div>
 
                     <h3 className="font-heading text-xl font-bold text-text-dark group-hover:text-brand-blue transition-colors">
                       {item.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-text-muted mt-2.5 leading-relaxed min-h-[44px]">
+                    <p className="text-xs sm:text-sm text-text-muted mt-2 leading-relaxed">
                       {item.desc}
                     </p>
                   </div>
 
-                  <div className="p-6 sm:p-7 pt-0 border-t border-gray-100/80 mt-auto flex items-center justify-between">
+                  <div className="p-5 sm:p-6 pt-0 border-t border-gray-100/80 mt-auto flex items-center justify-between">
                     <div>
                       <span className="text-[10px] text-text-muted uppercase tracking-wider block font-extrabold">Starting From</span>
                       <span className="font-heading text-xl font-black text-brand-red">{item.price}</span>
@@ -872,11 +872,11 @@ export default function PricingPage() {
                     </div>
                   )}
 
-                  <div className="p-6 sm:p-7">
+                  <div className="p-5 sm:p-6">
                     {/* Header Icon + App Title */}
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 shadow-xs ${app.iconBg}`}>
-                        <IconComp className="w-5.5 h-5.5" />
+                    <div className="flex items-center gap-3 mb-2.5">
+                      <div className={`w-10 h-10 rounded-2xl border flex items-center justify-center shrink-0 shadow-xs ${app.iconBg}`}>
+                        <IconComp className="w-5 h-5" />
                       </div>
                       <div>
                         <h3 className="font-heading text-xl font-black text-text-dark">
@@ -888,12 +888,12 @@ export default function PricingPage() {
                       </div>
                     </div>
 
-                    <p className="text-xs text-text-muted leading-relaxed min-h-[38px]">
+                    <p className="text-xs text-text-muted leading-relaxed">
                       {app.desc}
                     </p>
 
                     {/* Tech Stack Chips */}
-                    <div className="flex flex-wrap gap-1.5 my-3">
+                    <div className="flex flex-wrap gap-1.5 my-2.5">
                       {app.techStack.map((tech, tIdx) => (
                         <span key={tIdx} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-extrabold">
                           {tech}
@@ -902,33 +902,33 @@ export default function PricingPage() {
                     </div>
 
                     {/* Price Block */}
-                    <div className="my-4 pt-3 border-t border-gray-100">
+                    <div className="my-3 pt-3 border-t border-gray-100">
                       <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">
                         Starting From
                       </span>
                       <span
-                        className={`font-heading text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight ${
+                        className={`font-heading text-3xl sm:text-4xl font-black tracking-tight ${
                           isFeatured ? 'text-brand-red' : 'text-brand-blue'
                         }`}
                       >
                         {app.price}
                       </span>
-                      <div className="mt-2 text-[11px] font-semibold text-text-muted inline-flex items-center gap-1 bg-gray-100 px-2.5 py-0.5 rounded-md">
+                      <div className="mt-1.5 text-[10px] font-semibold text-text-muted inline-flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded-md">
                         <Clock className="w-3 h-3 text-amber-500" />
                         Est. {app.timeline}
                       </div>
                     </div>
 
                     {/* Features List */}
-                    <div className="border-t border-gray-100 pt-4 mb-2">
-                      <span className="text-[11px] font-extrabold text-text-dark uppercase tracking-wider block mb-2.5">
+                    <div className="border-t border-gray-100 pt-3 mb-1">
+                      <span className="text-[10px] font-extrabold text-text-dark uppercase tracking-wider block mb-2">
                         Key Deliverables:
                       </span>
-                      <ul className="space-y-2.5">
+                      <ul className="space-y-2">
                         {app.features.map((feat, fIdx) => (
-                          <li key={fIdx} className="flex items-start gap-2.5 text-xs text-text-dark">
+                          <li key={fIdx} className="flex items-start gap-2 text-xs text-text-dark">
                             <span className="p-0.5 rounded-full bg-emerald-500 text-white mt-0.5 shrink-0 shadow-xs">
-                              <Check className="w-3 h-3 stroke-[3]" />
+                              <Check className="w-2.5 h-2.5 stroke-[3]" />
                             </span>
                             <span className="font-semibold">{feat}</span>
                           </li>
@@ -938,7 +938,7 @@ export default function PricingPage() {
                   </div>
 
                   {/* Card Bottom CTA Button */}
-                  <div className="p-6 sm:p-7 pt-0 border-t border-gray-100/80 mt-auto">
+                  <div className="p-5 sm:p-6 pt-0 border-t border-gray-100/80 mt-auto">
                     <Button
                       variant={isFeatured ? 'primary' : 'outline'}
                       fullWidth
@@ -1064,11 +1064,11 @@ export default function PricingPage() {
                     </div>
                   )}
 
-                  <div className="p-6 sm:p-7">
+                  <div className="p-5 sm:p-6">
                     {/* Header Icon + Service Title */}
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 shadow-xs ${mkt.iconBg}`}>
-                        <IconComp className="w-5.5 h-5.5" />
+                    <div className="flex items-center gap-3 mb-2.5">
+                      <div className={`w-10 h-10 rounded-2xl border flex items-center justify-center shrink-0 shadow-xs ${mkt.iconBg}`}>
+                        <IconComp className="w-5 h-5" />
                       </div>
                       <div>
                         <h3 className="font-heading text-lg font-black text-text-dark leading-snug">
@@ -1077,12 +1077,12 @@ export default function PricingPage() {
                       </div>
                     </div>
 
-                    <p className="text-xs text-text-muted leading-relaxed min-h-[38px]">
+                    <p className="text-xs text-text-muted leading-relaxed">
                       {mkt.desc}
                     </p>
 
-                    {/* Clean Price & Billing Suffix (Fixes '/month' wrapping issue completely) */}
-                    <div className="my-4 pt-4 border-t border-gray-100">
+                    {/* Clean Price & Billing Suffix */}
+                    <div className="my-3 pt-3 border-t border-gray-100">
                       <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">
                         Monthly Retainer
                       </span>
@@ -1101,15 +1101,15 @@ export default function PricingPage() {
                     </div>
 
                     {/* Key Deliverables List */}
-                    <div className="border-t border-gray-100 pt-4 mb-2">
-                      <span className="text-[11px] font-extrabold text-text-dark uppercase tracking-wider block mb-2.5">
+                    <div className="border-t border-gray-100 pt-3 mb-1">
+                      <span className="text-[10px] font-extrabold text-text-dark uppercase tracking-wider block mb-2">
                         Campaign Includes:
                       </span>
-                      <ul className="space-y-2.5">
+                      <ul className="space-y-2">
                         {mkt.features.map((feat, fIdx) => (
-                          <li key={fIdx} className="flex items-start gap-2.5 text-xs text-text-dark">
+                          <li key={fIdx} className="flex items-start gap-2 text-xs text-text-dark">
                             <span className="p-0.5 rounded-full bg-emerald-500 text-white mt-0.5 shrink-0 shadow-xs">
-                              <Check className="w-3 h-3 stroke-[3]" />
+                              <Check className="w-2.5 h-2.5 stroke-[3]" />
                             </span>
                             <span className="font-semibold">{feat}</span>
                           </li>
@@ -1119,7 +1119,7 @@ export default function PricingPage() {
                   </div>
 
                   {/* Card Bottom CTA Button */}
-                  <div className="p-6 sm:p-7 pt-0 border-t border-gray-100/80 mt-auto">
+                  <div className="p-5 sm:p-6 pt-0 border-t border-gray-100/80 mt-auto">
                     <Button
                       variant={isFeatured ? 'primary' : 'outline'}
                       fullWidth
