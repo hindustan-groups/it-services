@@ -230,7 +230,7 @@ export default function AdminProposalBookPage() {
           }`}>
             <span className="relative z-10 tracking-tighter">Hi</span>
             <span className="bg-[#D32F2F] text-white text-[8px] px-1 py-0.5 rounded-xs ml-0.5 font-mono font-black z-10">
-              PRO
+              Pro
             </span>
           </div>
 
@@ -256,7 +256,7 @@ export default function AdminProposalBookPage() {
     </div>
   )
 
-  // Unified Design System Header (Pages 02 - 09)
+  // Unified Design System Header (Pages 03 - 09)
   const renderHeader = (pageCode) => (
     <div className="border-b-2 border-[#0A2540] pb-2.5 mb-5 flex items-center justify-between relative z-10">
       <LogoEmblem isLarge={false} />
@@ -272,7 +272,7 @@ export default function AdminProposalBookPage() {
     </div>
   )
 
-  // Unified Design System Footer (Pages 02 - 09)
+  // Unified Design System Footer (Pages 03 - 09)
   const renderFooter = (pageCode, pageNum) => (
     <div className="mt-auto pt-3 border-t border-slate-200 text-[9px] text-slate-500 flex items-center justify-between font-mono relative z-10">
       <div className="flex items-center gap-3">
@@ -952,81 +952,343 @@ export default function AdminProposalBookPage() {
             </div>
 
             {/* ─────────────────────────────────────────────────────────────────
-                PAGE 02: CLIENT INFORMATION & PROJECT OVERVIEW
+                PAGE 02: CLIENT INFORMATION & PROJECT OVERVIEW (HP-IT-002 Exact Graphic Artwork)
                 ───────────────────────────────────────────────────────────────── */}
             <div className="a4-page bg-white text-[#1E293B] shadow-2xl rounded-sm p-8 flex flex-col justify-between relative overflow-hidden w-[210mm] min-h-[296.8mm] border border-slate-200">
               <TechnicalWatermark />
-              <div>
-                {renderHeader('HP-IT-002')}
 
-                <h2 className="font-heading text-xl font-black text-[#0A2540] mb-4 flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-[#D32F2F]" />
-                  01. Client Information &amp; Project Overview
-                </h2>
+              <div className="relative z-10">
+                {/* Header matching image */}
+                <div className="flex items-center justify-between pb-2">
+                  <div className="flex items-center gap-2">
+                    {cfg.logo ? (
+                      <img src={cfg.logo} alt="Company Logo" className="h-9 object-contain" />
+                    ) : (
+                      <div>
+                        <div className="font-heading font-black text-xl text-[#0A2540] tracking-tight leading-none">
+                          Hi<span className="text-[#D32F2F]">Pro</span>
+                        </div>
+                        <span className="text-[8px] font-bold text-[#0A2540] tracking-wider block mt-0.5">
+                          HINDUSTAN PROJECTS
+                        </span>
+                        <span className="text-[7px] font-extrabold text-[#D32F2F] tracking-widest uppercase block">
+                          — IT SERVICES —
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
-                <div className="mb-6">
-                  <h3 className="font-heading text-xs font-extrabold text-[#0A2540] uppercase tracking-wider mb-2">
-                    Client Profile Details
-                  </h3>
-                  <table className="w-full text-xs text-[#1E293B] border border-slate-200 rounded-lg overflow-hidden">
-                    <tbody>
-                      <tr className="border-b border-slate-200 bg-slate-50">
-                        <td className="p-2.5 font-bold text-[#0A2540] w-1/3 border-r border-slate-200">Organization Name</td>
-                        <td className="p-2.5 font-semibold">{proposalData.clientCompany}</td>
-                      </tr>
-                      <tr className="border-b border-slate-200">
-                        <td className="p-2.5 font-bold text-[#0A2540] border-r border-slate-200">Contact Representative</td>
-                        <td className="p-2.5 font-semibold">{proposalData.contactPerson} ({proposalData.clientDesignation})</td>
-                      </tr>
-                      <tr className="border-b border-slate-200 bg-slate-50">
-                        <td className="p-2.5 font-bold text-[#0A2540] border-r border-slate-200">Email Address</td>
-                        <td className="p-2.5 font-semibold">{proposalData.clientEmail}</td>
-                      </tr>
-                      <tr className="border-b border-slate-200">
-                        <td className="p-2.5 font-bold text-[#0A2540] border-r border-slate-200">Phone Number</td>
-                        <td className="p-2.5 font-semibold">{proposalData.clientPhone}</td>
-                      </tr>
-                      <tr>
-                        <td className="p-2.5 font-bold text-[#0A2540] border-r border-slate-200">Corporate Address</td>
-                        <td className="p-2.5 font-semibold">{proposalData.clientAddress}</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div className="text-center">
+                    <h2 className="font-heading font-black text-xl text-[#0A2540] tracking-tight">
+                      HINDUSTAN PROJECTS
+                    </h2>
+                    <div className="flex items-center justify-center gap-2 mt-0.5">
+                      <div className="w-12 h-[1px] bg-[#D32F2F]" />
+                      <span className="text-xs font-black text-[#D32F2F] tracking-widest uppercase">
+                        IT SERVICES
+                      </span>
+                      <div className="w-12 h-[1px] bg-[#D32F2F]" />
+                    </div>
+                  </div>
+
+                  <div className="border-2 border-[#0A2540] px-3 py-1 rounded-lg">
+                    <span className="font-mono text-sm font-black text-[#0A2540]">
+                      HP-IT-002
+                    </span>
+                  </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                    <h3 className="font-heading text-xs font-extrabold text-[#0A2540] uppercase tracking-wider mb-1.5">
-                      Executive Project Summary
-                    </h3>
-                    <p className="text-xs text-[#1E293B] leading-relaxed">
-                      This proposal details the technical architecture, operational scope, delivery timeline, and commercial terms for the implementation of <strong>{proposalData.projectName}</strong>. Our engineering team at Hindustan Projects IT Services will architect a high-availability, secure, and scalable solution tailored to satisfy all business objectives.
-                    </p>
+                {/* Red Accent Bar */}
+                <div className="h-1 bg-[#D32F2F] my-3" />
+
+                {/* Main Section Title */}
+                <div className="mb-4">
+                  <h1 className="font-heading font-black text-2xl text-[#0A2540] tracking-tight">
+                    CLIENT INFORMATION
+                  </h1>
+                  <p className="text-xs font-semibold text-slate-500">
+                    Please provide the following project details
+                  </p>
+                </div>
+
+                {/* 2 Column Layout: Left Cards (Col-7) | Right Blueprint IT Grid (Col-5) */}
+                <div className="grid grid-cols-12 gap-5 items-start">
+                  
+                  <div className="col-span-7 space-y-4">
+                    
+                    {/* CARD 01: CLIENT DETAILS */}
+                    <div className="border-2 border-[#0A2540] rounded-xl relative pt-6 pb-3 px-4 bg-white">
+                      <div className="absolute top-0 left-0 bg-[#0A2540] text-white px-4 py-1 rounded-br-xl font-heading font-black text-xs tracking-wider flex items-center gap-2">
+                        <span className="bg-[#D32F2F] text-white px-1.5 py-0.2 rounded text-[10px]">01</span>
+                        CLIENT DETAILS
+                      </div>
+
+                      <div className="space-y-2 text-xs font-medium text-slate-800">
+                        <div className="flex items-center gap-2">
+                          <span className="w-4">🏢</span>
+                          <span className="font-bold w-36">Client Company Name :</span>
+                          <span className="font-semibold text-slate-900 flex-1 border-b border-dotted border-slate-400 pb-0.5">
+                            {proposalData.clientCompany}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-4">👤</span>
+                          <span className="font-bold w-36">Contact Person :</span>
+                          <span className="font-semibold text-slate-900 flex-1 border-b border-dotted border-slate-400 pb-0.5">
+                            {proposalData.contactPerson}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-4">🪪</span>
+                          <span className="font-bold w-36">Designation :</span>
+                          <span className="font-semibold text-slate-900 flex-1 border-b border-dotted border-slate-400 pb-0.5">
+                            {proposalData.clientDesignation}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-4">📞</span>
+                          <span className="font-bold w-36">Phone Number :</span>
+                          <span className="font-semibold text-slate-900 flex-1 border-b border-dotted border-slate-400 pb-0.5">
+                            {proposalData.clientPhone}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-4">✉️</span>
+                          <span className="font-bold w-36">Email Address :</span>
+                          <span className="font-semibold text-slate-900 flex-1 border-b border-dotted border-slate-400 pb-0.5">
+                            {proposalData.clientEmail}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-4">📍</span>
+                          <span className="font-bold w-36">Company Address :</span>
+                          <span className="font-semibold text-slate-900 flex-1 border-b border-dotted border-slate-400 pb-0.5">
+                            {proposalData.clientAddress}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-4">📜</span>
+                          <span className="font-bold w-36">GST Number :</span>
+                          <span className="font-semibold text-slate-900 flex-1 border-b border-dotted border-slate-400 pb-0.5">
+                            08AAACH1234F1Z9
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* CARD 02: PROJECT OVERVIEW */}
+                    <div className="border-2 border-[#0A2540] rounded-xl relative pt-6 pb-3 px-4 bg-white">
+                      <div className="absolute top-0 left-0 bg-[#0A2540] text-white px-4 py-1 rounded-br-xl font-heading font-black text-xs tracking-wider flex items-center gap-2">
+                        <span className="bg-[#D32F2F] text-white px-1.5 py-0.2 rounded text-[10px]">02</span>
+                        PROJECT OVERVIEW
+                      </div>
+
+                      <div className="space-y-2 text-xs font-medium text-slate-800">
+                        <div className="flex items-center gap-2">
+                          <span className="w-4">📁</span>
+                          <span className="font-bold w-36">Project Name :</span>
+                          <span className="font-semibold text-slate-900 flex-1 border-b border-dotted border-slate-400 pb-0.5">
+                            {proposalData.projectName}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-4">⚙️</span>
+                          <span className="font-bold w-36">Required Service :</span>
+                          <span className="font-semibold text-slate-900 flex-1 border-b border-dotted border-slate-400 pb-0.5">
+                            Full-Stack Web &amp; ERP Development
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-4">📚</span>
+                          <span className="font-bold w-36">Project Category :</span>
+                          <span className="font-semibold text-slate-900 flex-1 border-b border-dotted border-slate-400 pb-0.5">
+                            Enterprise Custom Software
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-4">&lt;/&gt;</span>
+                          <span className="font-bold w-36">Technology Stack :</span>
+                          <span className="font-semibold text-slate-900 flex-1 border-b border-dotted border-slate-400 pb-0.5">
+                            React.js, Node.js, PostgreSQL, Tailwind
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-4">📅</span>
+                          <span className="font-bold w-36">Expected Timeline :</span>
+                          <span className="font-semibold text-slate-900 flex-1 border-b border-dotted border-slate-400 pb-0.5">
+                            12 – 14 Business Days
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-4">₹</span>
+                          <span className="font-bold w-36">Estimated Budget :</span>
+                          <span className="font-semibold text-slate-900 flex-1 border-b border-dotted border-slate-400 pb-0.5">
+                            ₹{grandTotalNum.toLocaleString('en-IN')} (Inclusive of GST)
+                          </span>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="w-4">📝</span>
+                            <span className="font-bold">Project Description :</span>
+                          </div>
+                          <div className="w-full border-2 border-slate-300 rounded-lg p-2.5 h-20 text-[11px] text-slate-700 bg-slate-50 leading-relaxed font-normal">
+                            Development of a secure, cloud-hosted corporate software system with custom responsive web dashboard, automated PDF invoice generation, role-based access control, and 256-bit SSL encryption.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
 
-                  <div className="p-4 rounded-xl border border-[#0A2540]/20 bg-[#0A2540]/5">
-                    <h3 className="font-heading text-xs font-extrabold text-[#0A2540] uppercase tracking-wider mb-2">
-                      Key Strategic Objectives
-                    </h3>
-                    <ul className="space-y-1.5 text-xs text-[#1E293B]">
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#0A2540] shrink-0 mt-0.5" />
-                        <span><strong>High Performance &amp; Scalability:</strong> Engineer ultra-fast responsive interfaces capable of handling high concurrent user traffic.</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#0A2540] shrink-0 mt-0.5" />
-                        <span><strong>Enterprise Security:</strong> Implement 256-bit SSL encryption, input sanitization, and compliance with industry security protocols.</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#0A2540] shrink-0 mt-0.5" />
-                        <span><strong>Lead Generation &amp; Conversion:</strong> Optimize user journeys, CTAs, and automated lead management integration.</span>
-                      </li>
-                    </ul>
+                  {/* Right Column: Blueprint IT Network Vector */}
+                  <div className="col-span-5 relative flex items-center justify-center p-2">
+                    <svg viewBox="0 0 400 500" fill="none" className="w-full h-auto text-[#0A2540]">
+                      <path d="M 0 50 H 400 M 0 150 H 400 M 0 250 H 400 M 0 350 H 400 M 0 450 H 400" stroke="#0A2540" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.2" />
+                      <path d="M 50 0 V 500 M 150 0 V 500 M 250 0 V 500 M 350 0 V 500" stroke="#0A2540" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.2" />
+
+                      <g transform="translate(40, 190)">
+                        <rect x="20" y="20" width="180" height="110" rx="8" stroke="#0A2540" strokeWidth="2.5" fill="white" />
+                        <rect x="30" y="30" width="160" height="90" rx="4" stroke="#0A2540" strokeWidth="1" fill="#F8FAFC" />
+                        <rect x="40" y="40" width="50" height="40" rx="2" fill="#0A2540" opacity="0.15" />
+                        <line x1="100" y1="45" x2="175" y2="45" stroke="#0A2540" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="100" y1="55" x2="160" y2="55" stroke="#0A2540" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+                        <line x1="40" y1="90" x2="175" y2="90" stroke="#0A2540" strokeWidth="1.5" strokeDasharray="2 2" />
+                        <path d="M 0 135 H 220 L 205 148 H 15 Z" stroke="#0A2540" strokeWidth="2.5" fill="white" />
+                        <rect x="90" y="137" width="40" height="4" rx="2" fill="#0A2540" />
+                      </g>
+
+                      <g transform="translate(250, 30)">
+                        <rect x="0" y="0" width="75" height="45" rx="5" stroke="#0A2540" strokeWidth="2" fill="white" />
+                        <circle cx="15" cy="15" r="3" fill="#0A2540" />
+                        <circle cx="15" cy="30" r="3" fill="#D32F2F" />
+                        <line x1="30" y1="15" x2="60" y2="15" stroke="#0A2540" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="30" y1="30" x2="55" y2="30" stroke="#0A2540" strokeWidth="2" strokeLinecap="round" />
+                        <text x="37" y="60" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0A2540" fontFamily="sans-serif">SERVER</text>
+                      </g>
+
+                      <g transform="translate(320, 100)">
+                        <path d="M 10 25 A 15 15 0 0 1 35 15 A 20 20 0 0 1 65 20 A 15 15 0 0 1 70 35 H 10 Z" stroke="#0A2540" strokeWidth="2" fill="white" />
+                        <text x="40" y="48" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0A2540" fontFamily="sans-serif">CLOUD</text>
+                      </g>
+
+                      <g transform="translate(290, 180)">
+                        <circle cx="25" cy="25" r="20" stroke="#0A2540" strokeWidth="2" fill="white" />
+                        <text x="25" y="28" textAnchor="middle" fontSize="9" fontWeight="extrabold" fill="#0A2540" fontFamily="sans-serif">API</text>
+                        <text x="25" y="58" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0A2540" fontFamily="sans-serif">API</text>
+                      </g>
+
+                      <g transform="translate(330, 250)">
+                        <ellipse cx="25" cy="10" rx="20" ry="8" stroke="#0A2540" strokeWidth="2" fill="white" />
+                        <path d="M 5 10 V 30 A 20 8 0 0 0 45 30 V 10" stroke="#0A2540" strokeWidth="2" fill="none" />
+                        <path d="M 5 20 A 20 8 0 0 0 45 20" stroke="#0A2540" strokeWidth="1.5" fill="none" />
+                        <text x="25" y="48" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0A2540" fontFamily="sans-serif">DATABASE</text>
+                      </g>
+
+                      <g transform="translate(320, 330)">
+                        <rect x="0" y="0" width="55" height="40" rx="4" stroke="#0A2540" strokeWidth="2" fill="white" />
+                        <line x1="0" y1="12" x2="55" y2="12" stroke="#0A2540" strokeWidth="1.5" />
+                        <circle cx="6" cy="6" r="1.5" fill="#D32F2F" />
+                        <circle cx="12" cy="6" r="1.5" fill="#0A2540" />
+                        <text x="27" y="54" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0A2540" fontFamily="sans-serif">WEBSITE</text>
+                      </g>
+
+                      <g transform="translate(335, 410)">
+                        <rect x="0" y="0" width="30" height="55" rx="5" stroke="#0A2540" strokeWidth="2" fill="white" />
+                        <circle cx="15" cy="48" r="3" stroke="#0A2540" strokeWidth="1" />
+                        <text x="15" y="68" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#0A2540" fontFamily="sans-serif">MOBILE APP</text>
+                      </g>
+
+                      <g transform="translate(230, 410)">
+                        <rect x="0" y="0" width="55" height="40" rx="4" stroke="#0A2540" strokeWidth="2" fill="white" />
+                        <rect x="5" y="5" width="20" height="12" fill="#0A2540" opacity="0.2" />
+                        <rect x="30" y="5" width="20" height="12" fill="#0A2540" opacity="0.2" />
+                        <text x="27" y="54" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0A2540" fontFamily="sans-serif">UI/UX</text>
+                      </g>
+
+                      <path d="M 285 75 V 190 H 220" stroke="#0A2540" strokeWidth="1.5" strokeDasharray="3 3" />
+                      <path d="M 320 120 H 220" stroke="#0A2540" strokeWidth="1.5" strokeDasharray="3 3" />
+                      <path d="M 330 280 H 220" stroke="#0A2540" strokeWidth="1.5" strokeDasharray="3 3" />
+                      <path d="M 320 350 H 220" stroke="#0A2540" strokeWidth="1.5" strokeDasharray="3 3" />
+                      <path d="M 335 430 H 220" stroke="#0A2540" strokeWidth="1.5" strokeDasharray="3 3" />
+                      <path d="M 260 410 V 330 H 220" stroke="#0A2540" strokeWidth="1.5" strokeDasharray="3 3" />
+                    </svg>
                   </div>
+
+                </div>
+
+                {/* Bottom Quotation Prepared By Box */}
+                <div className="mt-4 p-3 rounded-xl border-2 border-[#0A2540] bg-slate-50">
+                  <div className="grid grid-cols-4 gap-3 items-center text-xs">
+                    
+                    <div className="flex items-center gap-2 border-r border-slate-300 pr-2">
+                      <div className="w-8 h-8 rounded-full bg-[#0A2540] text-white flex items-center justify-center shrink-0 text-xs">
+                        📝
+                      </div>
+                      <div>
+                        <span className="text-[9px] font-bold text-slate-500 uppercase block leading-tight">
+                          Quotation Prepared By
+                        </span>
+                        <span className="font-heading font-black text-slate-900 text-[10.5px]">
+                          Hindustan Projects IT Services
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 border-r border-slate-300 pr-2">
+                      <div className="w-7 h-7 rounded-full bg-[#0A2540]/10 text-[#0A2540] flex items-center justify-center shrink-0">
+                        🌐
+                      </div>
+                      <div>
+                        <span className="text-[9px] font-bold text-slate-500 uppercase block leading-tight">Website</span>
+                        <span className="font-mono text-[10px] font-bold text-slate-800">
+                          {proposalData.preparedByWebsite}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 border-r border-slate-300 pr-2">
+                      <div className="w-7 h-7 rounded-full bg-[#0A2540]/10 text-[#0A2540] flex items-center justify-center shrink-0">
+                        ✉️
+                      </div>
+                      <div>
+                        <span className="text-[9px] font-bold text-slate-500 uppercase block leading-tight">Email</span>
+                        <span className="font-mono text-[10px] font-bold text-slate-800">
+                          {proposalData.preparedByEmail}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-[#0A2540]/10 text-[#0A2540] flex items-center justify-center shrink-0">
+                        📞
+                      </div>
+                      <div>
+                        <span className="text-[9px] font-bold text-slate-500 uppercase block leading-tight">Phone</span>
+                        <span className="font-mono text-[10px] font-bold text-slate-800">
+                          {proposalData.preparedByPhone}
+                        </span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Bottom Solid Footer Strip */}
+              <div className="mt-3 border-t-2 border-[#D32F2F] pt-2">
+                <div className="bg-[#0A2540] text-white text-[9px] py-1.5 px-4 rounded-lg flex items-center justify-between font-mono relative z-10">
+                  <div className="flex items-center gap-2">
+                    <span>🌐 {proposalData.preparedByWebsite}</span>
+                  </div>
+                  <div className="bg-[#D32F2F] text-white px-3 py-0.5 rounded font-black text-[10px]">
+                    HP-IT-002
+                  </div>
+                  <div>Page 02 |</div>
                 </div>
               </div>
 
-              {renderFooter('HP-IT-002', '02')}
             </div>
 
             {/* ─────────────────────────────────────────────────────────────────
