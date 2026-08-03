@@ -30,6 +30,8 @@ import {
   QrCode,
   LayoutDashboard,
   Check,
+  User,
+  Calendar,
 } from 'lucide-react'
 import { SEO } from '@/components/ui'
 import { useSiteSettings } from '@/hooks/useContent'
