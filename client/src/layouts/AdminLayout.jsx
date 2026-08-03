@@ -49,6 +49,7 @@ const NAV_GROUPS = [
     items: [
       { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
       { to: '/admin/leads', icon: MessageSquare, label: 'Leads', badge: 'new', roles: ['ADMIN', 'SUPER_ADMIN'] },
+      { to: '/admin/proposal-book', icon: FileText, label: 'Proposal Book', badge: 'A4', roles: ['ADMIN', 'SUPER_ADMIN', 'STAFF'] },
       { to: '/admin/chatbot-inquiries', icon: Bot, label: 'Chatbot Inquiries', roles: ['ADMIN', 'SUPER_ADMIN'] },
     ],
   },
