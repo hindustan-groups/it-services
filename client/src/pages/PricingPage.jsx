@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -250,6 +250,26 @@ export default function PricingPage() {
   // Quote form state
   const [quoteForm, setQuoteForm] = useState({ name: '', email: '', phone: '', message: '' })
   const [formSubmitting, setFormSubmitting] = useState(false)
+
+  // Lock body scroll & listen for Escape key when modal is open
+  useEffect(() => {
+    if (isQuoteModalOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && isQuoteModalOpen) {
+        setIsQuoteModalOpen(false)
+      }
+    }
+    window.addEventListener('keydown', handleEscape)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', handleEscape)
+    }
+  }, [isQuoteModalOpen])
 
   const openQuoteModal = (planName) => {
     setSelectedPlan(planName || 'General Pricing Quote')
@@ -971,20 +991,19 @@ export default function PricingPage() {
       {/* ── FREE QUOTE MODAL ────────────────────────────────────────────── */}
       <AnimatePresence>
         {isQuoteModalOpen && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto bg-slate-900/60 backdrop-blur-md">
+            {/* Click backdrop to close */}
+            <div
+              className="fixed inset-0"
               onClick={() => setIsQuoteModalOpen(false)}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
             />
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl p-6 sm:p-8 z-10 overflow-hidden"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl p-6 sm:p-8 z-10 my-auto max-h-[90vh] overflow-y-auto border border-gray-100/90"
             >
               <button
                 type="button"
