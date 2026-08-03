@@ -37,16 +37,10 @@ import {
   User,
   Calendar,
   Save,
-  Plus,
   Trash2,
   ZoomIn,
   ZoomOut,
   Sliders,
-  ChevronDown,
-  ChevronUp,
-  Award,
-  Layers,
-  LayoutDashboard,
 } from 'lucide-react'
 import { SEO } from '@/components/ui'
 import { useSiteSettings } from '@/hooks/useContent'
@@ -220,31 +214,52 @@ export default function AdminProposalBookPage() {
     window.print()
   }
 
+  // Official Brand Logo Emblem Component
+  const LogoEmblem = ({ isLarge = false }) => (
+    <div className="flex items-center gap-3">
+      {cfg.logo ? (
+        <img
+          src={cfg.logo}
+          alt="Hindustan Projects Logo"
+          className={isLarge ? "h-11 object-contain" : "h-8.5 object-contain"}
+        />
+      ) : (
+        <div className="flex items-center gap-2.5">
+          <div className={`relative bg-[#0A2540] text-white font-heading font-black rounded-xl flex items-center justify-center shadow-xs border border-[#0A2540] overflow-hidden ${
+            isLarge ? "w-11 h-11 text-xs" : "w-8.5 h-8.5 text-[11px]"
+          }`}>
+            <span className="relative z-10 tracking-tighter">Hi</span>
+            <span className="bg-[#D32F2F] text-white text-[8px] px-1 py-0.5 rounded-xs ml-0.5 font-mono font-black z-10">
+              PRO
+            </span>
+          </div>
+
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className={`font-heading font-black text-[#0A2540] tracking-tight leading-none ${
+                isLarge ? "text-base" : "text-xs"
+              }`}>
+                HINDUSTAN PROJECTS
+              </span>
+              <span className="text-[7px] font-black bg-[#0A2540]/10 text-[#0A2540] px-1.5 py-0.5 rounded border border-[#0A2540]/20 uppercase tracking-widest">
+                IT SERVICES
+              </span>
+            </div>
+            <span className={`font-bold text-[#D32F2F] tracking-widest uppercase block ${
+              isLarge ? "text-[9px] mt-0.5" : "text-[7.5px] mt-0.5"
+            }`}>
+              ENTERPRISE IT SOLUTIONS &amp; SOFTWARE DIVISION
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+
   // Unified Design System Header (Pages 02 - 09)
   const renderHeader = (pageCode) => (
     <div className="border-b-2 border-[#0A2540] pb-2.5 mb-5 flex items-center justify-between relative z-10">
-      <div className="flex items-center gap-3">
-        {cfg.logo ? (
-          <img src={cfg.logo} alt="Company Logo" className="h-9 object-contain" />
-        ) : (
-          <div className="w-9 h-9 rounded-xl bg-[#0A2540] text-white flex items-center justify-center font-heading font-black text-xs shadow-sm">
-            Hi<span className="text-[#D32F2F]">PRO</span>
-          </div>
-        )}
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="font-heading font-black text-xs text-[#0A2540] tracking-wider block leading-tight">
-              HINDUSTAN PROJECTS
-            </span>
-            <span className="text-[7px] font-black bg-[#0A2540]/10 text-[#0A2540] px-1.5 py-0.5 rounded border border-[#0A2540]/20 uppercase">
-              ISO 9001:2015 CERTIFIED
-            </span>
-          </div>
-          <span className="text-[8px] font-bold text-[#D32F2F] tracking-widest uppercase block mt-0.5">
-            IT SERVICES &amp; ENTERPRISE SOLUTIONS DIVISION
-          </span>
-        </div>
-      </div>
+      <LogoEmblem isLarge={false} />
 
       <div className="text-right">
         <span className="font-mono text-[10px] font-black text-[#0A2540] bg-slate-100 px-2.5 py-0.5 rounded border border-slate-300 block mb-0.5 shadow-xs">
@@ -752,26 +767,7 @@ export default function AdminProposalBookPage() {
               <div className="relative z-10">
                 {/* Top Official Company Header */}
                 <div className="border-b-2 border-[#0A2540] pb-3 mb-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {cfg.logo ? (
-                      <img src={cfg.logo} alt="Company Logo" className="h-10 object-contain" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-xl bg-[#0A2540] text-white flex items-center justify-center font-heading font-black text-sm shadow-md">
-                        Hi<span className="text-[#D32F2F]">PRO</span>
-                      </div>
-                    )}
-                    <div>
-                      <h2 className="font-heading font-black text-xl text-[#0A2540] tracking-tight leading-none">
-                        HINDUSTAN PROJECTS
-                      </h2>
-                      <span className="text-[10px] font-bold text-[#D32F2F] tracking-widest uppercase block mt-0.5 border-b border-[#D32F2F] pb-0.5 w-fit">
-                        IT SERVICES &amp; SOLUTIONS
-                      </span>
-                      <p className="text-[9px] text-slate-500 font-semibold mt-1">
-                        Building Digital Solutions. Enabling Growth.
-                      </p>
-                    </div>
-                  </div>
+                  <LogoEmblem isLarge={true} />
                 </div>
 
                 {/* Main Title Block */}
@@ -1098,7 +1094,7 @@ export default function AdminProposalBookPage() {
                     { title: '100% Mobile Responsive', desc: 'Flawless responsive grid across smartphones, tablets, and desktop computers.', icon: Smartphone },
                     { title: 'Google SEO Ready', desc: 'On-Page SEO, Google Search Console indexing, meta tags, and structured data.', icon: Search },
                     { title: 'Enterprise Security', desc: '256-bit SSL encryption, input sanitization, and secure authentication.', icon: Lock },
-                    { title: 'Admin Control Panel', desc: 'User-friendly admin dashboard to manage leads, content, and site media.', icon: LayoutDashboard },
+                    { title: 'Admin Control Panel', desc: 'User-friendly admin dashboard to manage leads, content, and site media.', icon: Building2 },
                     { title: 'REST API Architecture', desc: 'Fast, secure, scalable RESTful API endpoints for seamless data integration.', icon: Code },
                     { title: 'Database Optimization', desc: 'Optimized relational schema design ensuring instant query response.', icon: Database },
                     { title: 'NVMe Cloud Hosting', desc: 'High-speed cloud server setup with 99.9% uptime reliability guarantee.', icon: Server },
