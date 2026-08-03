@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -988,119 +989,123 @@ export default function PricingPage() {
         </Container>
       </section>
 
-      {/* ── FREE QUOTE MODAL ────────────────────────────────────────────── */}
-      <AnimatePresence>
-        {isQuoteModalOpen && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-            {/* Dark blur backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsQuoteModalOpen(false)}
-              className="fixed inset-0 bg-slate-950/70 backdrop-blur-md"
-            />
+      {/* ── FREE QUOTE MODAL (Rendered via Portal outside PageTransition transform stack) ── */}
+      {typeof document !== 'undefined' &&
+        createPortal(
+          <AnimatePresence>
+            {isQuoteModalOpen && (
+              <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+                {/* Dark blur backdrop */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setIsQuoteModalOpen(false)}
+                  className="fixed inset-0 bg-slate-950/70 backdrop-blur-md"
+                />
 
-            {/* Modal Card */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="relative z-10 w-full max-w-lg bg-white rounded-3xl shadow-2xl p-6 sm:p-8 my-auto max-h-[90vh] overflow-y-auto border border-gray-100"
-            >
-              <button
-                type="button"
-                onClick={() => setIsQuoteModalOpen(false)}
-                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="mb-6">
-                <span className="inline-block px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-bold uppercase tracking-wider mb-2">
-                  Selected: {selectedPlan}
-                </span>
-                <h3 className="font-heading text-2xl font-bold text-text-dark">
-                  Request a Free Quote
-                </h3>
-                <p className="text-xs text-text-muted mt-1">
-                  Fill in your details below and our technical expert will reach out within 2 hours.
-                </p>
-              </div>
-
-              <form onSubmit={handleQuoteSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold text-text-dark uppercase tracking-wider mb-1">
-                    Your Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Rahul Sharma"
-                    value={quoteForm.name}
-                    onChange={(e) => setQuoteForm({ ...quoteForm, name: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-text-dark uppercase tracking-wider mb-1">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="rahul@example.com"
-                      value={quoteForm.email}
-                      onChange={(e) => setQuoteForm({ ...quoteForm, email: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-text-dark uppercase tracking-wider mb-1">
-                      Phone / WhatsApp *
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      placeholder="+91 99999 99999"
-                      value={quoteForm.phone}
-                      onChange={(e) => setQuoteForm({ ...quoteForm, phone: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-text-dark uppercase tracking-wider mb-1">
-                    Project Requirements / Notes
-                  </label>
-                  <textarea
-                    rows={3}
-                    placeholder="Briefly describe what you need (e.g. 5-page website, e-commerce, custom features)..."
-                    value={quoteForm.message}
-                    onChange={(e) => setQuoteForm({ ...quoteForm, message: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all resize-none"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  variant="primary"
-                  fullWidth
-                  loading={formSubmitting}
-                  leftIcon={<Send className="w-4 h-4" />}
+                {/* Modal Card */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  className="relative z-10 w-full max-w-lg bg-white rounded-3xl shadow-2xl p-6 sm:p-8 my-auto max-h-[90vh] overflow-y-auto border border-gray-100"
                 >
-                  Submit Quote Request
-                </Button>
-              </form>
-            </motion.div>
-          </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsQuoteModalOpen(false)}
+                    className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+
+                  <div className="mb-6">
+                    <span className="inline-block px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-bold uppercase tracking-wider mb-2">
+                      Selected: {selectedPlan}
+                    </span>
+                    <h3 className="font-heading text-2xl font-bold text-text-dark">
+                      Request a Free Quote
+                    </h3>
+                    <p className="text-xs text-text-muted mt-1">
+                      Fill in your details below and our technical expert will reach out within 2 hours.
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleQuoteSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-bold text-text-dark uppercase tracking-wider mb-1">
+                        Your Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Rahul Sharma"
+                        value={quoteForm.name}
+                        onChange={(e) => setQuoteForm({ ...quoteForm, name: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-text-dark uppercase tracking-wider mb-1">
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          placeholder="rahul@example.com"
+                          value={quoteForm.email}
+                          onChange={(e) => setQuoteForm({ ...quoteForm, email: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-text-dark uppercase tracking-wider mb-1">
+                          Phone / WhatsApp *
+                        </label>
+                        <input
+                          type="tel"
+                          required
+                          placeholder="+91 99999 99999"
+                          value={quoteForm.phone}
+                          onChange={(e) => setQuoteForm({ ...quoteForm, phone: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-text-dark uppercase tracking-wider mb-1">
+                        Project Requirements / Notes
+                      </label>
+                      <textarea
+                        rows={3}
+                        placeholder="Briefly describe what you need (e.g. 5-page website, e-commerce, custom features)..."
+                        value={quoteForm.message}
+                        onChange={(e) => setQuoteForm({ ...quoteForm, message: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all resize-none"
+                      />
+                    </div>
+
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      fullWidth
+                      loading={formSubmitting}
+                      leftIcon={<Send className="w-4 h-4" />}
+                    >
+                      Submit Quote Request
+                    </Button>
+                  </form>
+                </motion.div>
+              </div>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
     </>
   )
 }
