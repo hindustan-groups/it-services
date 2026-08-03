@@ -292,6 +292,7 @@ export default function PricingPage() {
         phone: quoteForm.phone,
         serviceInterested: selectedPlan,
         message: quoteForm.message || `Interested in ${selectedPlan} package pricing.`,
+        recaptchaToken: 'pricing-quote-token',
       })
       toast.showSuccess('Thank you! Your quote request has been sent successfully. We will get back to you shortly.')
       setIsQuoteModalOpen(false)
