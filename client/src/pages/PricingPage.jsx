@@ -37,6 +37,7 @@ import {
   CheckCircle,
   Shield,
   Rocket,
+  Crown,
   Building2,
   CreditCard,
   LayoutDashboard,
