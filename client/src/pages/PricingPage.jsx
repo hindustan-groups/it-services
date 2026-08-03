@@ -502,9 +502,6 @@ export default function PricingPage() {
       <section id="website-packages" className="py-16 lg:py-24 bg-bg-base scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="inline-block px-3.5 py-1 rounded-full bg-brand-red/10 text-brand-red text-xs font-extrabold uppercase tracking-widest mb-2">
-              Section 1
-            </span>
             <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-text-dark">
               Website Development Packages
             </h2>
@@ -634,9 +631,6 @@ export default function PricingPage() {
       <section id="software-development" className="py-16 lg:py-24 bg-gradient-to-b from-gray-50 to-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="inline-block px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-extrabold uppercase tracking-widest mb-2">
-              Section 2
-            </span>
             <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
               Software Development
             </h2>
@@ -696,9 +690,6 @@ export default function PricingPage() {
       <section id="mobile-app-development" className="py-16 lg:py-24 bg-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="inline-block px-3 py-1 rounded-full bg-brand-red/10 text-brand-red text-xs font-extrabold uppercase tracking-widest mb-2">
-              Section 3
-            </span>
             <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
               Mobile App Development
             </h2>
@@ -756,9 +747,6 @@ export default function PricingPage() {
       <section id="branding-services" className="py-16 lg:py-24 bg-gradient-to-b from-gray-50 to-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="inline-block px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-extrabold uppercase tracking-widest mb-2">
-              Section 4
-            </span>
             <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
               Branding Services
             </h2>
@@ -798,9 +786,6 @@ export default function PricingPage() {
       <section id="digital-marketing" className="py-16 lg:py-24 bg-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="inline-block px-3 py-1 rounded-full bg-brand-red/10 text-brand-red text-xs font-extrabold uppercase tracking-widest mb-2">
-              Section 5
-            </span>
             <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
               Digital Marketing
             </h2>
@@ -849,9 +834,6 @@ export default function PricingPage() {
       <section id="hosting-maintenance" className="py-16 lg:py-24 bg-gradient-to-b from-gray-50 to-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="inline-block px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-extrabold uppercase tracking-widest mb-2">
-              Section 6
-            </span>
             <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
               Hosting &amp; Maintenance
             </h2>
@@ -901,9 +883,6 @@ export default function PricingPage() {
       <section id="why-choose-us" className="py-16 lg:py-24 bg-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="inline-block px-3 py-1 rounded-full bg-brand-red/10 text-brand-red text-xs font-extrabold uppercase tracking-widest mb-2">
-              Section 7
-            </span>
             <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
               Why Choose Hindustan Projects IT Services
             </h2>
@@ -944,9 +923,6 @@ export default function PricingPage() {
       <section id="development-process" className="py-16 lg:py-24 bg-gradient-to-b from-gray-50 to-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="inline-block px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-extrabold uppercase tracking-widest mb-2">
-              Section 8
-            </span>
             <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
               Our Development Process
             </h2>
@@ -1015,9 +991,6 @@ export default function PricingPage() {
       <section id="faq-section" className="py-16 lg:py-24 bg-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="inline-block px-3 py-1 rounded-full bg-brand-red/10 text-brand-red text-xs font-extrabold uppercase tracking-widest mb-2">
-              Section 9
-            </span>
             <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
               Frequently Asked Questions
             </h2>
