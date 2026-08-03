@@ -239,82 +239,236 @@ export default function AdminProposalBookPage() {
       <div className="max-w-[850px] mx-auto py-8 px-4 sm:px-0 space-y-12 print:max-w-none print:py-0 print:px-0 print:space-y-0">
         
         {/* ─────────────────────────────────────────────────────────────────
-            PAGE 01: PREMIUM COVER
+            PAGE 01: OFFICIAL PROFESSIONAL QUOTATION COVER (HP-IT-001)
             ───────────────────────────────────────────────────────────────── */}
-        <div className="a4-page bg-white shadow-2xl rounded-sm p-10 print:shadow-none print:rounded-none print:p-8 flex flex-col justify-between relative overflow-hidden min-h-[1120px] print:min-h-[1050px] print:page-break-after-always">
-          {/* Blueprint Engineering Vector Line Background Overlay */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#0A3D91" strokeWidth="1" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#grid)" />
+        <div className="a4-page bg-white shadow-2xl rounded-sm p-8 print:shadow-none print:rounded-none print:p-6 flex flex-col justify-between relative overflow-hidden min-h-[1120px] print:min-h-[1050px] print:page-break-after-always border border-gray-200">
+          
+          {/* Top Right Document Code Angled Ribbon */}
+          <div className="absolute top-0 right-0 bg-[#0B2545] text-white font-mono text-xs font-black px-6 py-2 rounded-bl-2xl shadow-md z-20">
+            HP-IT-001
+          </div>
+
+          {/* Architectural City Skyline & Blueprint Vectors Overlay */}
+          <div className="absolute right-0 bottom-16 w-3/5 h-1/2 opacity-15 pointer-events-none z-0">
+            <svg width="100%" height="100%" viewBox="0 0 500 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* City Skyline Outline */}
+              <path d="M50 400V250H90V400M90 400V180H140V400M140 400V280H190V400M190 400V120H250V400M250 400V200H310V400M310 400V90H380V400M380 400V230H450V400" stroke="#0B2545" strokeWidth="1.5" strokeDasharray="3 3"/>
+              {/* Laptop Graphic */}
+              <rect x="220" y="260" width="180" height="110" rx="6" stroke="#0B2545" strokeWidth="2" fill="white"/>
+              <path d="M200 370H420" stroke="#0B2545" strokeWidth="4" strokeLinecap="round"/>
+              <text x="295" y="325" fill="#D32F2F" fontSize="24" fontFamily="monospace" fontWeight="bold">&lt;/&gt;</text>
+              {/* Floating Tech Dots */}
+              <circle cx="120" cy="150" r="3" fill="#D32F2F"/>
+              <circle cx="340" cy="70" r="3" fill="#0B2545"/>
+              <circle cx="430" cy="200" r="3" fill="#D32F2F"/>
+              <line x1="120" y1="150" x2="340" y2="70" stroke="#0B2545" strokeWidth="0.5" strokeDasharray="2 2"/>
             </svg>
           </div>
 
-          <div>
-            {renderHeader('HP-IT-001')}
+          <div className="relative z-10">
+            {/* Top Official Company Header */}
+            <div className="border-b-2 border-[#0B2545] pb-4 mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#0B2545] text-white flex items-center justify-center font-heading font-black text-sm shadow-md">
+                  Hi<span className="text-[#D32F2F]">PRO</span>
+                </div>
+                <div>
+                  <h2 className="font-heading font-black text-xl text-[#0B2545] tracking-tight leading-none">
+                    HINDUSTAN PROJECTS
+                  </h2>
+                  <span className="text-[10px] font-bold text-[#D32F2F] tracking-widest uppercase block mt-0.5 border-b border-[#D32F2F] pb-0.5 w-fit">
+                    IT SERVICES &amp; SOLUTIONS
+                  </span>
+                  <p className="text-[9px] text-gray-500 font-semibold mt-1">
+                    Building Digital Solutions. Enabling Growth.
+                  </p>
+                </div>
+              </div>
+            </div>
 
-            {/* Cover Main Title Block */}
-            <div className="mt-12 mb-10">
-              <span className="inline-block px-3 py-1 rounded bg-[#0A3D91]/10 text-[#0A3D91] font-mono text-xs font-bold uppercase tracking-widest mb-4">
-                OFFICIAL BUSINESS PROPOSAL &amp; QUOTATION
-              </span>
-              <h1 className="font-heading text-4xl sm:text-5xl font-black text-[#0A3D91] tracking-tight leading-[1.15]">
-                TECHNICAL PROPOSAL &amp; COMMERCIAL QUOTATION BOOK
+            {/* Main Bold Title */}
+            <div className="my-8">
+              <h1 className="font-heading font-black text-4xl sm:text-5xl tracking-tight leading-none text-[#0B2545]">
+                PROFESSIONAL
               </h1>
-              <p className="text-lg font-bold text-[#D32F2F] mt-3 tracking-wide border-l-4 border-[#D32F2F] pl-4">
-                {proposalData.projectName}
+              <h1 className="font-heading font-black text-5xl sm:text-6xl tracking-tight leading-none text-[#D32F2F] mt-1">
+                QUOTATION
+              </h1>
+              <p className="text-xs font-bold text-[#0B2545] mt-3 tracking-wider uppercase border-l-4 border-[#0B2545] pl-3">
+                Web Development • Software Solutions • Mobile Apps
               </p>
             </div>
 
-            {/* Corporate Blueprint Banner Box */}
-            <div className="p-6 rounded-xl bg-slate-50 border border-slate-200 my-8">
-              <div className="grid grid-cols-2 gap-6 text-xs text-[#333333]">
-                <div>
-                  <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block mb-1">
-                    PREPARED FOR (CLIENT)
-                  </span>
-                  <h3 className="font-heading text-lg font-black text-[#0A3D91]">
-                    {proposalData.clientCompany}
-                  </h3>
-                  <p className="font-semibold text-gray-700 mt-0.5">Attn: {proposalData.contactPerson}</p>
-                  <p className="text-gray-500 text-[11px] mt-1">{proposalData.clientAddress}</p>
+            {/* Middle Section: Prepared For Box (Left) & Quotation Info (Right) */}
+            <div className="grid grid-cols-12 gap-6 my-8 items-start">
+              
+              {/* Prepared For Box */}
+              <div className="col-span-7 bg-[#F2F6FA] border border-[#D0DFEF] rounded-2xl p-5 shadow-xs">
+                <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-1">
+                  PREPARED FOR
+                </span>
+                <h3 className="font-heading font-black text-xl text-[#0B2545] border-b-2 border-[#D32F2F] pb-1 inline-block mb-4">
+                  {proposalData.clientCompany}
+                </h3>
+
+                <div className="space-y-2.5 text-xs text-[#333333]">
+                  <div className="flex items-center gap-2">
+                    <User className="w-3.5 h-3.5 text-[#0B2545] shrink-0" />
+                    <span className="font-bold w-24">Contact Person</span>
+                    <span className="text-gray-400">:</span>
+                    <span className="font-semibold text-gray-800 border-b border-gray-300 flex-1 pb-0.5">
+                      {proposalData.contactPerson}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Building2 className="w-3.5 h-3.5 text-[#0B2545] shrink-0" />
+                    <span className="font-bold w-24">Designation</span>
+                    <span className="text-gray-400">:</span>
+                    <span className="font-semibold text-gray-800 border-b border-gray-300 flex-1 pb-0.5">
+                      Corporate Director / IT Lead
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-3.5 h-3.5 text-[#0B2545] shrink-0" />
+                    <span className="font-bold w-24">Email</span>
+                    <span className="text-gray-400">:</span>
+                    <span className="font-semibold text-gray-800 border-b border-gray-300 flex-1 pb-0.5">
+                      {proposalData.clientEmail}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-3.5 h-3.5 text-[#0B2545] shrink-0" />
+                    <span className="font-bold w-24">Phone</span>
+                    <span className="text-gray-400">:</span>
+                    <span className="font-semibold text-gray-800 border-b border-gray-300 flex-1 pb-0.5">
+                      {proposalData.clientPhone}
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Globe className="w-3.5 h-3.5 text-[#0B2545] shrink-0 mt-0.5" />
+                    <span className="font-bold w-24">Address</span>
+                    <span className="text-gray-400">:</span>
+                    <span className="font-semibold text-gray-800 border-b border-gray-300 flex-1 pb-0.5">
+                      {proposalData.clientAddress}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quotation Metadata Box */}
+              <div className="col-span-5 space-y-4">
+                <div className="p-4 rounded-xl border border-gray-200 bg-white shadow-xs flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#0B2545]/10 text-[#0B2545] flex items-center justify-center shrink-0">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold text-gray-400 uppercase block">
+                      QUOTATION NO.
+                    </span>
+                    <span className="font-mono text-sm font-black text-[#0B2545]">
+                      {proposalData.quotationNumber}
+                    </span>
+                  </div>
                 </div>
 
+                <div className="p-4 rounded-xl border border-gray-200 bg-white shadow-xs flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#0B2545]/10 text-[#0B2545] flex items-center justify-center shrink-0">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold text-gray-400 uppercase block">
+                      DATE
+                    </span>
+                    <span className="font-mono text-xs font-bold text-gray-800">
+                      {proposalData.date}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl border border-gray-200 bg-white shadow-xs flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-red-50 text-[#D32F2F] flex items-center justify-center shrink-0">
+                    <Clock className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold text-gray-400 uppercase block">
+                      VALID TILL
+                    </span>
+                    <span className="font-mono text-xs font-bold text-[#D32F2F]">
+                      {proposalData.validTill}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Prepared By Section */}
+            <div className="my-8 pt-4 border-t border-gray-200 max-w-sm">
+              <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-1">
+                PREPARED BY
+              </span>
+              <h4 className="font-heading font-black text-sm text-[#0B2545]">
+                HINDUSTAN PROJECTS IT SERVICES
+              </h4>
+              <div className="space-y-1 text-[11px] text-gray-600 mt-2 font-medium">
+                <p className="flex items-center gap-2">🌐 {proposalData.preparedByWebsite}</p>
+                <p className="flex items-center gap-2">📧 {proposalData.preparedByEmail}</p>
+                <p className="flex items-center gap-2">📞 {proposalData.preparedByPhone}</p>
+                <p className="flex items-center gap-2">📍 Bhilwara, Rajasthan, India</p>
+              </div>
+            </div>
+
+            {/* Bottom 3 Service Badges */}
+            <div className="grid grid-cols-3 gap-3 border-t-2 border-gray-200 pt-4">
+              <div className="p-2.5 rounded-xl border border-gray-200 bg-slate-50 flex items-center gap-2">
+                <div className="w-7 h-7 rounded bg-[#0B2545] text-white flex items-center justify-center text-xs shrink-0">
+                  🖥️
+                </div>
                 <div>
-                  <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block mb-1">
-                    PREPARED BY (VENDOR)
+                  <span className="font-heading font-black text-[11px] text-[#0B2545] uppercase block leading-tight">
+                    WEBSITE
                   </span>
-                  <h3 className="font-heading text-lg font-black text-[#0A3D91]">
-                    Hindustan Projects IT Services
-                  </h3>
-                  <p className="font-semibold text-gray-700 mt-0.5">Enterprise Solution Architecture Team</p>
-                  <p className="text-gray-500 text-[11px] mt-1">IT Services &amp; Digital Engineering Division</p>
+                  <span className="text-[9px] text-gray-500 font-bold block">DEVELOPMENT</span>
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-xl border border-gray-200 bg-slate-50 flex items-center gap-2">
+                <div className="w-7 h-7 rounded bg-[#0B2545] text-white flex items-center justify-center text-xs shrink-0">
+                  📱
+                </div>
+                <div>
+                  <span className="font-heading font-black text-[11px] text-[#0B2545] uppercase block leading-tight">
+                    MOBILE APP
+                  </span>
+                  <span className="text-[9px] text-gray-500 font-bold block">DEVELOPMENT</span>
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-xl border border-gray-200 bg-slate-50 flex items-center gap-2">
+                <div className="w-7 h-7 rounded bg-[#0B2545] text-white flex items-center justify-center text-xs shrink-0">
+                  &lt;/&gt;
+                </div>
+                <div>
+                  <span className="font-heading font-black text-[11px] text-[#0B2545] uppercase block leading-tight">
+                    SOFTWARE
+                  </span>
+                  <span className="text-[9px] text-gray-500 font-bold block">SOLUTIONS</span>
                 </div>
               </div>
             </div>
 
-            {/* Metadata Summary Grid */}
-            <div className="grid grid-cols-3 gap-4 p-4 rounded-lg bg-[#0A3D91] text-white text-xs font-semibold my-8">
-              <div>
-                <span className="text-[10px] text-blue-200 block uppercase">Quotation Number</span>
-                <span className="font-mono text-sm font-bold">{proposalData.quotationNumber}</span>
-              </div>
-              <div>
-                <span className="text-[10px] text-blue-200 block uppercase">Proposal Date</span>
-                <span className="font-mono text-sm font-bold">{proposalData.date}</span>
-              </div>
-              <div>
-                <span className="text-[10px] text-blue-200 block uppercase">Valid Until</span>
-                <span className="font-mono text-sm font-bold text-red-300">{proposalData.validTill}</span>
-              </div>
-            </div>
           </div>
 
-          {renderFooter('HP-IT-001', '01')}
+          {/* Bottom Solid Footer Bar */}
+          <div className="mt-6 bg-[#0B2545] text-white text-[10px] py-2 px-4 rounded-b-lg flex items-center justify-between font-mono relative z-10">
+            <div className="flex items-center gap-2">
+              <div className="w-0 h-0 border-t-[8px] border-t-transparent border-l-[12px] border-l-[#D32F2F] border-b-[8px] border-b-transparent" />
+              <span>hindustanprojects.in</span>
+            </div>
+            <div>HP-IT-001</div>
+            <div>Page 01</div>
+          </div>
+
         </div>
 
         {/* ─────────────────────────────────────────────────────────────────

@@ -103,6 +103,7 @@ const AdminRecycleBinPage = lazyWithRetry(() => import('@/pages/admin/AdminRecyc
 const AdminSocialDraftsPage = lazyWithRetry(() => import('@/pages/admin/AdminSocialDraftsPage'))
 const AdminChatbotInquiriesPage = lazyWithRetry(() => import('@/pages/admin/AdminChatbotInquiriesPage'))
 const AdminProposalBookPage = lazyWithRetry(() => import('@/pages/admin/AdminProposalBookPage'))
+const AdminPricingPage = lazyWithRetry(() => import('@/pages/admin/AdminPricingPage'))
 
 // ── Client Portal pages — lazy loaded ──────────────────────────
 const ClientLayout = lazyWithRetry(() => import('@/layouts/ClientLayout'))
@@ -150,6 +151,14 @@ export default function App() {
             element={
               <Suspense fallback={<PageFallback />}>
                 <AdminProposalBookPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="pricing"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <AdminPricingPage />
               </Suspense>
             }
           />
