@@ -224,46 +224,55 @@ export default function AdminProposalBookPage() {
     window.print()
   }
 
-  // Header Component for Pages 2-9
+  // Header Component for Pages 2-9 (Corporate Enterprise Standards)
   const renderHeader = (pageCode) => (
-    <div className="border-b-2 border-[#0A3D91] pb-2 mb-4 flex items-center justify-between">
+    <div className="border-b-2 border-[#0B2545] pb-2.5 mb-5 flex items-center justify-between">
       <div className="flex items-center gap-3">
         {cfg.logo ? (
-          <img src={cfg.logo} alt="Company Logo" className="h-8 object-contain" />
+          <img src={cfg.logo} alt="Company Logo" className="h-9 object-contain" />
         ) : (
-          <div className="w-8 h-8 rounded-lg bg-[#0A3D91] text-white flex items-center justify-center font-heading font-black text-xs shadow-sm">
+          <div className="w-9 h-9 rounded-xl bg-[#0B2545] text-white flex items-center justify-center font-heading font-black text-xs shadow-sm">
             Hi<span className="text-[#D32F2F]">PRO</span>
           </div>
         )}
         <div>
-          <span className="font-heading font-black text-xs text-[#0A3D91] tracking-wider block leading-tight">
-            HINDUSTAN PROJECTS
-          </span>
-          <span className="text-[8px] font-bold text-[#D32F2F] tracking-widest uppercase block">
-            IT SERVICES &amp; SOLUTIONS
+          <div className="flex items-center gap-2">
+            <span className="font-heading font-black text-xs text-[#0B2545] tracking-wider block leading-tight">
+              HINDUSTAN PROJECTS
+            </span>
+            <span className="text-[7px] font-black bg-[#0B2545]/10 text-[#0B2545] px-1.5 py-0.5 rounded border border-[#0B2545]/20 uppercase">
+              ISO 9001:2015 CERTIFIED
+            </span>
+          </div>
+          <span className="text-[8px] font-bold text-[#D32F2F] tracking-widest uppercase block mt-0.5">
+            IT SERVICES &amp; ENTERPRISE SOLUTIONS DIVISION
           </span>
         </div>
       </div>
+
       <div className="text-right">
-        <span className="font-mono text-[10px] font-bold text-[#0A3D91] bg-slate-100 px-2 py-0.5 rounded border border-slate-200 block mb-0.5">
-          DOC: {pageCode}
+        <span className="font-mono text-[10px] font-black text-[#0B2545] bg-slate-100 px-2.5 py-0.5 rounded border border-slate-300 block mb-0.5 shadow-xs">
+          DOC CODE: {pageCode}
         </span>
-        <span className="text-[9px] text-gray-500 font-bold">
-          REF: {proposalData.quotationNumber}
+        <span className="text-[9px] text-gray-600 font-extrabold block">
+          QUOTATION REF: {proposalData.quotationNumber}
         </span>
       </div>
     </div>
   )
 
-  // Footer Component for Pages 2-9
+  // Footer Component for Pages 2-9 (Corporate Enterprise Standards)
   const renderFooter = (pageCode, pageNum) => (
-    <div className="mt-auto pt-3 border-t border-gray-200 text-[9px] text-gray-500 flex items-center justify-between font-mono">
+    <div className="mt-auto pt-3 border-t border-gray-200 text-[9px] text-gray-500 flex items-center justify-between font-mono relative z-10">
       <div className="flex items-center gap-3">
+        <span className="text-[8px] font-bold text-[#D32F2F] bg-red-50 px-2 py-0.5 rounded border border-red-200 uppercase">
+          STRICTLY CONFIDENTIAL
+        </span>
         <span>🌐 {proposalData.preparedByWebsite}</span>
         <span>📧 {proposalData.preparedByEmail}</span>
         <span>📞 {proposalData.preparedByPhone}</span>
       </div>
-      <div className="font-bold text-[#0A3D91]">
+      <div className="font-black text-[#0B2545]">
         {pageCode} | Page {pageNum} of 09
       </div>
     </div>
