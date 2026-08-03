@@ -249,78 +249,90 @@ const BRANDING_SERVICES = [
   { title: 'ID Card Design', price: '₹999', icon: UserCheck },
 ]
 
-// ── 5. Digital Marketing ──────────────────────────────────────────
+// ── 5. Digital Marketing (Official Hindustan Projects Brochure Packages) ────
 const MARKETING_SERVICES = [
   {
-    title: 'SEO (Google Ranking)',
-    icon: TrendingUp,
+    title: 'Basic Package',
+    icon: Rocket,
     price: '₹4,999',
     period: '/ month',
-    badge: 'Organic Growth',
+    badge: 'BEST FOR STARTUPS',
     isPopular: false,
-    headerGradient: 'from-emerald-500 via-teal-600 to-emerald-700',
-    iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-200',
-    desc: 'Rank #1 on Google Search with high-intent keyword research, technical SEO, and link building.',
-    features: [
-      'Keyword & Competitor Research',
-      'On-Page & Technical SEO',
-      'High-DA Link Building',
-      'Google Maps (GMB) Optimization',
-      'Monthly Traffic & Ranking Reports',
+    headerGradient: 'from-blue-600 via-sky-600 to-indigo-700',
+    iconBg: 'bg-blue-50 text-blue-600 border-blue-200',
+    desc: 'Ideal growth starter plan for startups & small businesses seeking essential social media & Google Maps presence.',
+    groups: [
+      {
+        name: 'Social Media Management',
+        icon: Palette,
+        items: ['10 Creative Posts', '5 Professional Reels', '10–15 Stories', 'Thumbnail Designs'],
+      },
+      {
+        name: 'Google Business Profile',
+        icon: Globe,
+        items: ['Profile Optimization', 'Photo Uploads', 'Basic SEO'],
+      },
+      {
+        name: 'Ad Campaign & Analytics',
+        icon: Zap,
+        items: ['1 Meta / Google Ad Campaign (7 Days)', 'Monthly Performance Analysis'],
+      },
     ],
   },
   {
-    title: 'Google Ads (PPC)',
-    icon: Zap,
-    price: '₹5,999',
+    title: 'Advance Package',
+    icon: TrendingUp,
+    price: '₹8,999',
     period: '/ month',
-    badge: 'Highest Lead ROI',
+    badge: 'MOST POPULAR',
     isPopular: true,
     headerGradient: 'from-brand-red via-rose-600 to-brand-red-dark',
     iconBg: 'bg-red-50 text-brand-red border-red-200',
-    desc: 'High-converting Google Search & Display PPC campaigns targeting ready-to-buy customers.',
-    features: [
-      'Search & Display Campaign Setup',
-      'High-Intent Buyer Keyword Bidding',
-      'Negative Keyword Filtering',
-      'Conversion Tracking & Analytics',
-      'Landing Page Consultation',
+    desc: 'Most popular growth retainer for growing companies wanting high-frequency reels, advanced SEO & ad leads.',
+    groups: [
+      {
+        name: 'Social Media Management',
+        icon: Palette,
+        items: ['12–15 Creative Posts', '10 Professional Reels', '20 Stories', 'Thumbnail Designs'],
+      },
+      {
+        name: 'Google Business Profile',
+        icon: Globe,
+        items: ['Profile Optimization', 'Photo Uploads', 'Advanced SEO'],
+      },
+      {
+        name: 'Ad Campaign & Analytics',
+        icon: Zap,
+        items: ['1 Meta / Google Ad Campaign (10 Days)', 'Performance & Lead Analysis'],
+      },
     ],
   },
   {
-    title: 'Meta Ads (Insta & FB)',
-    icon: MessageSquare,
-    price: '₹5,999',
+    title: 'Premium Package',
+    icon: Award,
+    price: '₹14,999',
     period: '/ month',
-    badge: 'Targeted Reach',
+    badge: 'BEST VALUE',
     isPopular: false,
-    headerGradient: 'from-blue-600 via-indigo-600 to-blue-700',
-    iconBg: 'bg-blue-50 text-blue-600 border-blue-200',
-    desc: 'Targeted Instagram & Facebook lead generation ads with high-converting visual creative designs.',
-    features: [
-      'FB & Instagram Ad Campaign Setup',
-      'Laser-Targeted Audience Demographics',
-      'Retargeting & Lookalike Audiences',
-      'High-Converting Graphic & Reel Ads',
-      'A/B Testing & Weekly Optimization',
-    ],
-  },
-  {
-    title: 'Social Media Management',
-    icon: Palette,
-    price: '₹6,999',
-    period: '/ month',
-    badge: 'Complete Brand Presence',
-    isPopular: false,
-    headerGradient: 'from-purple-600 via-pink-600 to-rose-600',
+    headerGradient: 'from-purple-600 via-indigo-700 to-[#0a1936]',
     iconBg: 'bg-purple-50 text-purple-600 border-purple-200',
-    desc: 'Custom social media graphics, reels content calendar, page management & audience engagement.',
-    features: [
-      '12+ Custom Graphic Posts / Month',
-      'Trending Reels Content Calendar',
-      'Page Setup & Profile Branding',
-      'Hashtag & Audience Growth Strategy',
-      'Community Comment & DM Help',
+    desc: 'Complete 360° digital marketing suite with daily posting, 15 reels, 2 ad campaigns & competitor intelligence.',
+    groups: [
+      {
+        name: 'Social Media Management',
+        icon: Palette,
+        items: ['Daily Posts', '15 Professional Reels', 'Daily Stories', 'Thumbnail Designs'],
+      },
+      {
+        name: 'Google Business Profile & SEO',
+        icon: Globe,
+        items: ['Profile Optimization', 'Photo Uploads', 'Advanced SEO', 'Google Ads Management'],
+      },
+      {
+        name: 'Ad Campaigns & Intelligence',
+        icon: Zap,
+        items: ['2 Ad Campaigns (Meta & Google)', 'Performance & Market Analysis', 'Competitor Intelligence Analysis'],
+      },
     ],
   },
 ]
@@ -1107,7 +1119,7 @@ export default function PricingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
             {MARKETING_SERVICES.map((mkt, idx) => {
               const IconComp = mkt.icon
               const isFeatured = mkt.isPopular
@@ -1117,7 +1129,7 @@ export default function PricingPage() {
                   initial={{ opacity: 0, y: 25 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: idx * 0.08 }}
+                  transition={{ duration: 0.4, delay: idx * 0.1 }}
                   className={`relative bg-white rounded-3xl overflow-hidden transition-all duration-300 flex flex-col justify-between ${
                     isFeatured
                       ? 'border-2 border-brand-red shadow-[0_15px_50px_rgba(227,30,36,0.22)] ring-2 ring-brand-red/40 lg:-translate-y-3 z-10'
@@ -1143,13 +1155,16 @@ export default function PricingPage() {
                   <div className="p-5 sm:p-6">
                     {/* Header Icon + Service Title */}
                     <div className="flex items-center gap-3 mb-2.5">
-                      <div className={`w-10 h-10 rounded-2xl border flex items-center justify-center shrink-0 shadow-xs ${mkt.iconBg}`}>
-                        <IconComp className="w-5 h-5" />
+                      <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 shadow-xs ${mkt.iconBg}`}>
+                        <IconComp className="w-5.5 h-5.5" />
                       </div>
                       <div>
-                        <h3 className="font-heading text-lg font-black text-text-dark leading-snug">
+                        <h3 className="font-heading text-xl font-black text-text-dark leading-snug">
                           {mkt.title}
                         </h3>
+                        <span className="text-[10px] font-extrabold text-emerald-600 uppercase block">
+                          Official Growth Retainer
+                        </span>
                       </div>
                     </div>
 
@@ -1158,9 +1173,9 @@ export default function PricingPage() {
                     </p>
 
                     {/* Clean Price & Billing Suffix */}
-                    <div className="my-3 pt-3 border-t border-gray-100">
+                    <div className="my-3.5 pt-3 border-t border-gray-100">
                       <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">
-                        Monthly Retainer
+                        Monthly Investment
                       </span>
                       <div className="flex items-baseline gap-2 mt-1 flex-wrap">
                         <span
@@ -1170,27 +1185,35 @@ export default function PricingPage() {
                         >
                           {mkt.price}
                         </span>
-                        <span className="text-xs font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-md border border-gray-200 shrink-0">
+                        <span className="text-xs font-bold text-gray-600 bg-gray-100 px-2.5 py-0.5 rounded-md border border-gray-200 shrink-0">
                           {mkt.period}
                         </span>
                       </div>
                     </div>
 
-                    {/* Key Deliverables List */}
-                    <div className="border-t border-gray-100 pt-3 mb-1">
-                      <span className="text-[10px] font-extrabold text-text-dark uppercase tracking-wider block mb-2">
-                        Campaign Includes:
-                      </span>
-                      <ul className="space-y-2">
-                        {mkt.features.map((feat, fIdx) => (
-                          <li key={fIdx} className="flex items-start gap-2 text-xs text-text-dark">
-                            <span className="p-0.5 rounded-full bg-emerald-500 text-white mt-0.5 shrink-0 shadow-xs">
-                              <Check className="w-2.5 h-2.5 stroke-[3]" />
+                    {/* Grouped Deliverables List (Matching Brochure Sections) */}
+                    <div className="border-t border-gray-100 pt-3 space-y-3">
+                      {mkt.groups.map((group, gIdx) => {
+                        const GroupIcon = group.icon
+                        return (
+                          <div key={gIdx} className="bg-slate-50/80 p-3 rounded-2xl border border-gray-100">
+                            <span className="text-[10px] font-black text-[#0A3D91] uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
+                              <GroupIcon className="w-3.5 h-3.5 text-brand-red" />
+                              {group.name}
                             </span>
-                            <span className="font-semibold">{feat}</span>
-                          </li>
-                        ))}
-                      </ul>
+                            <ul className="space-y-1.5">
+                              {group.items.map((item, iIdx) => (
+                                <li key={iIdx} className="flex items-start gap-2 text-xs text-text-dark">
+                                  <span className="p-0.5 rounded-full bg-emerald-500 text-white mt-0.5 shrink-0 shadow-xs">
+                                    <Check className="w-2.5 h-2.5 stroke-[3]" />
+                                  </span>
+                                  <span className="font-semibold text-[11px] leading-snug">{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
 
@@ -1202,7 +1225,7 @@ export default function PricingPage() {
                       onClick={() => openQuoteModal(`Digital Marketing: ${mkt.title}`)}
                       className={isFeatured ? 'shadow-lg shadow-brand-red/30' : ''}
                     >
-                      Start Campaign
+                      Choose {mkt.title}
                     </Button>
                   </div>
                 </motion.div>
@@ -1210,25 +1233,41 @@ export default function PricingPage() {
             })}
           </div>
 
-          {/* Marketing Consultation Strip */}
-          <div className="mt-12 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-brand-red/5 via-brand-blue/10 to-brand-red/5 border border-brand-blue/20 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-text-dark shadow-xs">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-brand-red text-white flex items-center justify-center shrink-0 shadow-xs">
-                <TrendingUp className="w-5 h-5" />
-              </div>
+          {/* Marketing Flyer Slogan Strip */}
+          <div className="mt-12 p-6 rounded-3xl bg-gradient-to-r from-[#0a1936] via-[#122D6B] to-[#0a1936] text-white shadow-xl relative overflow-hidden">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
               <div>
-                <span className="font-extrabold text-brand-blue block">Need Custom Multi-Channel Marketing Budget?</span>
-                <span className="text-text-muted text-xs">We create combined SEO + Google Ads + Meta Ads strategy tailored for maximum business ROI.</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-brand-red bg-white/10 px-3 py-1 rounded-full inline-block mb-2">
+                  Official Growth Promise
+                </span>
+                <h3 className="font-heading text-xl sm:text-2xl font-black text-white">
+                  LET'S GROW YOUR BUSINESS DIGITALLY
+                </h3>
+                <p className="text-xs text-blue-200 mt-1 italic">
+                  "Your Growth, Our Responsibility" — Result-Driven Strategies &amp; Dedicated Campaign Support
+                </p>
+              </div>
+
+              {/* 4 Trust Highlights from Brochure */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div className="bg-white/10 p-2.5 rounded-xl border border-white/10 text-center">
+                  <span className="block font-black text-white">🎯 Result Driven</span>
+                  <span className="text-[10px] text-blue-200">Strategies</span>
+                </div>
+                <div className="bg-white/10 p-2.5 rounded-xl border border-white/10 text-center">
+                  <span className="block font-black text-white">👥 Expert Team</span>
+                  <span className="text-[10px] text-blue-200">Dedicated Marketers</span>
+                </div>
+                <div className="bg-white/10 p-2.5 rounded-xl border border-white/10 text-center">
+                  <span className="block font-black text-white">📈 Measurable</span>
+                  <span className="text-[10px] text-blue-200">Growth Metrics</span>
+                </div>
+                <div className="bg-white/10 p-2.5 rounded-xl border border-white/10 text-center">
+                  <span className="block font-black text-white">🎧 Dedicated</span>
+                  <span className="text-[10px] text-blue-200">Account Support</span>
+                </div>
               </div>
             </div>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => openQuoteModal('Custom Marketing Strategy Consultation')}
-              className="shrink-0 text-xs shadow-md shadow-brand-red/20"
-            >
-              Get Custom Ad Proposal
-            </Button>
           </div>
         </Container>
       </section>
