@@ -46,6 +46,7 @@ import {
   ChevronUp,
   Award,
   Layers,
+  LayoutDashboard,
 } from 'lucide-react'
 import { SEO } from '@/components/ui'
 import { useSiteSettings } from '@/hooks/useContent'
