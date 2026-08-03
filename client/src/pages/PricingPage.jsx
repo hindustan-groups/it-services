@@ -58,7 +58,7 @@ const WEBSITE_PACKAGES = [
     price: '₹7,999',
     priceSubtitle: 'Starting From',
     delivery: '5–7 Days',
-    support: '7 Days Free Support',
+    support: '1 Month Free Support',
     description: 'Perfect for startups and small businesses looking to launch a fast, modern website.',
     features: [
       'Up to 5 Pages',
@@ -70,7 +70,7 @@ const WEBSITE_PACKAGES = [
       'SSL Setup',
       'Social Media Links',
       'Delivery in 5–7 Days',
-      '7 Days Free Support',
+      '1 Month Free Support',
     ],
   },
   {
@@ -83,7 +83,7 @@ const WEBSITE_PACKAGES = [
     price: '₹14,999',
     priceSubtitle: 'Starting From',
     delivery: '7–12 Days',
-    support: '30 Days Free Support',
+    support: '2 Months Free Support',
     description: 'Our most popular package for growing businesses needing dynamic UI, blog & admin portal.',
     features: [
       'Up to 10 Pages',
@@ -96,7 +96,7 @@ const WEBSITE_PACKAGES = [
       'Basic Speed Optimization',
       'SEO Ready',
       'Delivery in 7–12 Days',
-      '30 Days Free Support',
+      '2 Months Free Support',
     ],
   },
   {
@@ -109,7 +109,7 @@ const WEBSITE_PACKAGES = [
     price: '₹24,999',
     priceSubtitle: 'Starting From',
     delivery: '15–20 Days',
-    support: '3 Months Support',
+    support: '5 Months Support',
     description: 'Ideal for established businesses seeking dynamic features, custom dashboard & payments.',
     features: [
       'Unlimited Pages',
@@ -121,7 +121,7 @@ const WEBSITE_PACKAGES = [
       'Premium Design',
       'Performance Optimization',
       'Delivery in 15–20 Days',
-      '3 Months Support',
+      '5 Months Support',
     ],
   },
   {
