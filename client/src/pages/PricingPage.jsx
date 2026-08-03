@@ -37,8 +37,11 @@ import {
   CheckCircle,
   Shield,
   Rocket,
-  Crown,
   Building2,
+  CreditCard,
+  LayoutDashboard,
+  Search,
+  Headphones,
 } from 'lucide-react'
 import { Container, Button, SEO } from '@/components/ui'
 import { breadcrumbSchema, faqSchema } from '@/components/ui/SEO'
