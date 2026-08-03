@@ -631,15 +631,15 @@ export default function PricingPage() {
       <section id="software-development" className="py-16 lg:py-24 bg-gradient-to-b from-gray-50 to-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-text-dark">
               Software Development
             </h2>
-            <p className="text-text-muted text-sm sm:text-base mt-2">
-              Custom business software, billing platforms, CRM, and ERP systems designed to streamline daily operations.
+            <p className="text-text-muted text-sm sm:text-base mt-3 leading-relaxed">
+              Custom business software, GST billing platforms, CRM pipelines, and ERP systems tailored for your operational workflow.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {SOFTWARE_SERVICES.map((item, idx) => {
               const IconComp = item.icon
               return (
@@ -649,25 +649,26 @@ export default function PricingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: idx * 0.08 }}
-                  className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 hover:border-brand-blue/40 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
+                  className="bg-white rounded-3xl overflow-hidden border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group"
                 >
-                  <div>
-                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.color} text-white flex items-center justify-center mb-5 shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`h-2 w-full bg-gradient-to-r ${item.color}`} />
+                  <div className="p-6 sm:p-7">
+                    <div className={`w-13 h-13 rounded-2xl bg-gradient-to-br ${item.color} text-white flex items-center justify-center mb-5 shadow-md group-hover:scale-110 transition-transform duration-300`}>
                       <IconComp className="w-6 h-6" />
                     </div>
 
-                    <h3 className="font-heading text-lg sm:text-xl font-bold text-text-dark group-hover:text-brand-blue transition-colors">
+                    <h3 className="font-heading text-xl font-bold text-text-dark group-hover:text-brand-blue transition-colors">
                       {item.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-text-muted mt-2 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-text-muted mt-2.5 leading-relaxed min-h-[44px]">
                       {item.desc}
                     </p>
                   </div>
 
-                  <div className="mt-6 pt-5 border-t border-gray-100 flex items-center justify-between">
+                  <div className="p-6 sm:p-7 pt-0 border-t border-gray-100/80 mt-auto flex items-center justify-between">
                     <div>
-                      <span className="text-[10px] text-text-muted uppercase tracking-wider block font-semibold">Starting From</span>
-                      <span className="font-heading text-xl font-extrabold text-brand-red">{item.price}</span>
+                      <span className="text-[10px] text-text-muted uppercase tracking-wider block font-extrabold">Starting From</span>
+                      <span className="font-heading text-xl font-black text-brand-red">{item.price}</span>
                     </div>
 
                     <Button
@@ -690,55 +691,71 @@ export default function PricingPage() {
       <section id="mobile-app-development" className="py-16 lg:py-24 bg-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-text-dark">
               Mobile App Development
             </h2>
-            <p className="text-text-muted text-sm sm:text-base mt-2">
-              High-performance Android and iOS mobile applications published on Google Play &amp; Apple App Store.
+            <p className="text-text-muted text-sm sm:text-base mt-3 leading-relaxed">
+              High-performance Android and iOS mobile applications published on Google Play Store &amp; Apple App Store.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {APP_PACKAGES.map((app, idx) => (
-              <motion.div
-                key={app.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.08 }}
-                className="bg-white rounded-3xl p-6 border border-gray-200/90 hover:border-brand-blue/40 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
-              >
-                <div>
-                  <span className="inline-block px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue text-[11px] font-bold uppercase tracking-wider mb-4">
-                    {app.badge}
-                  </span>
-                  <h3 className="font-heading text-xl font-bold text-text-dark">{app.title}</h3>
-                  <div className="mt-3 mb-4">
-                    <span className="text-[10px] text-text-muted uppercase tracking-wider block font-semibold">Starting From</span>
-                    <span className="font-heading text-2xl lg:text-3xl font-black text-brand-blue">{app.price}</span>
-                  </div>
-                  <p className="text-xs text-text-muted leading-relaxed mb-5 min-h-[40px]">{app.desc}</p>
-
-                  <ul className="space-y-2.5 border-t border-gray-100 pt-4 mb-6">
-                    {app.features.map((feat, fIdx) => (
-                      <li key={fIdx} className="flex items-center gap-2 text-xs text-text-dark font-medium">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                        <span>{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  fullWidth
-                  onClick={() => openQuoteModal(`Mobile App: ${app.title}`)}
+            {APP_PACKAGES.map((app, idx) => {
+              const isFeatured = app.title === 'Business App'
+              return (
+                <motion.div
+                  key={app.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: idx * 0.08 }}
+                  className={`relative bg-white rounded-3xl p-6 overflow-hidden transition-all duration-300 flex flex-col justify-between ${
+                    isFeatured
+                      ? 'border-2 border-brand-red shadow-xl ring-2 ring-brand-red/30 lg:-translate-y-2'
+                      : 'border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-xl hover:-translate-y-1'
+                  }`}
                 >
-                  Get Started
-                </Button>
-              </motion.div>
-            ))}
+                  <div className={`h-2 -mx-6 -mt-6 mb-6 bg-gradient-to-r ${isFeatured ? 'from-brand-red to-rose-600' : 'from-brand-blue to-indigo-600'}`} />
+
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                        isFeatured ? 'bg-brand-red text-white' : 'bg-brand-blue/10 text-brand-blue'
+                      }`}>
+                        {app.badge}
+                      </span>
+                      <span className="text-[10px] font-bold text-gray-400">Android &amp; iOS</span>
+                    </div>
+
+                    <h3 className="font-heading text-xl font-extrabold text-text-dark">{app.title}</h3>
+                    <div className="mt-3 mb-4">
+                      <span className="text-[10px] text-text-muted uppercase tracking-wider block font-semibold">Starting From</span>
+                      <span className={`font-heading text-2xl lg:text-3xl font-black ${isFeatured ? 'text-brand-red' : 'text-brand-blue'}`}>{app.price}</span>
+                    </div>
+                    <p className="text-xs text-text-muted leading-relaxed mb-5 min-h-[40px]">{app.desc}</p>
+
+                    <ul className="space-y-2.5 border-t border-gray-100 pt-4 mb-6">
+                      {app.features.map((feat, fIdx) => (
+                        <li key={fIdx} className="flex items-center gap-2 text-xs text-text-dark font-semibold">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <Button
+                    variant={isFeatured ? 'primary' : 'outline'}
+                    size="sm"
+                    fullWidth
+                    onClick={() => openQuoteModal(`Mobile App: ${app.title}`)}
+                    className={isFeatured ? 'shadow-md shadow-brand-red/25' : ''}
+                  >
+                    Get Started
+                  </Button>
+                </motion.div>
+              )
+            })}
           </div>
         </Container>
       </section>
@@ -747,11 +764,11 @@ export default function PricingPage() {
       <section id="branding-services" className="py-16 lg:py-24 bg-gradient-to-b from-gray-50 to-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-text-dark">
               Branding Services
             </h2>
-            <p className="text-text-muted text-sm sm:text-base mt-2">
-              Craft a distinct corporate identity with professional graphic design and print-ready collaterals.
+            <p className="text-text-muted text-sm sm:text-base mt-3 leading-relaxed">
+              Craft a distinct corporate identity with professional graphic design, brand kits, and print-ready collaterals.
             </p>
           </div>
 
@@ -765,15 +782,16 @@ export default function PricingPage() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: idx * 0.05 }}
-                  className="bg-white rounded-2xl p-5 border border-gray-200/90 hover:border-brand-red/40 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-center flex flex-col items-center justify-between group"
+                  onClick={() => openQuoteModal(`Branding: ${item.title}`)}
+                  className="bg-white rounded-3xl p-5 border border-gray-200/90 hover:border-brand-red/50 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 text-center flex flex-col items-center justify-between group cursor-pointer"
                 >
-                  <div className="w-11 h-11 rounded-2xl bg-brand-red/10 text-brand-red flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-brand-red group-hover:text-white transition-all duration-300">
-                    <IconComp className="w-5 h-5" />
+                  <div className="w-12 h-12 rounded-2xl bg-brand-red/10 text-brand-red flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-brand-red group-hover:text-white transition-all duration-300 shadow-xs">
+                    <IconComp className="w-5.5 h-5.5" />
                   </div>
-                  <h3 className="font-heading text-sm font-bold text-text-dark mb-2 group-hover:text-brand-red transition-colors">{item.title}</h3>
-                  <div className="mt-auto">
+                  <h3 className="font-heading text-sm font-extrabold text-text-dark mb-2 group-hover:text-brand-red transition-colors">{item.title}</h3>
+                  <div className="mt-auto pt-2 border-t border-gray-100 w-full">
                     <span className="text-[9px] text-text-muted uppercase block font-semibold">Starting From</span>
-                    <span className="font-heading text-base font-extrabold text-brand-red">{item.price}</span>
+                    <span className="font-heading text-base font-black text-brand-red">{item.price}</span>
                   </div>
                 </motion.div>
               )
@@ -786,11 +804,11 @@ export default function PricingPage() {
       <section id="digital-marketing" className="py-16 lg:py-24 bg-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-text-dark">
               Digital Marketing
             </h2>
-            <p className="text-text-muted text-sm sm:text-base mt-2">
-              Drive high-intent inquiries, boost sales conversion, and scale ROI across Google and Meta ad platforms.
+            <p className="text-text-muted text-sm sm:text-base mt-3 leading-relaxed">
+              Drive high-intent customer leads, rank #1 on Google, and scale sales ROI across Google and Meta ad platforms.
             </p>
           </div>
 
@@ -802,13 +820,13 @@ export default function PricingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: idx * 0.08 }}
-                className="bg-white rounded-3xl p-6 border border-gray-200/90 hover:border-brand-blue/40 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                className="bg-white rounded-3xl p-6 border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
-                  <span className="inline-block px-3 py-1 rounded-full bg-brand-red/10 text-brand-red text-[11px] font-bold uppercase tracking-wider mb-4">
+                  <span className="inline-block px-3 py-1 rounded-full bg-brand-red/10 text-brand-red text-[11px] font-black uppercase tracking-wider mb-4">
                     {mkt.badge}
                   </span>
-                  <h3 className="font-heading text-xl font-bold text-text-dark">{mkt.title}</h3>
+                  <h3 className="font-heading text-xl font-extrabold text-text-dark">{mkt.title}</h3>
                   <div className="mt-3 mb-4">
                     <span className="text-[10px] text-text-muted uppercase tracking-wider block font-semibold">Starting From</span>
                     <span className="font-heading text-2xl lg:text-3xl font-black text-brand-blue">{mkt.price}</span>
@@ -834,11 +852,11 @@ export default function PricingPage() {
       <section id="hosting-maintenance" className="py-16 lg:py-24 bg-gradient-to-b from-gray-50 to-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-text-dark">
               Hosting &amp; Maintenance
             </h2>
-            <p className="text-text-muted text-sm sm:text-base mt-2">
-              Enterprise cloud infrastructure, 99.9% uptime server management, and continuous technical support.
+            <p className="text-text-muted text-sm sm:text-base mt-3 leading-relaxed">
+              Enterprise cloud infrastructure, 99.9% uptime server management, SSL security, and continuous maintenance.
             </p>
           </div>
 
@@ -852,13 +870,13 @@ export default function PricingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: idx * 0.05 }}
-                  className="bg-white rounded-3xl p-6 border border-gray-200/90 hover:border-brand-blue/40 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group"
+                  className="bg-white rounded-3xl p-6 border border-gray-200/90 hover:border-brand-blue/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
                 >
                   <div>
-                    <div className="w-12 h-12 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center mb-4 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-300">
+                    <div className="w-12 h-12 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center mb-4 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-300 shadow-xs">
                       <IconComp className="w-6 h-6" />
                     </div>
-                    <h3 className="font-heading text-base font-bold text-text-dark group-hover:text-brand-blue transition-colors">
+                    <h3 className="font-heading text-base font-extrabold text-text-dark group-hover:text-brand-blue transition-colors">
                       {feat.title}
                     </h3>
                     <p className="text-xs text-text-muted mt-2 leading-relaxed">{feat.desc}</p>
@@ -883,10 +901,10 @@ export default function PricingPage() {
       <section id="why-choose-us" className="py-16 lg:py-24 bg-bg-base border-t border-gray-100 scroll-mt-24">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 className="font-heading text-3xl sm:text-4xl font-black text-text-dark">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-text-dark">
               Why Choose Hindustan Projects IT Services
             </h2>
-            <p className="text-text-muted text-sm sm:text-base mt-2">
+            <p className="text-text-muted text-sm sm:text-base mt-3 leading-relaxed">
               We combine technological innovation, regional market expertise, and long-term client partnership commitment.
             </p>
           </div>
@@ -901,13 +919,13 @@ export default function PricingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: idx * 0.05 }}
-                  className="bg-white rounded-3xl p-6 border border-gray-200/90 hover:border-brand-blue/30 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+                  className="bg-white rounded-3xl p-6 border border-gray-200/90 hover:border-brand-blue/40 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
                 >
                   <div>
-                    <div className="w-12 h-12 rounded-2xl bg-brand-red/10 text-brand-red flex items-center justify-center mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-brand-red/10 text-brand-red flex items-center justify-center mb-4 shadow-xs">
                       <IconComp className="w-6 h-6" />
                     </div>
-                    <h3 className="font-heading text-base font-bold text-text-dark mb-2">
+                    <h3 className="font-heading text-base font-extrabold text-text-dark mb-2">
                       {item.title}
                     </h3>
                     <p className="text-xs text-text-muted leading-relaxed">{item.desc}</p>
