@@ -39,6 +39,7 @@ import {
   Trash2,
   Bot,
   Share2,
+  DollarSign,
 } from 'lucide-react'
 import { api } from '@/utils/api'
 import { useQuery } from '@tanstack/react-query'
